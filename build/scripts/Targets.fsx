@@ -46,6 +46,10 @@ Target "DownloadProducts" (fun () ->
     productsToBuild
     |> List.iter (fun p -> p.Download())
 )
+Target "DownloadExtensions" (fun () ->
+    productsToBuild
+    |> List.iter (fun p -> p.DownloadExtensions())
+)
 
 Target "UnzipProducts" (fun () ->
     productsToBuild |> List.iter (fun p -> p.Unzip())
@@ -138,6 +142,7 @@ Target "Integrate" (fun () ->
 "Clean"
   =?> ("DownloadProducts", (not ((getBuildParam "release") = "1")))
   ==> "UnzipProducts"
+  =?> ("DownloadExtensions", (not ((getBuildParam "release") = "1")))
   ==> "PatchGuids"
   ==> "PruneFiles"
   =?> ("UnitTest", (not ((getBuildParam "skiptests") = "1")))

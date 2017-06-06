@@ -30,6 +30,10 @@ module Paths =
 
 module Products =
     open Paths
+    
+    type Extension = 
+        Plugin of string
+        | Pack of string
 
     type Product =
         | Elasticsearch
@@ -54,6 +58,33 @@ module Products =
             match this with
             | Elasticsearch -> "d4fb307f-cb1d-4026-bd28-ca1d0016d709"
             | Kibana -> "ffb9da32-12fa-4c9d-a5bd-06cddae74fd4"
+            
+            
+        member this.Extensions =
+            match this with
+            | Elasticsearch -> 
+            [
+                Pack "x-pack";
+                Plugin "ingest-attachment";
+                Plugin "ingest-geoip";
+                Plugin "analysis-icu";
+                Plugin "analysis-kuromoji";
+                Plugin "analysis-phonetic";
+                Plugin "analysis-smartcn";
+                Plugin "discovery-ec2";
+                Plugin "discovery-azure-classic";
+                Plugin "discovery-gce";
+                Plugin "mapper-size";
+                Plugin "mapper-murmur3";
+                Plugin "lang-javascript";
+                Plugin "lang-python";
+                Plugin "repository-hdfs";
+                Plugin "repository-s3";
+                Plugin "repository-azure";
+                Plugin "store-smb";
+            ]
+            | Kibana -> List.empty
+            
 
         member this.Title =
             CultureInfo.InvariantCulture.TextInfo.ToTitleCase this.Name
@@ -125,6 +156,41 @@ module Products =
                         | _ -> ()
                 else tracefn "Extracted directory %s already exists" extractedDirectory                
             )
+            
+    //https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-5.4.1.zip
+    //https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-5.4.1.zip
+    //https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-attachment/ingest-attachment-6.0.0-alpha1.zip
+        member this.DownloadExtensions () = 
+            let extensionZip v e =  
+                match e with 
+                | Pack x -> sprintf "%s-%s.zip" x v.FullVersion
+                | Plugin x -> sprintf "%s-%s.zip" x v.FullVersion
+            let extensionUrl v e =  
+                match e with 
+                | Pack x -> sprintf "%s/packs/%s/%s" ArtifactDownloadsUrl x (extensionZip v e)
+                | Plugin x -> sprintf "%s/%s-plugins/%s/%s" ArtifactDownloadsUrl this.Name x (extensionZip v e)
+            let fullPathInDir = InDir |> Path.GetFullPath
+            let downloadUrls = 
+                this.Versions
+                |> List.collect (fun v -> 
+                   product.Extensions
+                   |> List.map(fun e -> 
+                       let url = extensionUrl v e
+                       let zip = Path.Combine(fullPathInDir, extensionZip v e)
+                       (url, zip)
+                    )
+                )
+            downloadUrls
+            |> List.iter(fun location ->          
+                match location with
+                | (_, zip) when fileExists zip -> tracefn "Already downloaded %s to %s" this.Name zip
+                | (url, zip) ->
+                    tracefn "Downloading %s extension: %s" this.Name url 
+                    use webClient = new System.Net.WebClient()
+                    location |> webClient.DownloadFile
+                    tracefn "Done downloading %s extension to %s" this.Name zip 
+            )  
+            
 
         member this.Download () =
             let locations = List.zip this.DownloadUrls this.ZipFiles
