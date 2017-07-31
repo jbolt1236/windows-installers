@@ -130,6 +130,7 @@ namespace Elastic.Installer.Msi
 				throw new Exception($"The directory '{wixLocation}' could not be found");
 			Compiler.WixLocation = wixLocation;
 			Compiler.BuildWxs(project, $@"_Generated\{productName.ToLower()}.wxs", Compiler.OutputType.MSI);
+			Compiler.LightOptions = "-sw1076 -sw1079 -sval";
 			Compiler.BuildMsi(project);
 		}
 
