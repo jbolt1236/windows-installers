@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescriptionAttribute("kibana")]
 [assembly: GuidAttribute("ffb9da32-12fa-4c9d-a5bd-06cddae74fd4")]
 [assembly: AssemblyProductAttribute("Kibana")]
-[assembly: AssemblyMetadataAttribute("GitBuildHash","44ab5e")]
+[assembly: AssemblyMetadataAttribute("GitBuildHash","2d10b8")]
 [assembly: AssemblyCompanyAttribute("Elasticsearch BV")]
 [assembly: AssemblyCopyrightAttribute("Apache License, version 2 (ALv2). Copyright Elasticsearch.")]
 [assembly: AssemblyTrademarkAttribute("Kibana is a trademark of Elasticsearch BV, registered in the U.S. and in other countries.")]
@@ -18,7 +18,7 @@ namespace System {
         internal const System.String AssemblyDescription = "kibana";
         internal const System.String Guid = "ffb9da32-12fa-4c9d-a5bd-06cddae74fd4";
         internal const System.String AssemblyProduct = "Kibana";
-        internal const System.String AssemblyMetadata_GitBuildHash = "44ab5e";
+        internal const System.String AssemblyMetadata_GitBuildHash = "2d10b8";
         internal const System.String AssemblyCompany = "Elasticsearch BV";
         internal const System.String AssemblyCopyright = "Apache License, version 2 (ALv2). Copyright Elasticsearch.";
         internal const System.String AssemblyTrademark = "Kibana is a trademark of Elasticsearch BV, registered in the U.S. and in other countries.";
