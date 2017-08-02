@@ -10,32 +10,15 @@ namespace Elastic.ProcessHosts.Kibana.Process
 		private static readonly Regex StartedMessage =
 			new Regex(@"Server running at https?:\/\/(?<host>[^:]+)(:(?<port>\d*))?");
 
-		public DateTime Date { get; }
-
-		public string Type { get; }
-
 		public string Message { get; }
-
-		public string State { get; }
-
-		public int ProcessId { get; }
-
-		public IEnumerable<string> Tags { get; }
 
 		public KibanaMessage(string consoleLine) : base(false, consoleLine)
 		{
 			if (string.IsNullOrEmpty(consoleLine)) return;
-			throw new NotImplementedException("Parking this for now");
-
 			try
 			{
-//				//var message = JsonConvert.DeserializeObject<KibanaLogMessage>(consoleLine);
-//				Type = message.Type;
-//				Date = message.Timestamp;
-//				Tags = message.Tags;
-//				ProcessId = message.ProcessId;
-//				State = message.State;
-//				Message = message.Message;
+				var message = SimpleJson.DeserializeObject<Dictionary<string,object>>(consoleLine);
+				Message = message["message"].ToString();
 			}
 			catch (Exception)
 			{
@@ -59,26 +42,5 @@ namespace Elastic.ProcessHosts.Kibana.Process
 
 			return true;
 		}
-
-//		public class KibanaLogMessage
-//		{
-//			[JsonProperty("type")]
-//			public string Type { get; set; }
-//
-//			[JsonProperty("@timestamp")]
-//			public DateTime Timestamp { get; set; }
-//
-//			[JsonProperty("tags")]
-//			public IEnumerable<string> Tags { get; set; }
-//
-//			[JsonProperty("pid")]
-//			public int ProcessId { get; set; }
-//
-//			[JsonProperty("state")]
-//			public string State { get; set; }
-//
-//			[JsonProperty("message")]
-//			public string Message { get; set; }
-//		}
 	}
 }

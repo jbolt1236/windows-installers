@@ -43,12 +43,17 @@
     <Compile Include="Elasticsearch\Process\ElasticsearchConsoleOutHandler.cs" />
     <Compile Include="Elasticsearch\Process\ElasticsearchConsoleOutParser.cs" />
     <Compile Include="Elasticsearch\Process\ElasticsearchProcess.cs" />
-    <Compile Include="Elasticsearch\Service\ElasticsearchService.cs" />
+    <Compile Include="Elasticsearch\Service\ElasticsearchService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Elasticsearch\Service\ElasticsearchService.Designer.cs" />
     <Compile Include="ExceptionExtensions.cs" />
     <Compile Include="Kibana\Process\KibanaMessage.cs" />
     <Compile Include="Kibana\Process\KibanaProcess.cs" />
-    <Compile Include="Kibana\Service\KibanaService.cs" />
+    <Compile Include="Kibana\Process\SimpleJson.cs" />
+    <Compile Include="Kibana\Service\KibanaService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Kibana\Service\KibanaService.Designer.cs" />
     <Compile Include="Process\ConsoleOut.cs" />
     <Compile Include="Process\ConsoleOutHandler.cs" />
@@ -59,7 +64,9 @@
     <Compile Include="Process\RxProcessUtilities.cs" />
     <Compile Include="Process\StartupException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\Service.cs" />
+    <Compile Include="Service\Service.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
@@ -67,10 +74,7 @@
   <ItemGroup>
     <None Include="paket.references" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Elasticsearch" />
-    <Folder Include="Kibana" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Elastic.Configuration\Elastic.Configuration.csproj">
       <Project>{faeee7b2-9bad-40c3-81fe-ff81f7b1291f}</Project>
