@@ -9,6 +9,8 @@ open System.IO
 open System.Text.RegularExpressions
 open Fake
 open Fake.FileHelper
+open Fake.ArchiveHelper.Zip
+open Fake.ArchiveHelper.CompressionLevel
 
 module Paths =
 
@@ -119,9 +121,39 @@ module Products =
                     Unzip InDir zipFile
                     match this.Product with
                         | Kibana ->
-                            let original = sprintf "kibana-%s-windows-x86" version.FullVersion
-                            if directoryExists original |> not then
-                                Rename (InDir @@ (sprintf "kibana-%s" version.FullVersion)) (InDir @@ original)
+                            let prefix = sprintf "kibana-%s" version.FullVersion
+                            let z s = sprintf "%s-%s" prefix s
+                            
+                            //unzipped root folder of the distribution
+                            let kibanaRootFolder = (InDir @@ z "windows-x86")
+                            let kibanaFiles = !! (sprintf "%s/**/*" kibanaRootFolder)
+                            
+                            //temporary folder for the uncompressed repack of the root folder
+                            let tempEmbeddFolder = (InDir @@ z "embedded")
+                            let zipFilename = sprintf "%s.zip" prefix
+                            if directoryExists tempEmbeddFolder |> not then
+                                CreateDir tempEmbeddFolder
+                                
+                                //repack distribution with no compression
+                                let embeddedZipFile = tempEmbeddFolder @@ zipFilename 
+                                CompressDir (fun s -> 
+                                    { Comment = option.Some "Raw unpacked source" ; Level = CompressionLevel 0  }
+                                ) false (directoryInfo kibanaRootFolder) (fileInfo embeddedZipFile)
+                            
+                            //repack the uncompressed zip file
+                            let finalFolder = InDir @@ prefix
+                            let finalZipFile = finalFolder @@ zipFilename
+                            if directoryExists finalFolder |> not then
+                                CreateDir finalFolder
+                                CompressDir (fun s -> 
+                                    { Comment = option.Some version.FullVersion ; Level = CompressionLevel 7  }
+                                ) false (directoryInfo tempEmbeddFolder) (fileInfo finalZipFile)
+                            
+                            //delete temporary directories
+                            if directoryExists kibanaRootFolder then
+                                Directory.Delete(kibanaRootFolder, true)
+                            if directoryExists tempEmbeddFolder then
+                                Directory.Delete(tempEmbeddFolder, true)
                         | _ -> ()
                 else tracefn "Extracted directory %s already exists" extractedDirectory                
             )
