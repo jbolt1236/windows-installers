@@ -13,6 +13,7 @@ namespace Elastic.Installer.Domain.Configuration.Service
 
 		void RunTimeInstall(ServiceConfiguration config);
 		void StartAndWaitForRunning(TimeSpan timeToWait, int totalTicks);
+		void StartAndWaitForRunning(TimeSpan timeToWait);
 		void RunTimeUninstall(ServiceConfiguration config);
 		void StopIfRunning(TimeSpan timeToWait);
 	}
@@ -95,6 +96,31 @@ namespace Elastic.Installer.Domain.Configuration.Service
 				_session.SendProgress(totalTicks - tickCount, "started");
 			}
 		}
+
+		public void StartAndWaitForRunning(TimeSpan timeToWait)
+		{
+			if (!SeesService) return;
+			using (var service = new ServiceController(_serviceName))
+			{
+				if (service.Status != ServiceControllerStatus.Running)
+				{
+					service.Start();
+					service.Refresh();
+
+					var sleepyTime = 250;
+					var utcNow = DateTime.UtcNow;
+
+					while (service.Status != ServiceControllerStatus.Running)
+					{
+						if (DateTime.UtcNow - utcNow > timeToWait)
+							throw new System.ServiceProcess.TimeoutException($"Timeout has expired and the operation has not been completed in {timeToWait}.");
+
+						Thread.Sleep(sleepyTime);
+						service.Refresh();
+					}
+				}
+			}
+		}
 	}
 
 	public class NoopServiceStateProvider : IServiceStateProvider
@@ -115,5 +141,6 @@ namespace Elastic.Installer.Domain.Configuration.Service
 
 		public void StopIfRunning(TimeSpan timeToWait) { }
 		public void StartAndWaitForRunning(TimeSpan timeToWait, int totalTicks) { }
+		public void StartAndWaitForRunning(TimeSpan timeToWait) { }
 	}
 }

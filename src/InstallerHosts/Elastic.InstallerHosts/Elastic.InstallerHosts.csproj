@@ -45,7 +45,9 @@
     <Compile Include="Elasticsearch\Tasks\DeleteDirectoriesTask.cs" />
     <Compile Include="Elasticsearch\Tasks\EditElasticsearchYamlTask.cs" />
     <Compile Include="Elasticsearch\Tasks\EditJvmOptionsTask.cs" />
+    <Compile Include="Elasticsearch\Tasks\EnsureServiceStartTask.cs" />
     <Compile Include="Elasticsearch\Tasks\ElasticsearchInstallationTask.cs" />
+    <Compile Include="Elasticsearch\Tasks\EnsureEnvironmentVariablesTask.cs" />
     <Compile Include="Elasticsearch\Tasks\InstallPluginsTask.cs" />
     <Compile Include="Elasticsearch\Tasks\InstallServiceTask.cs" />
     <Compile Include="Elasticsearch\Tasks\PreserveInstallTask.cs" />

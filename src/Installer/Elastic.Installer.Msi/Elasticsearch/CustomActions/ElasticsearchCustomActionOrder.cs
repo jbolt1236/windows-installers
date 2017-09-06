@@ -31,5 +31,7 @@
 
 		// Commit actons
 		CleanupInstall = 1,
+		EnsureEnvironmentVariables = 2,
+		ElasticsearchEnsureServiceStart = 3,
 	}
 }

@@ -165,6 +165,7 @@ function Add-VagrantAzureProvider() {
 
 	vagrant plugin install $vagrantAzurePlugin --plugin-version $pluginVersion
 
+	# don't log the Azure SubscriptionId and Admin Username. https://github.com/Azure/vagrant-azure/issues/191
     $vagrantAzureRunInstanceFile = [Environment]::ExpandEnvironmentVariables("%USERPROFILE%\.vagrant.d\gems\2.2.5\gems\vagrant-azure-$pluginVersion\lib\vagrant-azure\action\run_instance.rb")
     $replacements = @{
         'env[:ui].info(" -- Subscription Id: #{config.subscription_id}")' = 'env[:ui].info(" -- Subscription Id: <redacted>")'
@@ -445,7 +446,7 @@ function Invoke-SilentInstall {
     $QuotedArgs = Add-Quotes $Exeargs
     $Exe = Get-Installer -Version $Version
     log "running installer: msiexec.exe /i $Exe /qn /l install.log $QuotedArgs"
-    $ExitCode = (Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/i $Exe /qn /l install.log $QuotedArgs" -Wait -PassThru).ExitCode
+    $ExitCode = (Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/i $Exe /qn /l*v install.log $QuotedArgs" -Wait -PassThru).ExitCode
 
     if ($ExitCode) {
         log "last exit code not zero: $ExitCode" -l Error
@@ -468,13 +469,26 @@ function Invoke-SilentUninstall {
     $QuotedArgs = Add-Quotes $Exeargs
     $Exe = Get-Installer -Version $Version
     log "running installer: msiexec.exe /x $Exe /qn /l uninstall.log $QuotedArgs"
-    $ExitCode = (Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/x $Exe /qn /l uninstall.log $QuotedArgs" -Wait -PassThru).ExitCode
+    $ExitCode = (Start-Process C:\Windows\System32\msiexec.exe -ArgumentList "/x $Exe /qn /l*v uninstall.log $QuotedArgs" -Wait -PassThru).ExitCode
 
     if ($ExitCode) {
         log "last exit code not zero: $ExitCode" -l Error
     }
 
     return $ExitCode
+}
+
+function Get-ConfigEnvironmentVariableForVersion($Version) {
+	if (!($Version)) {
+		$Version = $env:EsVersion
+	}
+
+	if ($Version.StartsWith("5")) {
+		return "ES_CONFIG"
+	}
+	else {
+		return "CONF_DIR"
+	}
 }
 
 function Ping-Node([System.Timespan]$Timeout, $Domain, $Port) {
@@ -546,22 +560,24 @@ function Get-TotalPhysicalMemory() {
     return (Get-WmiObject Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1mb
 }
 
-function Get-ElasticsearchYamlConfiguration() {
-	$EsConfig = Get-MachineEnvironmentVariable "CONF_DIR"
+function Get-ElasticsearchYamlConfiguration($Version) {
+	$esConfigEnvVar = Get-ConfigEnvironmentVariableForVersion -Version $Version
+	$EsConfig = Get-MachineEnvironmentVariable $esConfigEnvVar
     $EsData = Split-Path $EsConfig -Parent | Join-Path -ChildPath "data"
 	return Get-Content "$EsData\elasticsearch.yml"
 }
 
-function Add-XPackSecurityCredentials($Username, $Password, $Roles) {
+function Add-XPackSecurityCredentials($Username, $Password, $Roles, $Version) {
     if (!$Roles) {
         $Roles = @("superuser")
     }
 
+	$esConfigEnvVar = Get-ConfigEnvironmentVariableForVersion -Version $Version
     $Service = Get-ElasticsearchService
     $Service | Stop-Service
 
     $EsHome = Get-MachineEnvironmentVariable "ES_HOME"
-    $EsConfig = Get-MachineEnvironmentVariable "CONF_DIR"
+    $EsConfig = Get-MachineEnvironmentVariable $esConfigEnvVar
     $EsUsersBat = Join-Path -Path $EsHome -ChildPath "bin\x-pack\users.bat"
     $ConcatRoles = [string]::Join(",", $Roles)
 
