@@ -19,6 +19,7 @@ namespace Elastic.Configuration.EnvironmentBased
 		
 		string NewConfigDirectoryMachineVariable { get; }
 		string OldConfigDirectoryMachineVariable { get; }
+		string OldConfigDirectoryMachineVariableCopy { get; }
 
 		string GetEnvironmentVariable(string variable);
 
@@ -52,6 +53,7 @@ namespace Elastic.Configuration.EnvironmentBased
 
 		public string NewConfigDirectoryMachineVariable => Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.Machine); 
 		public string OldConfigDirectoryMachineVariable => Environment.GetEnvironmentVariable(ConfDirOld, EnvironmentVariableTarget.Machine); 
+		public string OldConfigDirectoryMachineVariableCopy => Environment.GetEnvironmentVariable(ConfDirOldRenamed, EnvironmentVariableTarget.Machine); 
 		
 		public string ConfigDirectoryProcessVariable => 
 			Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.Process)

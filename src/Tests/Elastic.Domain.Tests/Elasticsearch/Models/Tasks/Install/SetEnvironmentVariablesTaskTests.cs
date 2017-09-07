@@ -34,6 +34,30 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Install
 					t.EsState.UnsetOldConfigVariableWasCalled.Should().BeTrue();
 				}
 			);
+		
+		[Fact] void Installing5xSetsNewVariable() => WithValidPreflightChecks(s=>s.Wix(currentVersion: "5.0.0", existingVersion: null))
+			.AssertTask(
+				(m, s, fs) => new SetEnvironmentVariablesTask(m, s, fs),
+				(m, t) => 
+				{
+					t.EsState.NewConfigDirectoryMachineVariable.Should().Be(m.LocationsModel.ConfigDirectory);
+					t.EsState.OldConfigDirectoryMachineVariable.Should().Be(null);
+					t.EsState.OldConfigDirectoryMachineVariableCopy.Should().Be(null);
+					t.EsState.UnsetOldConfigVariableWasCalled.Should().BeTrue();
+				}
+			);
+		
+		[Fact] void Installing6xSetsNewVariable() => WithValidPreflightChecks(s=>s.Wix(currentVersion: "6.0.0", existingVersion: null))
+			.AssertTask(
+				(m, s, fs) => new SetEnvironmentVariablesTask(m, s, fs),
+				(m, t) => 
+				{
+					t.EsState.NewConfigDirectoryMachineVariable.Should().Be(m.LocationsModel.ConfigDirectory);
+					t.EsState.OldConfigDirectoryMachineVariable.Should().Be(null);
+					t.EsState.OldConfigDirectoryMachineVariableCopy.Should().Be(null);
+					t.EsState.UnsetOldConfigVariableWasCalled.Should().BeTrue();
+				}
+			);
 
 
 	}
