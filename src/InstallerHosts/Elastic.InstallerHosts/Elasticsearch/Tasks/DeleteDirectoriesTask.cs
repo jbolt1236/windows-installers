@@ -121,13 +121,12 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 		{
 			var tempconfigDirectory = this.FileSystem.Path.Combine(this.TempDirectory, "config");
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-			if (this.FileSystem.Directory.Exists(tempconfigDirectory))
-			{
-				this.Session.Log("Restoring config directory");
-				this.FileSystem.Directory.Delete(configDirectory, true);
-				this.CopyDirectory(tempconfigDirectory, configDirectory);
-				this.FileSystem.Directory.Delete(tempconfigDirectory, true);
-			}
+			if (!this.FileSystem.Directory.Exists(tempconfigDirectory)) return;
+			
+			this.Session.Log("Restoring config directory");
+			this.FileSystem.Directory.Delete(configDirectory, true);
+			this.CopyDirectory(tempconfigDirectory, configDirectory);
+			this.FileSystem.Directory.Delete(tempconfigDirectory, true);
 		}
 
 		private void RestorePluginsDirectory()
@@ -136,26 +135,25 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			var pluginsTempDirectory = path.Combine(this.TempDirectory, "plugins");
 			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
 
-			if (this.FileSystem.Directory.Exists(pluginsTempDirectory))
-			{
-				this.Session.Log("Restoring plugins directory");
+			if (!this.FileSystem.Directory.Exists(pluginsTempDirectory)) return;
+			
+			this.Session.Log("Restoring plugins directory");
 
-				// delete any plugins that might have been installed
-				var installDir = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsDirectory);
-				foreach (var file in installDir.GetFiles())
-					file.Delete();
-				foreach (var dir in installDir.GetDirectories())
-					dir.Delete(true);
+			// delete any plugins that might have been installed
+			var installDir = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsDirectory);
+			foreach (var file in installDir.GetFiles())
+				file.Delete();
+			foreach (var dir in installDir.GetDirectories())
+				dir.Delete(true);
 
-				// restore old plugins
-				var directory = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsTempDirectory);
-				foreach (var file in directory.GetFiles())
-					file.MoveTo(path.Combine(pluginsDirectory, file.Name));
-				foreach (var dir in directory.GetDirectories())
-					dir.MoveTo(path.Combine(pluginsDirectory, dir.Name));
+			// restore old plugins
+			var directory = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsTempDirectory);
+			foreach (var file in directory.GetFiles())
+				file.MoveTo(path.Combine(pluginsDirectory, file.Name));
+			foreach (var dir in directory.GetDirectories())
+				dir.MoveTo(path.Combine(pluginsDirectory, dir.Name));
 
-				this.FileSystem.Directory.Delete(pluginsTempDirectory, true);
-			}
+			this.FileSystem.Directory.Delete(pluginsTempDirectory, true);
 		}
 
 		private void DumpElasticsearchLogOnRollback(string logsDirectory)

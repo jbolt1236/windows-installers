@@ -6,6 +6,7 @@ using Elastic.Configuration.EnvironmentBased;
 using Elastic.Configuration.EnvironmentBased.Java;
 using Elastic.Configuration.FileBased.JvmOpts;
 using Elastic.Configuration.FileBased.Yaml;
+using Elastic.Installer.Domain.Configuration;
 using Elastic.Installer.Domain.Configuration.Plugin;
 using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
@@ -24,6 +25,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 	{
 		public ElasticsearchInstallationModel InstallationModel { get; }
 		public JavaConfiguration JavaConfig { get; }
+		public TempDirectoryConfiguration TempDirectoryConfiguration { get; set; }
 		public ElasticsearchYamlConfiguration EsConfig { get; }
 		public LocalJvmOptionsConfiguration JvmConfig { get; }
 		public MockElasticsearchEnvironmentStateProvider EsState { get; private set; }
@@ -40,7 +42,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 				new NoopServiceStateProvider(),
 				new NoopPluginStateProvider(),
 				new MockFileSystem(),
-				new NoopSession(),
+				NoopSession.Elasticsearch,
 				null
 			) { }
 
@@ -55,20 +57,21 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 			string[] args)
 		{
 			if (wixState == null) throw new ArgumentNullException(nameof(wixState));
-			if (javaState == null) throw new ArgumentNullException(nameof(javaState));
-			if (esState == null) throw new ArgumentNullException(nameof(esState));
 
-			this.JavaState = javaState;
-			this.EsState = esState;
+			this.JavaState = javaState ?? throw new ArgumentNullException(nameof(javaState));
+			this.EsState = esState ?? throw new ArgumentNullException(nameof(esState));
 			this.PluginState = pluginState;
 			this.JavaConfig = new JavaConfiguration(javaState);
 			var elasticsearchConfiguration = new ElasticsearchEnvironmentConfiguration(esState);
 			this.EsConfig = ElasticsearchYamlConfiguration.FromFolder(elasticsearchConfiguration.ConfigDirectory, fileSystem);
 			this.JvmConfig = LocalJvmOptionsConfiguration.FromFolder(elasticsearchConfiguration.ConfigDirectory, fileSystem);
+			this.TempDirectoryConfiguration = new TempDirectoryConfiguration(session, esState, fileSystem);
 			this.InstallationModel = new ElasticsearchInstallationModel(
-				wixState, JavaConfig, elasticsearchConfiguration, serviceState, pluginState,  EsConfig, JvmConfig, session, args);
+				wixState, JavaConfig, elasticsearchConfiguration, serviceState, pluginState, EsConfig, JvmConfig, TempDirectoryConfiguration
+				, session, args);
 			this.FileSystem = fileSystem;
 		}
+
 
 		public InstallationModelTester IsInvalidOnStep(
 			Func<ElasticsearchInstallationModel, IValidatableReactiveObject> selector,
@@ -205,6 +208,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 
 			return this;
 		}
+		
 
 		public static InstallationModelTester ValidPreflightChecks() => New(s => s
 			.Wix(alreadyInstalled: false)
@@ -220,7 +224,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 		public void AssertTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask, Action<ElasticsearchInstallationModel, InstallationModelTester> assert)
 			where TTask : ElasticsearchInstallationTask
 		{
-			var task = createTask(this.InstallationModel, new NoopSession(), this.FileSystem);
+			var task = createTask(this.InstallationModel, NoopSession.Elasticsearch, this.FileSystem);
 			Action a = () => task.Execute();
 			a.ShouldNotThrow();
 			assert(this.InstallationModel, this);
@@ -240,9 +244,6 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 				setupState.Arguments);
 		}
 
-		public static InstallationModelTester New()
-		{
-			return new InstallationModelTester();
-		}
+		public static InstallationModelTester New() => new InstallationModelTester();
 	}
 }

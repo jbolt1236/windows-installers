@@ -32,12 +32,11 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 		private void CopyCurrentConfigDirectory()
 		{
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-			if (this.FileSystem.Directory.Exists(configDirectory))
-			{
-				var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempDirectory, "config");
-				this.Session.Log($"Copying existing config directory from {configDirectory} to {tempConfigDirectory}");
-				this.CopyDirectory(configDirectory, tempConfigDirectory);
-			}
+			if (!this.FileSystem.Directory.Exists(configDirectory)) return;
+			 
+			var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempDirectory, "config");
+			this.Session.Log($"Copying existing config directory from {configDirectory} to {tempConfigDirectory}");
+			this.CopyDirectory(configDirectory, tempConfigDirectory);
 		}
 
 		private void MoveCurrentPlugins()
@@ -46,17 +45,16 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
 			var tempPluginsDirectory = path.Combine(this.TempDirectory, "plugins");
 
-			if (this.FileSystem.Directory.Exists(pluginsDirectory))
-			{
-				this.Session.Log($"Moving existing plugin directory from {pluginsDirectory} to {tempPluginsDirectory}");
-				this.FileSystem.Directory.CreateDirectory(tempPluginsDirectory);
-				var source = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsDirectory);
+			if (!this.FileSystem.Directory.Exists(pluginsDirectory)) return;
+			
+			this.Session.Log($"Moving existing plugin directory from {pluginsDirectory} to {tempPluginsDirectory}");
+			this.FileSystem.Directory.CreateDirectory(tempPluginsDirectory);
+			var source = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsDirectory);
 
-				foreach (var file in source.GetFiles())
-					file.MoveTo(path.Combine(tempPluginsDirectory, file.Name));
-				foreach (var dir in source.GetDirectories())
-					dir.MoveTo(path.Combine(tempPluginsDirectory, dir.Name));
-			}
+			foreach (var file in source.GetFiles())
+				file.MoveTo(path.Combine(tempPluginsDirectory, file.Name));
+			foreach (var dir in source.GetDirectories())
+				dir.MoveTo(path.Combine(tempPluginsDirectory, dir.Name));
 		}
 	}
 }

@@ -7,6 +7,7 @@ namespace Elastic.Configuration.EnvironmentBased
 	public interface IElasticsearchEnvironmentStateProvider
 	{
 		string RunningExecutableLocation { get; }
+		string TempDirectoryVariable { get; }
 		
 		string HomeDirectoryUserVariable { get; }
 		string HomeDirectoryMachineVariable { get; }
@@ -15,6 +16,9 @@ namespace Elastic.Configuration.EnvironmentBased
 		string ConfigDirectoryUserVariable { get; }
 		string ConfigDirectoryMachineVariable { get; }
 		string ConfigDirectoryProcessVariable { get; }
+		
+		string NewConfigDirectoryMachineVariable { get; }
+		string OldConfigDirectoryMachineVariable { get; }
 
 		string GetEnvironmentVariable(string variable);
 
@@ -37,19 +41,22 @@ namespace Elastic.Configuration.EnvironmentBased
 		public string HomeDirectoryProcessVariable => Environment.GetEnvironmentVariable(EsHome, EnvironmentVariableTarget.Process);
 		public string RunningExecutableLocation => new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath;
 
+		public string TempDirectoryVariable => Environment.ExpandEnvironmentVariables("%TEMP%");
 		
 		public string ConfigDirectoryUserVariable => 
 			Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.User)
 			?? Environment.GetEnvironmentVariable(ConfDirOld, EnvironmentVariableTarget.User);
 
-		public string ConfigDirectoryMachineVariable =>
-			Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.Machine)
-			?? Environment.GetEnvironmentVariable(ConfDirOld, EnvironmentVariableTarget.Machine);
+		public string ConfigDirectoryMachineVariable => NewConfigDirectoryMachineVariable ?? OldConfigDirectoryMachineVariable;
+
+		public string NewConfigDirectoryMachineVariable => Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.Machine); 
+		public string OldConfigDirectoryMachineVariable => Environment.GetEnvironmentVariable(ConfDirOld, EnvironmentVariableTarget.Machine); 
 		
 		public string ConfigDirectoryProcessVariable => 
 			Environment.GetEnvironmentVariable(ConfDir, EnvironmentVariableTarget.Process)
 			?? Environment.GetEnvironmentVariable(ConfDirOld, EnvironmentVariableTarget.Process);
 
+		
 		public string GetEnvironmentVariable(string variable) =>
 			Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.Process)
 			?? Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.User)

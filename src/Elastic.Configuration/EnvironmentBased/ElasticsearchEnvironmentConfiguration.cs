@@ -6,7 +6,7 @@ namespace Elastic.Configuration.EnvironmentBased
 {
 	public class ElasticsearchEnvironmentConfiguration
 	{
-		public static ElasticsearchEnvironmentConfiguration Default { get; } = new ElasticsearchEnvironmentConfiguration(new ElasticsearchEnvironmentStateProvider());
+		public static ElasticsearchEnvironmentConfiguration Default { get; } = new ElasticsearchEnvironmentConfiguration(ElasticsearchEnvironmentStateProvider.Default);
 
 		public IElasticsearchEnvironmentStateProvider StateProvider { get; }
 
@@ -68,6 +68,7 @@ namespace Elastic.Configuration.EnvironmentBased
 				return string.IsNullOrEmpty(homeDir) ? null : Path.Combine(homeDir, "config");
 			}
 		}
+
 
 		public string GetEnvironmentVariable(string variable) => this.StateProvider.GetEnvironmentVariable(variable);
 

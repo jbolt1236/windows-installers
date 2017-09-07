@@ -14,19 +14,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 		protected override bool ExecuteTask()
 		{
-			if (this.FileSystem.Directory.Exists(this.TempDirectory))
-			{
-				try
-				{
-					this.FileSystem.Directory.Delete(this.TempDirectory, true);
-				}
-				catch (Exception e)
-				{
-					// log, but continue.
-					this.Session.Log($"Exception deleting {this.TempDirectory}: {e}");
-				}
-			}
-
+			this.InstallationModel.TempDirectoryConfiguration.CleanUp();
 			return true;
 		}
 	}

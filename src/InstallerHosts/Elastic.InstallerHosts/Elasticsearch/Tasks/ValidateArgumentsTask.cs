@@ -16,7 +16,8 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			this.ServiceStateProvider = new ServiceStateProvider(session, "Elasticsearch");
 		}
 
-		public ValidateArgumentsTask(ElasticsearchInstallationModel model, ISession session, IFileSystem fileSystem, IServiceStateProvider serviceConfig) 
+		public ValidateArgumentsTask(ElasticsearchInstallationModel model, ISession session, IFileSystem fileSystem,
+			IServiceStateProvider serviceConfig)
 			: base(model, session, fileSystem)
 		{
 			this.ServiceStateProvider = serviceConfig;
@@ -24,26 +25,18 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 		protected override bool ExecuteTask()
 		{
-			this.Session.Log($"Existing Version Installed: {this.InstallationModel.NoticeModel.ExistingVersionInstalled}");
-			this.Session.Log($"Current Version: {this.InstallationModel.NoticeModel.CurrentVersion}");
-			this.Session.Log($"Existing Version: {this.InstallationModel.NoticeModel.ExistingVersion}");
-			this.Session.Log($"Session Installing: {this.Session.IsInstalling}");
-			this.Session.Log($"Session Uninstalling: {this.Session.IsUninstalling}");
-			this.Session.Log($"Session Rollback: {this.Session.IsRollback}");
-			this.Session.Log($"Session Upgrading: {this.Session.IsUpgrading}");
-			this.Session.Log("Passed Args:\r\n" + string.Join(", ", this.SanitizedArgs));
-			this.Session.Log("ViewModelState:\r\n" + this.InstallationModel);
-			if (!this.InstallationModel.IsValid || this.InstallationModel.Steps.Any(s => !s.IsValid))
-			{
-				var errorPrefix = $"Cannot continue installation because of the following errors";
-				var failures = this.InstallationModel.ValidationFailures
-					.Concat(this.InstallationModel.Steps.SelectMany(s => s.ValidationFailures))
-					.ToList();
+			PrintInstallationState();
+			FailOnValidationFailures();
+			
+			var tempState = this.InstallationModel.TempDirectoryConfiguration.State;
+			
+			tempState.SeesService = this.ServiceStateProvider.SeesService;
+			tempState.ServiceRunning = this.ServiceStateProvider.Running;
 
-				var validationFailures = ValidationFailures(failures);
-				throw new Exception(errorPrefix + Environment.NewLine + validationFailures);
-			}
-
+			var environmentState = this.InstallationModel.ElasticsearchEnvironmentConfiguration.StateProvider;
+			tempState.HomeDirectoryMachineVariable = environmentState.HomeDirectoryMachineVariable;
+			tempState.NewConfigDirectoryMachineVariable = environmentState.NewConfigDirectoryMachineVariable;
+			tempState.OldConfigDirectoryMachineVariable = environmentState.OldConfigDirectoryMachineVariable;
 			if (this.ServiceStateProvider.SeesService)
 			{
 				this.Session.Log($"Service registered");
@@ -59,6 +52,31 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			this.Session.Log($"CONF_DIR {Environment.GetEnvironmentVariable("CONF_DIR", EnvironmentVariableTarget.Machine)}");
 
 			return true;
+		}
+
+		private void PrintInstallationState()
+		{
+			this.Session.Log($"Existing Version Installed: {this.InstallationModel.NoticeModel.ExistingVersionInstalled}");
+			this.Session.Log($"Current Version: {this.InstallationModel.NoticeModel.CurrentVersion}");
+			this.Session.Log($"Existing Version: {this.InstallationModel.NoticeModel.ExistingVersion}");
+			this.Session.Log($"Session Installing: {this.Session.IsInstalling}");
+			this.Session.Log($"Session Uninstalling: {this.Session.IsUninstalling}");
+			this.Session.Log($"Session Rollback: {this.Session.IsRollback}");
+			this.Session.Log($"Session Upgrading: {this.Session.IsUpgrading}");
+			this.Session.Log("Passed Args:\r\n" + string.Join(", ", this.SanitizedArgs));
+			this.Session.Log("ViewModelState:\r\n" + this.InstallationModel);
+		}
+
+		private void FailOnValidationFailures()
+		{
+			if (this.InstallationModel.IsValid && this.InstallationModel.Steps.All(s => s.IsValid)) return;
+			var errorPrefix = $"Cannot continue installation because of the following errors";
+			var failures = this.InstallationModel.ValidationFailures
+				.Concat(this.InstallationModel.Steps.SelectMany(s => s.ValidationFailures))
+				.ToList();
+
+			var validationFailures = ValidationFailures(failures);
+			throw new Exception(errorPrefix + Environment.NewLine + validationFailures);
 		}
 	}
 }

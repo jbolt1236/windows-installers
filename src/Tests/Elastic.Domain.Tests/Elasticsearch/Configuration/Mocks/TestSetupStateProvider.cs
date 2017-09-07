@@ -65,7 +65,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 
 		public TestSetupStateProvider Session(bool uninstalling = true)
 		{
-			this.SessionState = new NoopSession { IsUninstalling = true };
+			this.SessionState = new NoopSession(nameof(NoopSession.Elasticsearch)) { IsUninstalling = true };
 			return this;
 		}
 
@@ -81,7 +81,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 
 		public NoopPluginStateProvider PluginState { get; private set; } = new NoopPluginStateProvider();
 
-		public NoopSession SessionState { get; private set; } = new NoopSession();
+		public NoopSession SessionState { get; private set; } = NoopSession.Elasticsearch;
 
 		private List<string> IntermediateArguments = new List<string>();
 		public string[] Arguments => IntermediateArguments.ToArray();
