@@ -29,9 +29,9 @@
 		UninstallDirectories = 3,
 		UninstallEnvironment = 4,
 
-		// Commit actons
-		CleanupInstall = 1,
-		EnsureEnvironmentVariables = 2,
-		ElasticsearchEnsureServiceStart = 3,
+		// Commit actons	
+		EnsureEnvironmentVariables = 1,
+		ElasticsearchEnsureServiceStart = 2,
+		CleanupInstall = 3,
 	}
 }
