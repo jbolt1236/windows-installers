@@ -120,7 +120,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 		private void RestoreConfigDirectory()
 		{
-			var tempconfigDirectory = this.FileSystem.Path.Combine(this.TempDirectory, "config");
+			var tempconfigDirectory = this.FileSystem.Path.Combine(this.TempProductDirectory, "config");
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
 			if (!this.FileSystem.Directory.Exists(tempconfigDirectory)) return;
 			
@@ -133,7 +133,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 		private void RestorePluginsDirectory()
 		{
 			var path = this.FileSystem.Path;
-			var pluginsTempDirectory = path.Combine(this.TempDirectory, "plugins");
+			var pluginsTempDirectory = path.Combine(this.TempProductDirectory, "plugins");
 			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
 
 			if (!this.FileSystem.Directory.Exists(pluginsTempDirectory)) return;

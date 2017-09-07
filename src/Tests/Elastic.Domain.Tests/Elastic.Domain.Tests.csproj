@@ -101,6 +101,7 @@
     <Compile Include="Elasticsearch\Models\Tasks\Install\EditJvmOptionTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\InstallPluginsTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\InstallServiceTaskTests.cs" />
+    <Compile Include="Elasticsearch\Models\Tasks\Install\PreserveInstallTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\SetEnvironmentVariablesTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\StoreTemporaryStateTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\UninstallServiceTaskTests.cs" />

@@ -26,6 +26,6 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		protected bool IsDirectoryEmpty(string path) =>
 			this.FileSystem.Directory.Exists(path) && !this.FileSystem.Directory.EnumerateFileSystemEntries(path).Any();
 
-		protected string TempDirectory => this.InstallationModel.TempDirectoryConfiguration.TempProductInstallationDirectory;
+		protected string TempProductDirectory => this.InstallationModel.TempDirectoryConfiguration.TempProductInstallationDirectory;
 	}
 }

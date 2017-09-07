@@ -13,8 +13,10 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 
 		protected override bool ExecuteTask()
 		{
-			if (this.FileSystem.Directory.Exists(this.TempDirectory))
-				this.FileSystem.Directory.Delete(this.TempDirectory, true);
+			if (this.FileSystem.Directory.Exists(this.TempProductDirectory))
+				this.FileSystem.Directory.Delete(this.TempProductDirectory, true);
+			else
+				this.FileSystem.Directory.CreateDirectory(this.TempProductDirectory);
 
 			// move the current installed plugins, to restore in case of rollback.
 			// Current plugins could be removed and reinstalled in event of rollback,
@@ -32,7 +34,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
 			if (!this.FileSystem.Directory.Exists(configDirectory)) return;
 			 
-			var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempDirectory, "config");
+			var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempProductDirectory, "config");
 			this.Session.Log($"Copying existing config directory from {configDirectory} to {tempConfigDirectory}");
 			this.CopyDirectory(configDirectory, tempConfigDirectory);
 		}
@@ -41,7 +43,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		{
 			var path = this.FileSystem.Path;
 			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
-			var tempPluginsDirectory = path.Combine(this.TempDirectory, "plugins");
+			var tempPluginsDirectory = path.Combine(this.TempProductDirectory, "plugins");
 
 			if (!this.FileSystem.Directory.Exists(pluginsDirectory)) return;
 			
