@@ -1,5 +1,6 @@
 using System;
 using System.IO.Abstractions;
+using Elastic.Configuration.EnvironmentBased;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 
@@ -22,28 +23,37 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			this.Session.Log($"Session Rollback: {this.Session.IsRollback}");
 			this.Session.Log($"Session Upgrading: {this.Session.IsUpgrading}");
 
-			var installDirectory = this.InstallationModel.LocationsModel.InstallDir;
-			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-
-			var esConfigEnvVar = this.InstallationModel.NoticeModel.CurrentVersion.Major == 5
-				? "ES_CONFIG"
-				: "CONF_DIR";
-
-			var esConfig = Environment.GetEnvironmentVariable(esConfigEnvVar, EnvironmentVariableTarget.Machine);
-			if (string.IsNullOrEmpty(esConfig))
-			{
-				this.Session.Log($"{nameof(EnsureEnvironmentVariablesTask)}: Setting {esConfigEnvVar}");
-				Environment.SetEnvironmentVariable(esConfigEnvVar, configDirectory, EnvironmentVariableTarget.Machine);
-			}
-
-			var esHome = Environment.GetEnvironmentVariable("ES_HOME", EnvironmentVariableTarget.Machine);
-			if (string.IsNullOrEmpty(esHome))
-			{
-				this.Session.Log($"{nameof(EnsureEnvironmentVariablesTask)}: Setting ES_HOME");
-				this.InstallationModel.ElasticsearchEnvironmentConfiguration.SetEsHomeEnvironmentVariable(installDirectory);
-			}
-
+			var env = this.InstallationModel.ElasticsearchEnvironmentConfiguration.StateProvider;
+			EnsureConfigVariable(env);
+			EnsureHomeVariable(env);
 			return true;
+		}
+
+		private void EnsureHomeVariable(IElasticsearchEnvironmentStateProvider env)
+		{
+			var esHome = env.HomeDirectoryMachineVariable;
+			if (!string.IsNullOrEmpty(esHome)) return;
+			var installDirectory = this.InstallationModel.LocationsModel.InstallDir;
+			this.Session.Log($"{nameof(EnsureEnvironmentVariablesTask)}: Setting ES_HOME");
+			this.InstallationModel.ElasticsearchEnvironmentConfiguration.SetEsHomeEnvironmentVariable(installDirectory);
+		}
+
+		private void EnsureConfigVariable(IElasticsearchEnvironmentStateProvider env)
+		{
+			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
+			var envConfig = this.InstallationModel.ElasticsearchEnvironmentConfiguration;
+			if (this.InstallationModel.NoticeModel.CurrentVersion.Major == 5)
+			{
+				var v = env.NewConfigDirectoryMachineVariable;
+				this.Session.Log($"{nameof(EnsureEnvironmentVariablesTask)}: Setting CONF_DIR");
+				if (string.IsNullOrWhiteSpace(v)) envConfig.SetEsConfigEnvironmentVariable(configDirectory);
+			}
+			else
+			{
+				var v = env.OldConfigDirectoryMachineVariable;
+				this.Session.Log($"{nameof(EnsureEnvironmentVariablesTask)}: Setting ES_CONF");
+				if (string.IsNullOrWhiteSpace(v)) envConfig.SetOldEsConfigEnvironmentVariable(configDirectory);
+			}
 		}
 	}
 }

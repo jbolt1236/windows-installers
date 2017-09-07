@@ -55,7 +55,8 @@
     <Compile Include="Elasticsearch\Tasks\RemovePluginsTask.cs" />
     <Compile Include="Elasticsearch\Tasks\SetEnvironmentVariablesTask.cs" />
     <Compile Include="Elasticsearch\Tasks\StartServiceTask.cs" />
-    <Compile Include="Elasticsearch\Tasks\StopServiceTask.cs" />
+    <Compile Include="Elasticsearch\Tasks\RollbackServiceTask.cs" />
+    <Compile Include="Elasticsearch\Tasks\StoreTemporaryStateTask.cs" />
     <Compile Include="Elasticsearch\Tasks\UninstallServiceTask.cs" />
     <Compile Include="Elasticsearch\Tasks\ValidateArgumentsTask.cs" />
     <Compile Include="Kibana\Tasks\CreateDirectoriesTask.cs" />

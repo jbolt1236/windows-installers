@@ -24,6 +24,7 @@ namespace Elastic.Configuration.EnvironmentBased
 
 		void SetEsHomeEnvironmentVariable(string esHome);
 		void SetEsConfigEnvironmentVariable(string esConfig);
+		void SetOldEsConfigEnvironmentVariable(string esConfig);
 		void UnsetOldConfigVariable();
 		bool RestoreOldConfigVariable();
 	}
@@ -67,6 +68,9 @@ namespace Elastic.Configuration.EnvironmentBased
 
 		public void SetEsConfigEnvironmentVariable(string esConfig) =>
 			Environment.SetEnvironmentVariable(ConfDir, esConfig, EnvironmentVariableTarget.Machine);
+		
+		public void SetOldEsConfigEnvironmentVariable(string esConfig) =>
+			Environment.SetEnvironmentVariable(ConfDirOld, esConfig, EnvironmentVariableTarget.Machine);
 		
 		public void UnsetOldConfigVariable()
 		{

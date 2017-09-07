@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using Elastic.Configuration.EnvironmentBased;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 
@@ -16,14 +17,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 			if (this.Session.IsRollback && this.InstallationModel.NoticeModel.ExistingVersionInstalled)
 			{
-				this.Session.Log($"{nameof(RemoveEnvironmentVariablesTask)}: Rolling back and checking for existence of ES_CONFIG_OLD");
-
-				// handle rolling back to a version that uses the old config environment variable
-				if (this.InstallationModel.ElasticsearchEnvironmentConfiguration.RestoreOldConfigVariable())
-				{
-					this.Session.Log($"Skipping {nameof(RemoveEnvironmentVariablesTask)}: ES_CONFIG_OLD found and reinstated");
-					esState.SetEsConfigEnvironmentVariable(null);
-				}
+				RollbackEsConfigOld(esState);
 
 				return true;
 			}
@@ -39,6 +33,16 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			esState.SetEsConfigEnvironmentVariable(null);
 			this.Session.SendProgress(1000, "Environment variables removed");
 			return true;
+		}
+
+		private void RollbackEsConfigOld(ElasticsearchEnvironmentConfiguration esState)
+		{
+			this.Session.Log($"{nameof(RemoveEnvironmentVariablesTask)}: Rolling back and checking for existence of ES_CONFIG_OLD");
+
+			// handle rolling back to a version that uses the old config environment variable
+			if (!this.InstallationModel.ElasticsearchEnvironmentConfiguration.RestoreOldConfigVariable()) return;
+			this.Session.Log($"Skipping {nameof(RemoveEnvironmentVariablesTask)}: ES_CONFIG_OLD found and reinstated");
+			esState.SetEsConfigEnvironmentVariable(null);
 		}
 	}
 }

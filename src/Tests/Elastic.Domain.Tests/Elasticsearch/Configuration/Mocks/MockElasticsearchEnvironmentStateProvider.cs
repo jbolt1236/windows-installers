@@ -12,6 +12,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 
 		public string LastSetEsHome { get; set; }
 		public string LastSetEsConfig { get; set; }
+		public string LastSetOldEsConfig { get; set; }
 
 		public string GetEnvironmentVariable(string variable) => _mockVariables.TryGetValue(variable, out string v) ? v : null;
 
@@ -113,6 +114,10 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 		void IElasticsearchEnvironmentStateProvider.SetEsConfigEnvironmentVariable(string esConfig)
 		{
 			this.LastSetEsConfig = esConfig;
+		}
+		void IElasticsearchEnvironmentStateProvider.SetOldEsConfigEnvironmentVariable(string esConfig)
+		{
+			this.LastSetOldEsConfig = esConfig;
 		}
 
 		public bool UnsetOldConfigVariableWasCalled { get; private set; }

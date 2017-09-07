@@ -2,8 +2,10 @@
 using System.Data;
 using System.Globalization;
 using System.IO.Abstractions;
+using System.Text;
 using Elastic.Configuration.EnvironmentBased;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
+using Elastic.Installer.Domain.Model.Elasticsearch;
 using ReactiveUI;
 
 namespace Elastic.Installer.Domain.Configuration
@@ -36,17 +38,17 @@ namespace Elastic.Installer.Domain.Configuration
 		public string HomeDirectoryMachineVariable 
 		{
 			get => this.Read<string>(nameof(HomeDirectoryMachineVariable));
-			set => this.Set(nameof(HomeDirectoryMachineVariable), value.ToString(CultureInfo.InvariantCulture));
+			set => this.Set(nameof(HomeDirectoryMachineVariable), value?.ToString(CultureInfo.InvariantCulture));
 		}
 		public string NewConfigDirectoryMachineVariable 
 		{
 			get => this.Read<string>(nameof(NewConfigDirectoryMachineVariable));
-			set => this.Set(nameof(NewConfigDirectoryMachineVariable), value.ToString(CultureInfo.InvariantCulture));
+			set => this.Set(nameof(NewConfigDirectoryMachineVariable), value?.ToString(CultureInfo.InvariantCulture));
 		}
 		public string OldConfigDirectoryMachineVariable
 		{
 			get => this.Read<string>(nameof(OldConfigDirectoryMachineVariable));
-			set => this.Set(nameof(OldConfigDirectoryMachineVariable), value.ToString(CultureInfo.InvariantCulture));
+			set => this.Set(nameof(OldConfigDirectoryMachineVariable), value?.ToString(CultureInfo.InvariantCulture));
 		}
 
 		private void Set(string key, string value)
@@ -57,7 +59,7 @@ namespace Elastic.Installer.Domain.Configuration
 				this.FileSystem.Directory.CreateDirectory(StateDirectory);
 
 			var filePath = FilePath(key);
-			this.FileSystem.File.WriteAllText(filePath, value.ToString());
+			this.FileSystem.File.WriteAllText(filePath, value);
 		}
 
 		private string FilePath(string key) => this.FileSystem.Path.Combine(StateDirectory, $"_{key}.state");
@@ -80,6 +82,23 @@ namespace Elastic.Installer.Domain.Configuration
 			if (string.IsNullOrWhiteSpace(value)) return default(T);
 			
 			return (T)Convert.ChangeType(value, typeof(T));
+		}
+		
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(nameof(TempDirectoryStateConfiguration));
+			if (this.Exists(nameof(HomeDirectoryMachineVariable)))
+				sb.AppendLine($"- {nameof(HomeDirectoryMachineVariable)} = " + HomeDirectoryMachineVariable);
+			if (this.Exists(nameof(OldConfigDirectoryMachineVariable)))
+				sb.AppendLine($"- {nameof(OldConfigDirectoryMachineVariable)} = " + OldConfigDirectoryMachineVariable);
+			if (this.Exists(nameof(NewConfigDirectoryMachineVariable)))
+				sb.AppendLine($"- {nameof(NewConfigDirectoryMachineVariable)} = " + NewConfigDirectoryMachineVariable);
+			if (this.Exists(nameof(SeesService)))
+				sb.AppendLine($"- {nameof(SeesService)} = " + SeesService);
+			if (this.Exists(nameof(ServiceRunning)))
+				sb.AppendLine($"- {nameof(ServiceRunning)} = " + ServiceRunning);
+			return sb.ToString();
 		}
 	}
 	

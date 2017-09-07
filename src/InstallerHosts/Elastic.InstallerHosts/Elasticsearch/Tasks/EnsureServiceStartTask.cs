@@ -31,12 +31,10 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			this.Session.Log($"Session Rollback: {this.Session.IsRollback}");
 			this.Session.Log($"Session Upgrading: {this.Session.IsUpgrading}");
 
-			if (!this.ServiceStateProvider.Running && this.ServiceStateProvider.SeesService)
-			{
-				this.Session.Log($"{nameof(EnsureServiceStartTask)}: Service installed and not running. Attempting to start");
-				this.ServiceStateProvider.StartAndWaitForRunning(TimeSpan.FromSeconds(60));
-
-			}
+			if (this.ServiceStateProvider.Running || !this.ServiceStateProvider.SeesService) return true;
+			
+			this.Session.Log($"{nameof(EnsureServiceStartTask)}: Service installed and not running. Attempting to start");
+			this.ServiceStateProvider.StartAndWaitForRunning(TimeSpan.FromSeconds(60));
 
 			return true;
 		}

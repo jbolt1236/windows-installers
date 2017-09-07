@@ -221,13 +221,22 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 			)
 		);
 
-		public void AssertTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask, Action<ElasticsearchInstallationModel, InstallationModelTester> assert)
+		public InstallationModelTester ExecuteTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask)
+			where TTask : ElasticsearchInstallationTask
+		{
+			var task = createTask(this.InstallationModel, NoopSession.Elasticsearch, this.FileSystem);
+			Action a = () => task.Execute();
+			a.ShouldNotThrow();
+			return this;
+		}
+		public InstallationModelTester AssertTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask, Action<ElasticsearchInstallationModel, InstallationModelTester> assert)
 			where TTask : ElasticsearchInstallationTask
 		{
 			var task = createTask(this.InstallationModel, NoopSession.Elasticsearch, this.FileSystem);
 			Action a = () => task.Execute();
 			a.ShouldNotThrow();
 			assert(this.InstallationModel, this);
+			return this;
 		}
 
 		public static InstallationModelTester New(Func<TestSetupStateProvider, TestSetupStateProvider> selector)

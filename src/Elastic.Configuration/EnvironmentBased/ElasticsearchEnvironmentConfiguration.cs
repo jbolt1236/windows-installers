@@ -75,6 +75,7 @@ namespace Elastic.Configuration.EnvironmentBased
 		public void SetEsHomeEnvironmentVariable(string esHome) => StateProvider.SetEsHomeEnvironmentVariable(esHome);
 
 		public void SetEsConfigEnvironmentVariable(string esConfig) => StateProvider.SetEsConfigEnvironmentVariable(esConfig);
+		public void SetOldEsConfigEnvironmentVariable(string esConfig) => StateProvider.SetOldEsConfigEnvironmentVariable(esConfig);
 		
 		public void UnsetOldConfigVariable() => StateProvider.UnsetOldConfigVariable();
 

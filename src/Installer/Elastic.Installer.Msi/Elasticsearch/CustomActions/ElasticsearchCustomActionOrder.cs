@@ -7,15 +7,16 @@
 
 		// Deferred actions
 		SetPreconditions = 2,
-		InstallPreserveInstall = 3,
-		InstallStopServiceAction = 3,
-		InstallEnvironment = 4,
-		InstallDirectories = 5,
-		InstallConfiguration = 6,
-		InstallJvmOptions = 7,
-		InstallPlugins = 8,
-		InstallService = 9,
-		InstallStartService = 10,
+		InstallStoreTemporaryState = 3,
+		InstallPreserveInstall = 4,
+		InstallStopServiceAction = 5,
+		InstallEnvironment = 6,
+		InstallDirectories = 7,
+		InstallConfiguration = 8,
+		InstallJvmOptions = 9,
+		InstallPlugins = 10,
+		InstallService = 11,
+		InstallStartService = 12,
 
 		// Rollback actions are played in reverse order
 		RollbackEnvironment = 1,

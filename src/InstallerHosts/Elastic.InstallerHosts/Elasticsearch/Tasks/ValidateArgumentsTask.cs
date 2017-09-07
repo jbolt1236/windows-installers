@@ -37,6 +37,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			tempState.HomeDirectoryMachineVariable = environmentState.HomeDirectoryMachineVariable;
 			tempState.NewConfigDirectoryMachineVariable = environmentState.NewConfigDirectoryMachineVariable;
 			tempState.OldConfigDirectoryMachineVariable = environmentState.OldConfigDirectoryMachineVariable;
+			
 			if (this.ServiceStateProvider.SeesService)
 			{
 				this.Session.Log($"Service registered");
@@ -56,6 +57,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 		private void PrintInstallationState()
 		{
+			this.Session.Log($"--- Installation Start State ---");
 			this.Session.Log($"Existing Version Installed: {this.InstallationModel.NoticeModel.ExistingVersionInstalled}");
 			this.Session.Log($"Current Version: {this.InstallationModel.NoticeModel.CurrentVersion}");
 			this.Session.Log($"Existing Version: {this.InstallationModel.NoticeModel.ExistingVersion}");
@@ -64,6 +66,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 			this.Session.Log($"Session Rollback: {this.Session.IsRollback}");
 			this.Session.Log($"Session Upgrading: {this.Session.IsUpgrading}");
 			this.Session.Log("Passed Args:\r\n" + string.Join(", ", this.SanitizedArgs));
+			this.Session.Log("TempDirectoryState:\r\n" + this.InstallationModel.TempDirectoryConfiguration.State);
 			this.Session.Log("ViewModelState:\r\n" + this.InstallationModel);
 		}
 

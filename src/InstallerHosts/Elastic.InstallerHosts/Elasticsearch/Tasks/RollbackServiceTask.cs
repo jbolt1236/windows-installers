@@ -6,16 +6,16 @@ using Elastic.Installer.Domain.Model.Elasticsearch;
 
 namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 {
-	public class StopServiceTask : ElasticsearchInstallationTask
+	public class RollbackServiceTask : ElasticsearchInstallationTask
 	{
 		private IServiceStateProvider ServiceStateProvider { get; }
 
-		public StopServiceTask(string[] args, ISession session) : base(args, session)
+		public RollbackServiceTask(string[] args, ISession session) : base(args, session)
 		{
 			this.ServiceStateProvider = new ServiceStateProvider(session, "Elasticsearch");
 		}
 
-		public StopServiceTask(ElasticsearchInstallationModel model, ISession session, IFileSystem fileSystem, IServiceStateProvider serviceConfig) 
+		public RollbackServiceTask(ElasticsearchInstallationModel model, ISession session, IFileSystem fileSystem, IServiceStateProvider serviceConfig) 
 			: base(model, session, fileSystem)
 		{
 			this.ServiceStateProvider = serviceConfig;
