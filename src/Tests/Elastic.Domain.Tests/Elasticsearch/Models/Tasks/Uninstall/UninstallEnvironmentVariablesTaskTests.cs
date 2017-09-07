@@ -1,9 +1,8 @@
 ﻿using Elastic.InstallerHosts.Elasticsearch.Tasks;
-using Elastic.InstallerHosts.Elasticsearch.Tasks.Commit;
 using FluentAssertions;
 using Xunit;
 
-namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Rollback
+namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Uninstall
 {
 	public class UninstallRemoveEnvironmentVariablesTaskTests : InstallationModelTestBase
 	{
