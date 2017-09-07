@@ -31,7 +31,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 
 			if (!this.ServiceStateProvider.SeesService)
 			{
-				this.Session.Log("No service running with the name 'Elasticsearch'");
+				this.Session.Log("No service with the name 'Elasticsearch'");
 				return true;
 			}
 

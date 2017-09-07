@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using WixSharp;
 using static System.Reflection.Assembly;
@@ -138,6 +137,7 @@ namespace Elastic.Installer.Msi
 				project.UI = WUI.WixUI_ProgressOnly;
 
 			project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
+			project.MajorUpgradeStrategy.RemoveExistingProductAfter = Step.InstallExecute;
 			project.WixSourceGenerated += PatchWixSource;
 			project.IncludeWixExtension(WixExtension.NetFx);
 
@@ -237,6 +237,7 @@ namespace Elastic.Installer.Msi
 			if (exeComponent == null)
 				throw new Exception($"No File element found with Id '{exeName}'");
 
+			// Add entry into the service control table
 			var fileId = exeComponent.File.Attribute("Id").Value;
 			exeComponent.Component.Add(new XElement(ns + "ServiceControl",
 				new XAttribute("Id", fileId),
@@ -249,7 +250,7 @@ namespace Elastic.Installer.Msi
 			// see http://wixtoolset.org/documentation/manual/v3/customactions/wixfailwhendeferred.html
 			if (!_releaseMode)
 			{
-				var product = document.Root.Descendants(ns + "Product").First();
+				var product = document.Root.Descendants(ns + "Product").Single();
 				product.Add(new XElement(ns + "CustomActionRef",
 						new XAttribute("Id", "WixFailWhenDeferred")
 					)

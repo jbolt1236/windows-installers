@@ -6,14 +6,13 @@ using Microsoft.Deployment.WindowsInstaller;
 
 namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Commit
 {
-	public class ElasticsearchEnsureEnvironmentVariablesAction : CommitCustomAction<Elasticsearch>
+	public class ElasticsearchEnsureEnvVarsAction : CommitCustomAction<Elasticsearch>
 	{
-		public override string Name => nameof(ElasticsearchEnsureEnvironmentVariablesAction);
+		public override string Name => nameof(ElasticsearchEnsureEnvVarsAction);
 		public override int Order => (int)ElasticsearchCustomActionOrder.EnsureEnvironmentVariables;
-		public override bool NeedsElevatedPrivileges => false;
 
 		[CustomAction]
-		public static ActionResult ElasticsearchEnsureEnvironmentVariables(Session session) =>
+		public static ActionResult ElasticsearchEnsureEnvVars(Session session) =>
 			session.Handle(() => new EnsureEnvironmentVariablesTask(session.ToSetupArguments(ElasticsearchArgumentParser.AllArguments), session.ToISession()).Execute());
 	}
 }

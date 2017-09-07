@@ -9,12 +9,8 @@
 #load "Commandline.fsx"
 
 open System
-open System.Diagnostics
-open System.Text
 open System.IO
 open System.Management.Automation
-open System.Text.RegularExpressions
-open Microsoft.FSharp.Reflection
 open Fake
 open Fake.FileHelper
 open Scripts
@@ -27,13 +23,14 @@ open Commandline
 
 let productsToBuild = Commandline.parse()
 
-let productDescriptions = productsToBuild
-                          |> List.map(fun p ->
-                                 p.Versions 
-                                 |> List.map(fun v -> sprintf "%s %s (%s)" p.Title v.FullVersion v.Source.Description)
-                             )
-                          |> List.concat
-                          |> String.concat Environment.NewLine
+let productDescriptions = 
+    productsToBuild
+    |> List.map(fun p ->
+            p.Versions 
+            |> List.map(fun v -> sprintf "%s %s (%s)" p.Title v.FullVersion v.Source.Description)
+        )
+    |> List.concat
+    |> String.concat Environment.NewLine
 
 if (getBuildParam "target" |> toLower <> "help") then 
     traceHeader (sprintf "Products:%s%s%s" Environment.NewLine Environment.NewLine productDescriptions)

@@ -1,12 +1,26 @@
 ﻿using System;
+using System.IO.Abstractions;
 using System.Linq;
+using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
+using Elastic.Installer.Domain.Model.Elasticsearch;
 
 namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 {
 	public class ValidateArgumentsTask : ElasticsearchInstallationTask
 	{
-		public ValidateArgumentsTask(string[] args, ISession session) : base(args, session) { }
+		private IServiceStateProvider ServiceStateProvider { get; }
+
+		public ValidateArgumentsTask(string[] args, ISession session) : base(args, session)
+		{
+			this.ServiceStateProvider = new ServiceStateProvider(session, "Elasticsearch");
+		}
+
+		public ValidateArgumentsTask(ElasticsearchInstallationModel model, ISession session, IFileSystem fileSystem, IServiceStateProvider serviceConfig) 
+			: base(model, session, fileSystem)
+		{
+			this.ServiceStateProvider = serviceConfig;
+		}
 
 		protected override bool ExecuteTask()
 		{
@@ -29,6 +43,21 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 				var validationFailures = ValidationFailures(failures);
 				throw new Exception(errorPrefix + Environment.NewLine + validationFailures);
 			}
+
+			if (this.ServiceStateProvider.SeesService)
+			{
+				this.Session.Log($"Service registered");
+
+				if (this.ServiceStateProvider.Running)
+				{
+					this.Session.Log($"Service running");
+				}
+			}
+
+			this.Session.Log($"ES_CONFIG {Environment.GetEnvironmentVariable("ES_CONFIG", EnvironmentVariableTarget.Machine)}");
+			this.Session.Log($"ES_HOME {Environment.GetEnvironmentVariable("ES_HOME", EnvironmentVariableTarget.Machine)}");
+			this.Session.Log($"CONF_DIR {Environment.GetEnvironmentVariable("CONF_DIR", EnvironmentVariableTarget.Machine)}");
+
 			return true;
 		}
 	}

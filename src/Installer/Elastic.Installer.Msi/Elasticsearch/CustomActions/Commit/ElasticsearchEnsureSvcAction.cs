@@ -7,15 +7,14 @@ using WixSharp;
 
 namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Commit
 {
-	public class ElasticsearchEnsureServiceStartAction : CommitCustomAction<Elasticsearch>
+	public class ElasticsearchEnsureSvcAction : CommitCustomAction<Elasticsearch>
 	{
-		public override string Name => nameof(ElasticsearchEnsureServiceStartAction);
+		public override string Name => nameof(ElasticsearchEnsureSvcAction);
 		public override int Order => (int)ElasticsearchCustomActionOrder.ElasticsearchEnsureServiceStart;
 		public override Condition Condition => new Condition("INSTALLASSERVICE=\"true\" AND STARTAFTERINSTALL=\"true\"");
-		public override bool NeedsElevatedPrivileges => false;
 
 		[CustomAction]
-		public static ActionResult ElasticsearchEnsureServiceStart(Session session) =>
+		public static ActionResult ElasticsearchEnsureSvc(Session session) =>
 			session.Handle(() => new EnsureServiceStartTask(session.ToSetupArguments(ElasticsearchArgumentParser.AllArguments), session.ToISession()).Execute());
 	}
 }
