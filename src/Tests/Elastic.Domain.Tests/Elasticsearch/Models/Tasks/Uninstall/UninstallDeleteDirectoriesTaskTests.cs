@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Uninstall
 {
-	public class DeleteDirectoriesTaskTests : InstallationModelTestBase
+	public class UninstallDeleteDirectoriesTaskTests : InstallationModelTestBase
 	{
 		[Fact] void RemoveDirectoriesOnUninstall() =>
 			WithValidPreflightChecks(s => s
