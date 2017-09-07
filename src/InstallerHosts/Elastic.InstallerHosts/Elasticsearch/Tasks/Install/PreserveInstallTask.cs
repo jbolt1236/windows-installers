@@ -13,10 +13,11 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 
 		protected override bool ExecuteTask()
 		{
-			if (this.FileSystem.Directory.Exists(this.TempProductDirectory))
-				this.FileSystem.Directory.Delete(this.TempProductDirectory, true);
-			else
-				this.FileSystem.Directory.CreateDirectory(this.TempProductDirectory);
+//			if (this.FileSystem.Directory.Exists(this.TempProductDirectory))
+//				this.FileSystem.Directory.Delete(this.TempProductDirectory, true);
+//			
+//			var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempProductDirectory, "config");
+			
 
 			// move the current installed plugins, to restore in case of rollback.
 			// Current plugins could be removed and reinstalled in event of rollback,
@@ -32,9 +33,13 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		private void CopyCurrentConfigDirectory()
 		{
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-			if (!this.FileSystem.Directory.Exists(configDirectory)) return;
-			 
 			var tempConfigDirectory = this.FileSystem.Path.Combine(this.TempProductDirectory, "config");
+			//make sure if for some reason the tempConfigDirectory is there its empty before copying over the current state
+			if (this.FileSystem.Directory.Exists(tempConfigDirectory))
+				this.FileSystem.Directory.Delete(tempConfigDirectory, true);
+			
+			if (!this.FileSystem.Directory.Exists(configDirectory)) return;
+			
 			this.Session.Log($"Copying existing config directory from {configDirectory} to {tempConfigDirectory}");
 			this.CopyDirectory(configDirectory, tempConfigDirectory);
 		}
@@ -44,13 +49,17 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 			var path = this.FileSystem.Path;
 			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
 			var tempPluginsDirectory = path.Combine(this.TempProductDirectory, "plugins");
+			//make sure if for some reason the tempPluginsDirectory is there its empty before copying over the current state
+			if (this.FileSystem.Directory.Exists(tempPluginsDirectory))
+				this.FileSystem.Directory.Delete(tempPluginsDirectory, true);
 
 			if (!this.FileSystem.Directory.Exists(pluginsDirectory)) return;
 			
 			this.Session.Log($"Moving existing plugin directory from {pluginsDirectory} to {tempPluginsDirectory}");
+			
 			this.FileSystem.Directory.CreateDirectory(tempPluginsDirectory);
+			
 			var source = this.FileSystem.DirectoryInfo.FromDirectoryName(pluginsDirectory);
-
 			foreach (var file in source.GetFiles())
 				file.MoveTo(path.Combine(tempPluginsDirectory, file.Name));
 			foreach (var dir in source.GetDirectories())

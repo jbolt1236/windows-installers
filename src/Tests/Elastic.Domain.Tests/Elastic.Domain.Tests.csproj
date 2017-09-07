@@ -96,6 +96,7 @@
     <Compile Include="Elasticsearch\Models\InvalidExternalStates\JavaStateTests.cs" />
     <Compile Include="Elasticsearch\Models\InstallationModelArgumentsTestsBase.cs" />
     <Compile Include="Elasticsearch\Models\InstallationModelArgumentsTests.cs" />
+    <Compile Include="Elasticsearch\Models\Tasks\Commit\CleanUpInstallTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\CreateDirectoriesTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\EditElasticsearchYamlTaskTests.cs" />
     <Compile Include="Elasticsearch\Models\Tasks\Install\EditJvmOptionTaskTests.cs" />
@@ -168,7 +169,6 @@
     </FluentValidationExcludedCultures>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Elasticsearch\Models\Tasks\Commit" />
     <Folder Include="Elasticsearch\Models\Tasks\Immediate" />
     <Folder Include="Elasticsearch\Models\Tasks\Rollback" />
     <Folder Include="Elasticsearch\Models\Tasks\Uninstall" />

@@ -1,18 +1,18 @@
 ﻿using System.IO;
 using System.IO.Abstractions.TestingHelpers;
-using System.Net.Http.Headers;
-using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Commit;
 using Elastic.InstallerHosts.Elasticsearch.Tasks.Install;
 using FluentAssertions;
 using Xunit;
 
-namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Install
+namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Commit
 {
-	public class PreserveInstallTaskTests : InstallationModelTestBase
+	public class CleanUpInstallTaskTests : InstallationModelTestBase
 	{
-		[Fact] void DoesNotRemovePreviouslySetState() => WithValidPreflightChecks()
+		[Fact] void CleansProductInstallTempDirectory() => WithValidPreflightChecks()
 			//call StoreTemporaryStateTask before PreserveInstallTask like the installer does
 			.ExecuteTask((m, s, fs) => new StoreTemporaryStateTask(m, s, fs, new NoopServiceStateProvider()))
 			.AssertTask(
@@ -23,7 +23,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Install
 					var file = state.FilePath(nameof(state.SeesService));
 					fs.Directory.Exists(dir).Should().BeTrue();
 					fs.File.Exists(file).Should().BeTrue();
-					return new PreserveInstallTask(m, s, fs);
+					return new CleanupInstallTask(m, s, fs);
 				},
 				(m, t) =>
 				{
@@ -31,32 +31,8 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Install
 					var dir = state.StateDirectory;
 					var file = state.FilePath(nameof(state.SeesService));
 					var fs = t.FileSystem;
-					fs.Directory.Exists(dir).Should().BeTrue();
-					fs.File.Exists(file).Should().BeTrue();
-				}
-			);
-		
-		[Fact] void DeletesConfigFolderIfOneIsSomehowPreset() => WithValidPreflightChecks()
-			.AssertTask(
-				(m, s, fs) =>
-				{
-					var tempDir = m.TempDirectoryConfiguration.TempProductInstallationDirectory;
-					var configTempDir = Path.Combine(tempDir, "config");
-					var configTempFile = Path.Combine(configTempDir, "some.yml");
-					fs.AddDirectory(configTempDir);
-					fs.AddFile(configTempFile, MockFileData.NullObject);
-					fs.Directory.Exists(configTempDir).Should().BeTrue();
-					fs.File.Exists(configTempFile).Should().BeTrue();
-					return new PreserveInstallTask(m, s, fs);
-				},
-				(m, t) =>
-				{
-					var tempDir = m.TempDirectoryConfiguration.TempProductInstallationDirectory;
-					var configTempDir = Path.Combine(tempDir, "config");
-					var configTempFile = Path.Combine(configTempDir, "some.yml");
-					var fs = t.FileSystem;
-					fs.Directory.Exists(configTempDir).Should().BeFalse();
-					fs.File.Exists(configTempFile).Should().BeFalse();
+					fs.Directory.Exists(dir).Should().BeFalse();
+					fs.File.Exists(file).Should().BeFalse();
 				}
 			);
 
