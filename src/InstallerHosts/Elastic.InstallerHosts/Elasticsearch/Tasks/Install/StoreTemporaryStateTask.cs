@@ -1,13 +1,11 @@
-﻿using System;
-using System.IO.Abstractions;
-using System.Linq;
+﻿using System.IO.Abstractions;
 using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 
-namespace Elastic.InstallerHosts.Elasticsearch.Tasks
+namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 {
-	public class StoreTemporaryStateTask : ElasticsearchInstallationTask
+	public class StoreTemporaryStateTask : ElasticsearchInstallationTaskBase
 	{
 		private IServiceStateProvider ServiceStateProvider { get; }
 

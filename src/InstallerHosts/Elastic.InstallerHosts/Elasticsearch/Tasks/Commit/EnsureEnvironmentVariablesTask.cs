@@ -1,12 +1,12 @@
-using System;
 using System.IO.Abstractions;
 using Elastic.Configuration.EnvironmentBased;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Install;
 
-namespace Elastic.InstallerHosts.Elasticsearch.Tasks
+namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Commit
 {
-	public class EnsureEnvironmentVariablesTask : ElasticsearchInstallationTask
+	public class EnsureEnvironmentVariablesTask : ElasticsearchInstallationTaskBase
 	{
 		public EnsureEnvironmentVariablesTask(string[] args, ISession session) : base(args, session) { }
 

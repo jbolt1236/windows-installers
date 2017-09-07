@@ -2,6 +2,7 @@ using Elastic.Installer.Domain.Model.Elasticsearch;
 using Elastic.Installer.Msi.CustomActions;
 using Elastic.InstallerHosts;
 using Elastic.InstallerHosts.Elasticsearch.Tasks;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Commit;
 using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
 

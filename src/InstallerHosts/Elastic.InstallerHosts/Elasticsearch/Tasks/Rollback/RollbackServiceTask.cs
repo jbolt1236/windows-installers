@@ -3,10 +3,11 @@ using System.IO.Abstractions;
 using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Install;
 
-namespace Elastic.InstallerHosts.Elasticsearch.Tasks
+namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Rollback
 {
-	public class RollbackServiceTask : ElasticsearchInstallationTask
+	public class RollbackServiceTask : ElasticsearchInstallationTaskBase
 	{
 		private IServiceStateProvider ServiceStateProvider { get; }
 

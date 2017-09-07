@@ -16,6 +16,7 @@ using Elastic.Installer.Domain.Model.Elasticsearch.Closing;
 using Elastic.Installer.Domain.Model.Elasticsearch.Notice;
 using Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks;
 using Elastic.InstallerHosts.Elasticsearch.Tasks;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Install;
 using FluentAssertions;
 using FluentValidation.Results;
 
@@ -222,7 +223,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 		);
 
 		public InstallationModelTester ExecuteTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask)
-			where TTask : ElasticsearchInstallationTask
+			where TTask : ElasticsearchInstallationTaskBase
 		{
 			var task = createTask(this.InstallationModel, NoopSession.Elasticsearch, this.FileSystem);
 			Action a = () => task.Execute();
@@ -230,7 +231,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models
 			return this;
 		}
 		public InstallationModelTester AssertTask<TTask>(Func<ElasticsearchInstallationModel, ISession, MockFileSystem, TTask> createTask, Action<ElasticsearchInstallationModel, InstallationModelTester> assert)
-			where TTask : ElasticsearchInstallationTask
+			where TTask : ElasticsearchInstallationTaskBase
 		{
 			var task = createTask(this.InstallationModel, NoopSession.Elasticsearch, this.FileSystem);
 			Action a = () => task.Execute();

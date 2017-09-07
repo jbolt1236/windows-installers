@@ -4,6 +4,7 @@ using WixSharp;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 using Elastic.InstallerHosts;
 using Elastic.InstallerHosts.Elasticsearch.Tasks;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Uninstall;
 
 namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Uninstall
 {
@@ -17,5 +18,5 @@ namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Uninstall
 
 		[CustomAction]
 		public static ActionResult ElasticsearchUninstallPlugins(Session session) =>
-			session.Handle(() => new RemovePluginsTask(session.ToSetupArguments(ElasticsearchArgumentParser.AllArguments), session.ToISession()).Execute());
+			session.Handle(() => new UninstallPluginsTask(session.ToSetupArguments(ElasticsearchArgumentParser.AllArguments), session.ToISession()).Execute());
 	}}

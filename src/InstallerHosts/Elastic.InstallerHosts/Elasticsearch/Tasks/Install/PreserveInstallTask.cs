@@ -1,12 +1,10 @@
-﻿using System;
-using System.IO.Abstractions;
-using System.Reflection;
+﻿using System.IO.Abstractions;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 
-namespace Elastic.InstallerHosts.Elasticsearch.Tasks
+namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 {
-	public class PreserveInstallTask : ElasticsearchInstallationTask
+	public class PreserveInstallTask : ElasticsearchInstallationTaskBase
 	{
 		public PreserveInstallTask(string[] args, ISession session) : base(args, session) {}
 

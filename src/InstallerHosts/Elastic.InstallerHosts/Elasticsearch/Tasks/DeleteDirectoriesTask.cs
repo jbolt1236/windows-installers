@@ -5,10 +5,11 @@ using Elastic.Configuration.FileBased.Yaml;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Install;
 
 namespace Elastic.InstallerHosts.Elasticsearch.Tasks
 {
-	public class DeleteDirectoriesTask : ElasticsearchInstallationTask
+	public class DeleteDirectoriesTask : ElasticsearchInstallationTaskBase
 	{
 		private bool RollBack { get; }
 		public DeleteDirectoriesTask(string[] args, ISession session, bool rollBack) : base(args, session)

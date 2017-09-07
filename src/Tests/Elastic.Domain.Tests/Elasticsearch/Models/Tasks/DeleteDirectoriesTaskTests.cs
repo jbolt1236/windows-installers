@@ -9,7 +9,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks
 		[Fact(Skip = "ignore for now")]
 		void DeleteDefaultDirectoriesOnCleanInstallRollback() =>
 			WithValidPreflightChecks(s => s
-				.Session(false)
+				.Session(uninstalling: false)
 			)
 			.AssertTask((m, s, fs) =>
 			{
@@ -33,7 +33,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks
 		void RemoveDirectoriesOnUninstall() =>
 			WithValidPreflightChecks(s => s
 				.Wix("5.0.1", "5.0.0")
-				.Session(true)
+				.Session(uninstalling: true)
 			)
 			.AssertTask((m, s, fs) =>
 			{
