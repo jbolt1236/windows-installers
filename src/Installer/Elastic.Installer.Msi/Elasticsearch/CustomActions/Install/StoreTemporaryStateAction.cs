@@ -16,11 +16,11 @@ namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Install
 		public override Return Return => Return.check;
 		public override Sequence Sequence => Sequence.InstallExecuteSequence;
 		public override When When => When.After;
-		public override Step Step => new Step(nameof(StoreTemporaryStateAction));
+		public override Step Step => Step.InstallInitialize;
 		public override Execute Execute => Execute.deferred;
 
 		[CustomAction]
-		public static ActionResult ElasticsearchValidateArguments(Session session) =>
+		public static ActionResult StoreTemporaryState(Session session) =>
 			session.Handle(() => new StoreTemporaryStateTask(session.ToSetupArguments(ElasticsearchArgumentParser.AllArguments), session.ToISession()).Execute());
 	}
 }
