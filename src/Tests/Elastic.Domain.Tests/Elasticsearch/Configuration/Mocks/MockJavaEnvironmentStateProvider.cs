@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Elastic.Configuration.EnvironmentBased.Java;
@@ -22,6 +24,17 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 		string IJavaEnvironmentStateProvider.JreRegistry64 => _jreRegistry64; 
 		private string _jreRegistry32;
 		string IJavaEnvironmentStateProvider.JreRegistry32 => _jreRegistry32;
+
+		private bool _javaVersionCalledOk = false;
+		private List<string> _javaVersionConsoleOut = null;
+		bool IJavaEnvironmentStateProvider.ReadJavaVersionInformation(string javaHomeCanonical, out List<string> consoleOut)
+		{
+			consoleOut = null;
+			if (!_javaVersionCalledOk) return false;
+			consoleOut = _javaVersionConsoleOut;
+			return true;
+
+		}
 
 		public MockJavaEnvironmentStateProvider JavaHomeUserVariable(string path)
 		{
@@ -58,6 +71,15 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks
 		public MockJavaEnvironmentStateProvider JreRegistry32(string path)
 		{
 			this._jreRegistry32 = path;
+			return this;
+		}
+		public MockJavaEnvironmentStateProvider JavaVersionResponse(bool ok, string consoleOut)
+		{
+			this._javaVersionCalledOk  = ok;
+			this._javaVersionConsoleOut = string.IsNullOrEmpty(consoleOut) 
+				? null 
+				: consoleOut.Split(Environment.NewLine.ToCharArray()).ToList();
+			
 			return this;
 		}
 	}

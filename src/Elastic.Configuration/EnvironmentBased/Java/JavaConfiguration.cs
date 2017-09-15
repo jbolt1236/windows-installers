@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -9,13 +10,15 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 {
 	public class JavaConfiguration 
 	{
-		public static JavaConfiguration Default { get; } = new JavaConfiguration(new JavaEnvironmentStateProvider());
+		private readonly IFileSystem _fileSystem;
+		public static JavaConfiguration Default { get; } = new JavaConfiguration(new JavaEnvironmentStateProvider(), new FileSystem());
 
 		private readonly IJavaEnvironmentStateProvider _stateProvider;
 
-		public JavaConfiguration(IJavaEnvironmentStateProvider stateProvider)
+		public JavaConfiguration(IJavaEnvironmentStateProvider stateProvider, IFileSystem fileSystem)
 		{
 			_stateProvider = stateProvider ?? new JavaEnvironmentStateProvider();
+			_fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
 		}
 
 		public string JavaExecutable
@@ -35,8 +38,10 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 			}
 		}
 
+		public bool JavaExecutableExists => this._fileSystem.File.Exists(this.JavaExecutable);
+		
 		public string JavaHomeCanonical => JavaHomeCandidates.FirstOrDefault(j=>!string.IsNullOrWhiteSpace(j));
-
+		
 		private List<string> JavaHomeCandidates => new List<string> {
 			_stateProvider.JavaHomeProcessVariable,
 			_stateProvider.JavaHomeUserVariable,
@@ -62,11 +67,28 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 				return _stateProvider.JavaHomeMachineVariable != _stateProvider.JavaHomeUserVariable;
 			}
 		}
+
+		public bool ReadJavaVersionInformation(out string version, out bool? is64Bit)
+		{
+			version = null;
+			is64Bit = null;
+			if (!this.JavaExecutableExists || !this._stateProvider.ReadJavaVersionInformation(this.JavaHomeCanonical, out var consoleOut))
+				return false;
+			is64Bit = false;
+			foreach (var line in consoleOut)
+			{
+				if (line.IndexOf("64-bit", StringComparison.OrdinalIgnoreCase) >= 0) is64Bit = true;
+				if (line.StartsWith("java version"))
+					version = line.Replace("java version ", "").Trim('"').Trim();
+			}
+			return true;
+		}
 			
 		public override string ToString() =>
 			new StringBuilder()
 				.AppendLine($"Java paths")
 				.AppendLine($"- current = {JavaExecutable}")
+				.AppendLine($"- exists = {JavaExecutableExists}")
 				.AppendLine($"Java Candidates (in order of precedence)")
 				.AppendLine($"- {nameof(_stateProvider.JavaHomeProcessVariable)} = {_stateProvider.JavaHomeProcessVariable}")
 				.AppendLine($"- {nameof(_stateProvider.JavaHomeUserVariable)} = {_stateProvider.JavaHomeUserVariable}")

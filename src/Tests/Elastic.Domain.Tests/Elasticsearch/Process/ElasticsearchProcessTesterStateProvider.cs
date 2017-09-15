@@ -15,11 +15,11 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Process
 
 		public MockElasticsearchEnvironmentStateProvider ElasticsearchState { get; private set; }
 		public ElasticsearchEnvironmentConfiguration ElasticsearchConfigState { get; private set; }
-
+		
 		public ElasticsearchProcessTesterStateProvider()
 		{
 			this.JavaState = new MockJavaEnvironmentStateProvider();
-			this.JavaConfigState = new JavaConfiguration(this.JavaState);
+			this.JavaConfigState = new JavaConfiguration(this.JavaState, this.FileSystemState);
 
 			this.ElasticsearchState = new MockElasticsearchEnvironmentStateProvider();
 			this.ElasticsearchConfigState = new ElasticsearchEnvironmentConfiguration(this.ElasticsearchState);
@@ -28,7 +28,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Process
 		public ElasticsearchProcessTesterStateProvider Java(Func<MockJavaEnvironmentStateProvider, MockJavaEnvironmentStateProvider> setter)
 		{
 			this.JavaState = setter(new MockJavaEnvironmentStateProvider());
-			this.JavaConfigState = new JavaConfiguration(this.JavaState);
+			this.JavaConfigState = new JavaConfiguration(this.JavaState, this.FileSystemState);
 			return this;
 		}
 
@@ -42,7 +42,9 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Process
 
 		public ElasticsearchProcessTesterStateProvider FileSystem(Func<MockFileSystem, MockFileSystem> selector)
 		{
-			this.FileSystemState = selector(new MockFileSystem());
+			var returnedFileSystem = selector(this.FileSystemState);
+			if (this.FileSystemState != returnedFileSystem)
+				throw new Exception("Not allowed to return a new instance of mock file system setup");
 			return this;
 		}
 
@@ -50,7 +52,8 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Process
 
 		public MockFileSystem AddJavaExe(MockFileSystem fs)
 		{
-			var java = new JavaConfiguration(this.JavaState);
+			//temporary create a java config to get the full JavaExecutable
+			var java = new JavaConfiguration(this.JavaState, fs);
 			fs.AddFile(java.JavaExecutable, new MockFileData(""));
 			return fs;
 		}

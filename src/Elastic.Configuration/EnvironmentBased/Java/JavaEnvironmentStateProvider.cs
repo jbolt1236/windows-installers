@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Win32;
 using static Microsoft.Win32.RegistryView;
 
@@ -15,6 +18,7 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 		string JdkRegistry32 { get; }
 		string JreRegistry64  { get; }
 		string JreRegistry32 { get; }
+		bool ReadJavaVersionInformation(string javaHomeCanonical, out List<string> consoleOut);
 	}
 
 	public class JavaEnvironmentStateProvider : IJavaEnvironmentStateProvider
@@ -26,7 +30,6 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 		public string JavaHomeProcessVariable => Environment.GetEnvironmentVariable(JavaHome, EnvironmentVariableTarget.Process);
 		public string JavaHomeUserVariable => Environment.GetEnvironmentVariable(JavaHome, EnvironmentVariableTarget.User);
 		public string JavaHomeMachineVariable => Environment.GetEnvironmentVariable(JavaHome, EnvironmentVariableTarget.Machine);
-
 
 		public string JdkRegistry64 => RegistrySubKey(Registry64, JdkRootPath);
 		public string JdkRegistry32 => RegistrySubKey(Registry32, JdkRootPath);
@@ -45,7 +48,38 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 
 			using (var key = registry.OpenSubKey(subKey + "\\" + version))
 				return key?.GetValue("JavaHome") as string;
+		}
+
+		public bool ReadJavaVersionInformation(string javaHomeCanonical, out List<string> consoleOut)
+		{
+			var localConsoleOut = new List<string>();
+			consoleOut = localConsoleOut;
 			
+			var startInfo = new ProcessStartInfo
+			{
+				FileName = javaHomeCanonical,
+				Arguments = "-version",
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				RedirectStandardInput = true,
+				ErrorDialog = false,
+				CreateNoWindow = true,
+				UseShellExecute = false
+			};
+			var process = new Process { StartInfo = startInfo };
+			process.OutputDataReceived += (s, a) => localConsoleOut.Add(a.Data);;
+			var errors = false;
+			process.ErrorDataReceived += (s, a) =>
+			{
+				if (string.IsNullOrEmpty(a.Data)) return;
+				errors = true;
+			};
+			process.Start();
+			process.BeginOutputReadLine();
+			process.BeginErrorReadLine();
+			process.WaitForExit();
+			var exitCode = process.ExitCode;
+			return exitCode <= 0 && !errors;
 		}
 	}
 }

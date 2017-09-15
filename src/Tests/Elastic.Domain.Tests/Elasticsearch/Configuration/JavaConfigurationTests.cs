@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions.TestingHelpers;
 using Elastic.Configuration.EnvironmentBased.Java;
 using Elastic.Installer.Domain.Tests.Elasticsearch.Configuration.Mocks;
 using FluentAssertions;
@@ -19,7 +20,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Configuration
 		private void AssertJavaHome(string expext, Func<MockJavaEnvironmentStateProvider, IJavaEnvironmentStateProvider> setup,
 			bool warn32bit = false)
 		{
-			var javaConfiguration = new JavaConfiguration(setup(new MockJavaEnvironmentStateProvider()));
+			var javaConfiguration = new JavaConfiguration(setup(new MockJavaEnvironmentStateProvider()), new MockFileSystem());
 			javaConfiguration.JavaHomeCanonical.Should().Be(expext);
 			javaConfiguration.Using32BitJava.Should().Be(warn32bit);
 		}
