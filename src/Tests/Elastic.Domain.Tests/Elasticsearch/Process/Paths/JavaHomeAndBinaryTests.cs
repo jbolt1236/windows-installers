@@ -10,9 +10,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Process.Paths
 		private const string JavaHomeUser = @"c:\Java\User";
 		private const string JavaHomeMachine = @"c:\Java\Machine";
 		private const string RegistryJdk64 = @"c:\Java\RegistryJdk64";
-		private const string RegistryJdk32 = @"c:\Java\RegistryJdk32";
 		private const string RegistryJre64 = @"c:\Java\RegistryJre64";
-		private const string RegistryJre32 = @"c:\Java\RegistryJre32";
 
 		private static string JavaExe(string folder) => Path.Combine(folder, @"bin\java.exe");
 

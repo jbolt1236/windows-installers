@@ -28,7 +28,6 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 				}
 				catch (Exception e)
 				{
-					
 					throw new Exception(
 						$"There was a problem constructing a path from the detected java home directory '{this.JavaHomeCanonical}'", e);
 				}
@@ -42,14 +41,10 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 			_stateProvider.JavaHomeUserVariable,
 			_stateProvider.JavaHomeMachineVariable,
 			_stateProvider.JdkRegistry64,
-			_stateProvider.JreRegistry64,
-			_stateProvider.JdkRegistry32,
-			_stateProvider.JreRegistry32
+			_stateProvider.JreRegistry64
 		};
 
 		public bool JavaInstalled => !string.IsNullOrEmpty(this.JavaHomeCanonical);
-
-		public bool Using32BitJava => JavaHomeCandidates.FindIndex(c => !string.IsNullOrWhiteSpace(c)) >= JavaHomeCandidates.Count - 2;
 
 		public bool JavaMisconfigured 
 		{
@@ -73,10 +68,7 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 				.AppendLine($"- {nameof(_stateProvider.JavaHomeMachineVariable)} = {_stateProvider.JavaHomeProcessVariable}")
 				.AppendLine($"- {nameof(_stateProvider.JdkRegistry64)} = {_stateProvider.JdkRegistry64}")
 				.AppendLine($"- {nameof(_stateProvider.JreRegistry64)} = {_stateProvider.JreRegistry64}")
-				.AppendLine($"- {nameof(_stateProvider.JdkRegistry32)} = {_stateProvider.JdkRegistry32}")
-				.AppendLine($"- {nameof(_stateProvider.JreRegistry32)} = {_stateProvider.JreRegistry32}")
 				.AppendLine($"Java checks")
-				.AppendLine($"- {nameof(Using32BitJava)} = {Using32BitJava}")
 				.AppendLine($"- JAVA_HOME as machine and user variable = {JavaMisconfigured}")
 				.ToString();
 

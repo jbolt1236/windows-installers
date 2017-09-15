@@ -667,15 +667,6 @@ namespace Elastic.Installer.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Found a 32 bit java installation as the default in the registry, elasticsearch requires a 64bit JVM.
-        /// </summary>
-        public static string NoticeModelValidator_Using32BitJava {
-            get {
-                return ResourceManager.GetString("NoticeModelValidator_Using32BitJava", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Azure Discovery plugin uses the Azure API for unicast discovery..
         /// </summary>
         public static string PluginsModel_AzureDiscovery {

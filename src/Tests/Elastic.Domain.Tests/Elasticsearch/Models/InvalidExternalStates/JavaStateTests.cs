@@ -27,14 +27,6 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.InvalidExternalSta
 			)
 			.IsValidOnFirstStep();
 
-		/// <summary>
-		/// Registry java home will be set as JAVA_HOME later 
-		/// </summary>
-		[Fact] public void JavaHomeOnlyInRegistry() => EmptyJavaModel(s=>s
-				.Java(j => j.JdkRegistry64(@"C:\Java"))
-			)
-			.IsValidOnFirstStep();
-
 		[Fact] public void JavaHomeMachineVariable() => EmptyJavaModel(s=>s
 				.Java(j => j.JavaHomeMachineVariable(@"C:\Java"))
 			)
@@ -57,27 +49,13 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.InvalidExternalSta
 			)
 			.IsValidOnFirstStep();
 		
-		[Fact] public void Jdk32BitsOnlyIsAPrequisiteFailure() => EmptyJavaModel(s=>s
-				.Java(j => j.JdkRegistry32(@"C:\Java32"))
-			)
-			.HasPrerequisiteErrors(errors => errors
-				.ShouldHaveErrors(TextResources.NoticeModelValidator_Using32BitJava)
-			);
-		
-		[Fact] public void Jre32BitsOnlyIsAPrequisiteFailure() => EmptyJavaModel(s=>s
-				.Java(j => j.JreRegistry32(@"C:\Java32"))
-			)
-			.HasPrerequisiteErrors(errors => errors
-				.ShouldHaveErrors(TextResources.NoticeModelValidator_Using32BitJava)
-			);
-		
-		[Fact] public void Jre32And64IsValid() => EmptyJavaModel(s=>s
-				.Java(j => j.JreRegistry64(@"C:\Java").JreRegistry32(@"c:\Java32"))
+		[Fact] public void Jre64IsValid() => EmptyJavaModel(s=>s
+				.Java(j => j.JreRegistry64(@"C:\Java"))
 			)
 			.IsValidOnFirstStep();
 		
-		[Fact] public void Jdk32And64IsValid() => EmptyJavaModel(s=>s
-				.Java(j => j.JdkRegistry64(@"C:\Java").JdkRegistry32(@"c:\Java32"))
+		[Fact] public void Jdk64IsValid() => EmptyJavaModel(s=>s
+				.Java(j => j.JdkRegistry64(@"C:\Java"))
 			)
 			.IsValidOnFirstStep();
 

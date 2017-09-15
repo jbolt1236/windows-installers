@@ -28,12 +28,10 @@ namespace Elastic.ProcessHosts.Elasticsearch
 			ElasticsearchService service = null;
 			try
 			{
-				if (Environment.UserInteractive && JavaConfiguration.Default.Using32BitJava)
-					Console.WriteLine("You are using a 32bit version this may cause the JVM to start, consider installing a 64bit JVM");
-
-				service = new ElasticsearchService(args);
 				if (Environment.UserInteractive)
 					Console.Title = $"Elasticsearch {AssemblyVersionInformation.AssemblyInformationalVersion}";
+
+				service = new ElasticsearchService(args);
 				service.Run();
 				var exitCode = service.LastExitCode ?? 0;
 				return exitCode;
@@ -52,7 +50,6 @@ namespace Elastic.ProcessHosts.Elasticsearch
 				Console.ResetColor();
 			}
 		}
-
 
 		private static void WriteEnvironmentDebugInformation()
 		{

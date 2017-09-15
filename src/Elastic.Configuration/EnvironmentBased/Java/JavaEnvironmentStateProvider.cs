@@ -12,9 +12,7 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 		string JavaHomeProcessVariable { get; }
 		
 		string JdkRegistry64 { get; }
-		string JdkRegistry32 { get; }
 		string JreRegistry64  { get; }
-		string JreRegistry32 { get; }
 	}
 
 	public class JavaEnvironmentStateProvider : IJavaEnvironmentStateProvider
@@ -27,11 +25,8 @@ namespace Elastic.Configuration.EnvironmentBased.Java
 		public string JavaHomeUserVariable => Environment.GetEnvironmentVariable(JavaHome, EnvironmentVariableTarget.User);
 		public string JavaHomeMachineVariable => Environment.GetEnvironmentVariable(JavaHome, EnvironmentVariableTarget.Machine);
 
-
 		public string JdkRegistry64 => RegistrySubKey(Registry64, JdkRootPath);
-		public string JdkRegistry32 => RegistrySubKey(Registry32, JdkRootPath);
 		public string JreRegistry64 => RegistrySubKey(Registry64, JreRootPath); 
-		public string JreRegistry32 => RegistrySubKey(Registry32, JreRootPath);
 		
 		private static string RegistrySubKey(RegistryView view, string subKey)
 		{
