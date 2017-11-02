@@ -514,7 +514,7 @@ namespace Elastic.Installer.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An elasticsearch plugin written in Clojure that provides clojure as a scripting language for elasticsearch queries..
+        ///   Looks up a localized string similar to An Elasticsearch plugin written in Clojure that provides clojure as a scripting language for Elasticsearch queries..
         /// </summary>
         public static string PluginsModel_ClojureLanguagePlugin {
             get {
@@ -962,6 +962,24 @@ namespace Elastic.Installer.Domain.Properties {
         public static string XPackModelValidator_LogstashPasswordRequired {
             get {
                 return ResourceManager.GetString("XPackModelValidator_LogstashPasswordRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X-Pack license file must exist.
+        /// </summary>
+        public static string XPackModelValidator_XPackLicenseFileDoesNotExist {
+            get {
+                return ResourceManager.GetString("XPackModelValidator_XPackLicenseFileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X-Pack license file is required.
+        /// </summary>
+        public static string XPackModelValidator_XPackLicenseFileRequired {
+            get {
+                return ResourceManager.GetString("XPackModelValidator_XPackLicenseFileRequired", resourceCulture);
             }
         }
     }

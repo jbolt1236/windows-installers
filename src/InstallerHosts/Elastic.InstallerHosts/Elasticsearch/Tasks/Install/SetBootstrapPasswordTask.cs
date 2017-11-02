@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.IO.Abstractions;
+using System.Runtime.CompilerServices;
 using Elastic.Configuration.EnvironmentBased;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Elasticsearch;
@@ -18,7 +20,9 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		protected override bool ExecuteTask()
 		{
 			var xPackModel = this.InstallationModel.XPackModel;
-			if (!xPackModel.IsRelevant || !xPackModel.XPackSecurityEnabled || xPackModel.XPackLicense != XPackLicenseMode.Trial) return true;
+			if (!xPackModel.IsRelevant || !xPackModel.XPackSecurityEnabled || 
+				xPackModel.XPackLicense != XPackLicenseMode.Trial || string.IsNullOrEmpty(xPackModel.XPackLicenseFile) || 
+				(!string.IsNullOrEmpty(xPackModel.XPackLicenseFile) && xPackModel.UploadedXPackLicense == "basic")) return true;
 
 			var installationDir = this.InstallationModel.LocationsModel.InstallDir;
 			var password = this.InstallationModel.XPackModel.BootstrapPassword;

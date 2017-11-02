@@ -435,4 +435,10 @@ PLEASE NOTE: an uninstall will always remove the data folder be sure you move it
     <value>HTTPS proxy port must be between {0} and {1}.</value>
     <comment>{0} = minimum port number. {1} = maximum port number</comment>
   </data>
+  <data name="XPackModelValidator_XPackLicenseFileDoesNotExist" xml:space="preserve">
+    <value>X-Pack license file must exist</value>
+  </data>
+  <data name="XPackModelValidator_XPackLicenseFileRequired" xml:space="preserve">
+    <value>X-Pack license file is required</value>
+  </data>
 </root>

@@ -11,11 +11,11 @@ namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Install
 	{
 		public override string Name => nameof(ElasticsearchSetupXPackPasswordsAction);
 		public override int Order => (int)ElasticsearchCustomActionOrder.SetupXPackPasswords;
-		public override Condition Condition => new Condition("(NOT Installed) AND XPACKSECURITYENABLED~=\"true\" AND XPACKLICENSE~=\"Trial\" AND SKIPSETTINGPASSWORDS~=\"false\"");
+		public override Condition Condition => new Condition("(NOT Installed) AND XPACKSECURITYENABLED~=\"true\" AND SKIPSETTINGPASSWORDS~=\"false\"");
 		public override Return Return => Return.check;
 		public override Sequence Sequence => Sequence.InstallExecuteSequence;
 		public override When When => When.After;
-		public override Step Step => new Step(nameof(ElasticsearchServiceStartAction));
+		public override Step Step => new Step(nameof(ElasticsearchSetupXPackLicenseAction));
 		public override Execute Execute => Execute.deferred;
 
 		[CustomAction]

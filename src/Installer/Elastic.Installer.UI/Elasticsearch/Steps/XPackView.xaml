@@ -25,6 +25,7 @@
       <ColumnDefinition Width="*"/>
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
+      <RowDefinition Height="60" />
       <RowDefinition Height="50" />
       <RowDefinition Height="95" />
       <RowDefinition Height="*" />
@@ -35,12 +36,58 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
-        <RowDefinition Height="45" />
+        <RowDefinition Height="30" />
+        <RowDefinition Height="30" />
       </Grid.RowDefinitions>
       <Label Grid.Row="0" Grid.Column="0" x:Name="LicenseLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseLabel}" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
+      <RadioButton Grid.Row="0" Grid.Column="1" x:Name="UploadLicenseFileRadioButton" Content="{x:Static resx:ViewResources.XPackView_UploadLicenseFileRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
+      <RadioButton Grid.Row="1" Grid.Column="1" x:Name="CreateLicenseRadioButton" Content="{x:Static resx:ViewResources.XPackView_CreateLicenseRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
+    </Grid>
+
+    <Grid Grid.Column="0" x:Name="CreateLicenseGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="80"></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="45" />
+      </Grid.RowDefinitions>
+      <!--<Label Grid.Row="0" Grid.Column="0" x:Name="LicenseTypeLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseTypeLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
       <ComboBox Grid.Row="0" Grid.Column="1" x:Name="LicenseDropDown" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
     </Grid>
-    <Grid Grid.Column="0" x:Name="SecurityGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+
+    <Grid Grid.Column="0" x:Name="UploadLicenseGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="80"></ColumnDefinition>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="45" />
+      </Grid.RowDefinitions>
+      <!--<Label Grid.Row="0" Grid.Column="0" x:Name="LicenseFileLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseFileLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
+      <TextBox x:Name="LicenseFileTextBox" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+      <Button x:Name="LicenseFileBrowseButton" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+    </Grid>
+    <Grid Grid.Column="0" x:Name="ManualLicenseGrid" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <TextBox x:Name="ManuallyApplyLicenseTextBox" Grid.Row="0" Grid.Column="0" Text="{x:Static resx:ViewResources.XPackView_ManuallyApplyLicense}"
+               Background="Transparent" BorderBrush="Transparent"  Margin="0,20,0,10" Foreground="{DynamicResource AccentColorBrush2}"
+               TextWrapping="Wrap" BorderThickness="0"
+               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsReadOnly="True"
+               ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
+      <Button Grid.Row="1" Grid.Column="0" x:Name="OpenManuallyApplyLicenseLink"  Style="{DynamicResource Link}" 
+              FontWeight="Bold" 
+              Margin="6, 12, 0,0"
+              Content="{x:Static resx:ViewResources.XPackView_ManuallyApplyLicenseLink}" 
+              HorizontalAlignment="Left" VerticalAlignment="Top" />
+    </Grid>
+
+    <Grid Grid.Column="0" x:Name="SecurityGrid" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="150"/>
         <ColumnDefinition Width="*"/>
@@ -54,7 +101,7 @@
       <Label Grid.Row="1" Grid.Column="0" x:Name="UserLabel" Content="{x:Static resx:ViewResources.XPackView_UsersLabel}" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
       <CheckBox Grid.Row="1" Grid.Column="1" x:Name="SkipPasswordGenerationCheckBox" Content="{x:Static resx:ViewResources.XPackView_OverrideGeneratePasswordsLabel}" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top"/>
     </Grid> 
-    <Grid Grid.Column="0" x:Name="UserGrid" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+    <Grid Grid.Column="0" x:Name="UserGrid" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="150"/>
         <ColumnDefinition Width="*"/>
@@ -76,7 +123,7 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
-      <TextBox x:Name="ManualConfigurationNeededTextBox" Grid.Row="0" Grid.Column="0" Text="{x:Static resx:ViewResources.XPackView_ManualUserConfigurationNeeded}"
+       <TextBox x:Name="ManualConfigurationNeededTextBox" Grid.Row="0" Grid.Column="0" Text="{x:Static resx:ViewResources.XPackView_ManualUserConfigurationNeeded}"
                Background="Transparent" BorderBrush="Transparent"  Margin="0,20,0,10" Foreground="{DynamicResource AccentColorBrush2}"
                TextWrapping="Wrap" BorderThickness="0"
                HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsReadOnly="True"

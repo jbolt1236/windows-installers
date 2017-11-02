@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
 using Elastic.Installer.UI.Controls;
+using Elastic.Installer.UI.Properties;
 using FluentValidation.Results;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ReactiveUI;
@@ -73,18 +74,26 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 			this.CustomLocationsCheckBox.Events().Click
 				.Subscribe(e => ViewModel.PlaceWritableLocationsInSamePath = this.CustomLocationsCheckBox.IsChecked.GetValueOrDefault());
 			this.InstallDirectoryBrowseButton.Events().Click
-				.Subscribe(folder => this.BrowseForFolder(ViewModel.InstallDir, (result) => { ViewModel.InstallDir = result; }));
+				.Subscribe(folder => 
+					this.BrowseForFolder(ViewModel.InstallDir, ViewResources.LocationsView_InstallDirDialogTitle, 
+					(result) => { ViewModel.InstallDir = result; }));
 			this.DataDirectoryBrowseButton.Events().Click
-				.Subscribe(folder => this.BrowseForFolder(ViewModel.DataDirectory, (result) => { ViewModel.DataDirectory = result; }));
+				.Subscribe(folder => 
+					this.BrowseForFolder(ViewModel.DataDirectory, ViewResources.LocationsView_DataDirectoryDialogTitle, 
+					(result) => { ViewModel.DataDirectory = result; }));
 			this.ConfigDirectoryBrowseButton.Events().Click
-				.Subscribe(folder => this.BrowseForFolder(ViewModel.ConfigDirectory, (result) => { ViewModel.ConfigDirectory = result; }));
+				.Subscribe(folder => 
+					this.BrowseForFolder(ViewModel.ConfigDirectory, ViewResources.LocationsView_ConfigDirectoryDialogTitle, 
+					(result) => { ViewModel.ConfigDirectory = result; }));
 			this.LogsDirectoryBrowseButton.Events().Click
-				.Subscribe(folder => this.BrowseForFolder(ViewModel.LogsDirectory, (result) => { ViewModel.LogsDirectory = result; }));
+				.Subscribe(folder => 
+					this.BrowseForFolder(ViewModel.LogsDirectory, ViewResources.LocationsView_LogsDirectoryDialogTitle, 
+					(result) => { ViewModel.LogsDirectory = result; }));
 			this.DefaultLocationsRadioButton.Events().Click
 				.Subscribe(e => ViewModel.SetDefaultLocations());
 		}
 
-		protected void BrowseForFolder(string defaultLocation, Action<string> setter)
+		protected void BrowseForFolder(string defaultLocation, string title, Action<string> setter)
 		{
 			var dlg = new CommonOpenFileDialog
 			{
@@ -98,7 +107,8 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				EnsureReadOnly = false,
 				EnsureValidNames = true,
 				Multiselect = false,
-				ShowPlacesList = true
+				ShowPlacesList = true,
+				Title = title
 			};
 
 			var result = dlg.ShowDialog();

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using Elastic.Installer.Domain.Configuration.Wix;
 using Elastic.Installer.Domain.Model.Base;
 using ReactiveUI;
@@ -14,22 +16,40 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 		public XPackModel(
 			VersionConfiguration versionConfig, 
 			IObservable<bool> xPackEnabled, 
-			IObservable<bool> canAutomaticallySetupUsers)
+			IObservable<bool> installServiceAndStartAfterInstall)
 		{
 			xPackEnabled.Subscribe(t =>
 			{
 				this.IsRelevant = t;
 			});
-			canAutomaticallySetupUsers.Subscribe(b=>
+
+			installServiceAndStartAfterInstall.Subscribe(b=>
 			{
-				this.CanAutomaticallySetupUsers = b;
+				this.InstallServiceAndStartAfterInstall = b;
 				this.SkipSettingPasswords = !b;
 			});
+
 			this.Header = "X-Pack";
 			this.CurrentVersion = versionConfig.CurrentVersion;
 			this.OpenLicensesAndSubscriptions = ReactiveCommand.Create();
 			this.RegisterBasicLicense = ReactiveCommand.Create();
 			this.OpenManualUserConfiguration = ReactiveCommand.Create();
+			this.OpenManuallyApplyLicense = ReactiveCommand.Create();
+
+			this.WhenAnyValue(vm => vm.XPackLicenseFile)
+				.Subscribe(file =>
+				{
+					if (File.Exists(file))
+					{
+						var licenseContent = File.ReadAllText(file);
+						var match = Regex.Match(licenseContent, "\"type\"\\s*:\\s*\"(?<licenseType>.*?)\"");
+						if (match.Success)
+							this.UploadedXPackLicense = match.Groups["licenseType"].Value.ToLowerInvariant();
+					}
+					else
+						this.UploadedXPackLicense = null;
+				});
+
 			this.Refresh();
 		}
 
@@ -66,11 +86,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			set => this.RaiseAndSetIfChanged(ref this.logstashSystemUserPassword, value);
 		}
 		
-		bool canAutomaticallySetupUsers;
-		public bool CanAutomaticallySetupUsers
+		bool installServiceAndStartAfterInstall;
+		public bool InstallServiceAndStartAfterInstall
 		{
-			get => this.canAutomaticallySetupUsers;
-			set => this.RaiseAndSetIfChanged(ref this.canAutomaticallySetupUsers, value);
+			get => this.installServiceAndStartAfterInstall;
+			set => this.RaiseAndSetIfChanged(ref this.installServiceAndStartAfterInstall, value);
 		}
 		
 		bool xPackSecurityEnabled;
@@ -89,9 +109,9 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			set => this.RaiseAndSetIfChanged(ref this.skipSettingPasswords, value);
 		}
 
-		XPackLicenseMode xPackLicense;
+		XPackLicenseMode? xPackLicense;
 		[Argument(nameof(XPackLicense))]
-		public XPackLicenseMode XPackLicense
+		public XPackLicenseMode? XPackLicense
 		{
 			get => this.xPackLicense;
 			set => this.RaiseAndSetIfChanged(ref this.xPackLicense, value);
@@ -105,10 +125,19 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			set => this.RaiseAndSetIfChanged(ref this.bootstrapPassword, value);
 		}
 
+		private string xpackLicenseFile;
+		[Argument(nameof(XPackLicenseFile))]
+		public string XPackLicenseFile
+		{
+			get => this.xpackLicenseFile;
+			set => this.RaiseAndSetIfChanged(ref this.xpackLicenseFile, value);
+		}
+
 		public bool NeedsPasswords =>
 			this.IsRelevant 
-			&& this.CanAutomaticallySetupUsers 
-			&& this.XPackLicense == XPackLicenseMode.Trial
+			&& this.InstallServiceAndStartAfterInstall 
+			&& ((this.XPackLicense == XPackLicenseMode.Trial && this.SelfGenerateLicense) || 
+			    (this.UploadLicenseFile && !string.IsNullOrEmpty(this.UploadedXPackLicense) && this.UploadedXPackLicense != "basic"))
 			&& !this.SkipSettingPasswords
 			&& this.XPackSecurityEnabled;
 
@@ -118,6 +147,29 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 
 		public ReactiveCommand<object> OpenManualUserConfiguration { get; }
 
+		public ReactiveCommand<object> OpenManuallyApplyLicense { get; }
+
+		private bool selfGenerateLicense;
+		public bool SelfGenerateLicense
+		{
+			get => this.selfGenerateLicense;
+			set => this.RaiseAndSetIfChanged(ref this.selfGenerateLicense, value);
+		}
+
+		private bool uploadLicenseFile;
+		public bool UploadLicenseFile
+		{
+			get => this.uploadLicenseFile;
+			set => this.RaiseAndSetIfChanged(ref this.uploadLicenseFile, value);
+		}
+
+		private string uploadedXPackLicense;
+		public string UploadedXPackLicense
+		{
+			get => this.uploadedXPackLicense;
+			set => this.RaiseAndSetIfChanged(ref this.uploadedXPackLicense, value);
+		}
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -125,14 +177,15 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			sb.AppendLine($"- {nameof(IsValid)} = " + IsValid);
 			sb.AppendLine($"- {nameof(IsRelevant)} = " + IsRelevant);
 			sb.AppendLine($"- {nameof(NeedsPasswords)} = " + NeedsPasswords);
-			sb.AppendLine($"- {nameof(XPackLicense)} = " + Enum.GetName(typeof(XPackLicenseMode), XPackLicense));
-			sb.AppendLine($"- {nameof(this.CanAutomaticallySetupUsers)} = " + CanAutomaticallySetupUsers);
-			sb.AppendLine($"- {nameof(this.SkipSettingPasswords)} = " + SkipSettingPasswords);
-			sb.AppendLine($"- {nameof(this.XPackSecurityEnabled)} = " + SkipSettingPasswords);
-			sb.AppendLine($"- {nameof(this.BootstrapPassword)} = " + !string.IsNullOrWhiteSpace(BootstrapPassword));
-			sb.AppendLine($"- {nameof(this.ElasticUserPassword)} = " + !string.IsNullOrWhiteSpace(ElasticUserPassword));
-			sb.AppendLine($"- {nameof(this.KibanaUserPassword)} = " + !string.IsNullOrWhiteSpace(KibanaUserPassword));
-			sb.AppendLine($"- {nameof(this.LogstashSystemUserPassword)} = " + !string.IsNullOrWhiteSpace(LogstashSystemUserPassword));
+			sb.AppendLine($"- {nameof(XPackLicense)} = " + (XPackLicense.HasValue ? Enum.GetName(typeof(XPackLicenseMode), XPackLicense) : string.Empty));
+			sb.AppendLine($"- {nameof(XPackLicenseFile)} = " + XPackLicenseFile);
+			sb.AppendLine($"- {nameof(InstallServiceAndStartAfterInstall)} = " + InstallServiceAndStartAfterInstall);
+			sb.AppendLine($"- {nameof(SkipSettingPasswords)} = " + SkipSettingPasswords);
+			sb.AppendLine($"- {nameof(XPackSecurityEnabled)} = " + SkipSettingPasswords);
+			sb.AppendLine($"- {nameof(BootstrapPassword)} = " + !string.IsNullOrWhiteSpace(BootstrapPassword));
+			sb.AppendLine($"- {nameof(ElasticUserPassword)} = " + !string.IsNullOrWhiteSpace(ElasticUserPassword));
+			sb.AppendLine($"- {nameof(KibanaUserPassword)} = " + !string.IsNullOrWhiteSpace(KibanaUserPassword));
+			sb.AppendLine($"- {nameof(LogstashSystemUserPassword)} = " + !string.IsNullOrWhiteSpace(LogstashSystemUserPassword));
 			return sb.ToString();
 		}
 

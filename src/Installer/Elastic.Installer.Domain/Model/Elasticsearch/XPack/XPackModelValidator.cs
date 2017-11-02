@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Elastic.Installer.Domain.Properties;
 using FluentValidation;
 
@@ -12,6 +13,8 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 		public static readonly string ElasticPasswordAtLeast6Characters = TextResources.XPackModelValidator_ElasticPasswordAtLeast6Characters;
 		public static readonly string KibanaPasswordAtLeast6Characters = TextResources.XPackModelValidator_KibanaPasswordAtLeast6Characters;
 		public static readonly string LogstashPasswordAtLeast6Characters = TextResources.XPackModelValidator_LogstashPasswordAtLeast6Characters;
+		public static readonly string XPackLicenseFileRequired = TextResources.XPackModelValidator_XPackLicenseFileRequired;
+		public static readonly string XPackLicenseFileDoesNotExist = TextResources.XPackModelValidator_XPackLicenseFileDoesNotExist;
 
 		public XPackModelValidator()
 		{
@@ -37,7 +40,15 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 				.When(NeedsPassword)
 				.Length(6, int.MaxValue)
 				.WithMessage(LogstashPasswordAtLeast6Characters)
-				.When(NeedsPassword);		
+				.When(NeedsPassword);
+
+			RuleFor(c => c.XPackLicenseFile)
+				.NotEmpty()
+				.WithMessage(XPackLicenseFileRequired)
+				.When(m => m.UploadLicenseFile)
+				.Must(File.Exists)
+				.WithMessage(XPackLicenseFileDoesNotExist)
+				.When(m => !string.IsNullOrEmpty(m.XPackLicenseFile) && m.UploadLicenseFile);
 		}
 
 		private static bool NeedsPassword(XPackModel m) => m.NeedsPasswords;

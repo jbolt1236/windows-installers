@@ -18,7 +18,8 @@
 		BootstrapPassword = 9,
 		InstallService = 10,
 		InstallStartService = 11,
-		SetupXPackPasswords = 12,
+		SetupXPackLicense = 12,
+		SetupXPackPasswords = 13,
 
 		// Rollback actions are played in reverse order
 		RollbackEnvironment = 1,

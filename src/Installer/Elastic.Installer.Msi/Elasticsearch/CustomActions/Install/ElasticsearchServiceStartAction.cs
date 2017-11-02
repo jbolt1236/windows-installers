@@ -12,7 +12,7 @@ namespace Elastic.Installer.Msi.Elasticsearch.CustomActions.Install
 	{
 		public override string Name => nameof(ElasticsearchServiceStartAction);
 		public override int Order => (int)ElasticsearchCustomActionOrder.InstallStartService;
-		public override Condition Condition => new Condition("(NOT Installed) AND INSTALLASSERVICE=\"true\" AND STARTAFTERINSTALL=\"true\"");
+		public override Condition Condition => new Condition("(NOT Installed) AND INSTALLASSERVICE~=\"true\" AND STARTAFTERINSTALL~=\"true\"");
 		public override Return Return => Return.check;
 		public override Sequence Sequence => Sequence.InstallExecuteSequence;
 		public override When When => When.After;

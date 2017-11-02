@@ -856,4 +856,44 @@ Alternatively, you may choose to not install Kibana as a service and run it manu
   <data name="PluginsView_SetHttpsProxy_Title" xml:space="preserve">
     <value>HTTPS proxy</value>
   </data>
+  <data name="LocationsView_ConfigDirectoryDialogTitle" xml:space="preserve">
+    <value>Select a Config Directory</value>
+  </data>
+  <data name="LocationsView_DataDirectoryDialogTitle" xml:space="preserve">
+    <value>Select a Data Directory</value>
+  </data>
+  <data name="LocationsView_InstallDirDialogTitle" xml:space="preserve">
+    <value>Select an Installation Directory</value>
+  </data>
+  <data name="LocationsView_LogsDirectoryDialogTitle" xml:space="preserve">
+    <value>Select a Logs Directory</value>
+  </data>
+  <data name="XPackView_CreateLicenseRadioButton" xml:space="preserve">
+    <value>Generate a temporary license</value>
+  </data>
+  <data name="XPackView_LicenseFileDialogFilter" xml:space="preserve">
+    <value>License file</value>
+  </data>
+  <data name="XPackView_LicenseFileDialogTitle" xml:space="preserve">
+    <value>Select an X-Pack license file</value>
+  </data>
+  <data name="XPackView_LicenseFileLabel" xml:space="preserve">
+    <value>License file</value>
+  </data>
+  <data name="XPackView_LicenseTypeLabel" xml:space="preserve">
+    <value>License type</value>
+  </data>
+  <data name="XPackView_UploadLicenseFileRadioButton" xml:space="preserve">
+    <value>Upload an existing license file</value>
+  </data>
+  <data name="XPackView_ManuallyApplyLicense" xml:space="preserve">
+    <value>An X-Pack license needs to be setup manually. In order to apply as part of installation, Elasticsearch must be installed as a service and started as part of the installation</value>
+  </data>
+  <data name="XPackView_ManuallyApplyLicenseLink" xml:space="preserve">
+    <value>Updating your license</value>
+  </data>
+  <data name="XPackView_UpdatingYourLicense" xml:space="preserve">
+    <value>https://www.elastic.co/guide/en/x-pack/{0}/installing-license.html</value>
+    <comment>{0} = major minor version</comment>
+  </data>
 </root>
