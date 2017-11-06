@@ -98,8 +98,11 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				)
 				.Subscribe(t =>
 				{
-					var isNonBasicLicense = (t.Item1 == XPackLicenseMode.Trial && t.Item5) || 
-											(t.Item6 && !string.IsNullOrEmpty(t.Item7) && t.Item7 != "basic");
+					var uploadLicenseFile = t.Item6;
+					var uploadedXPackLicense = t.Item7;
+					var uploadedNonBasicLicense = (uploadLicenseFile && !string.IsNullOrEmpty(uploadedXPackLicense) && uploadedXPackLicense != "basic");
+					var selfGenerateTrialLicense = (t.Item1 == XPackLicenseMode.Trial && t.Item5);
+					var isNonBasicLicense = selfGenerateTrialLicense || uploadedNonBasicLicense;
 					var securityEnabled = t.Item3;
 					var installServiceAndStartAfterInstall = t.Item4;
 
@@ -110,27 +113,24 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 					else if (!this.ViewModel.NeedsPasswords)
 						this.UserGrid.Visibility = Collapsed;
 					else this.UserGrid.Visibility = Visible;
-					
-					this.ManualSetupGrid.Visibility =
-						!isNonBasicLicense || !securityEnabled
-							? Collapsed : (!this.ViewModel.NeedsPasswords ? Visible : Collapsed);
+
+					if (!uploadLicenseFile)
+						ViewModel.XPackLicenseFile = null;
+
+					this.ManualSetupGrid.Visibility = !isNonBasicLicense || !securityEnabled
+							? Collapsed 
+							: (!this.ViewModel.NeedsPasswords 
+								? Visible 
+								: Collapsed);
 
 					this.UserLabel.Visibility = isNonBasicLicense && securityEnabled ? Visible : Collapsed;
 					this.SkipPasswordGenerationCheckBox.Visibility = isNonBasicLicense && securityEnabled ? Visible : Collapsed;
 					this.SkipPasswordGenerationCheckBox.IsEnabled = securityEnabled && installServiceAndStartAfterInstall;
-				});
 
-			this.ViewModel.WhenAnyValue(
-					vm => vm.UploadLicenseFile,
-					vm => vm.InstallServiceAndStartAfterInstall
-				)
-				.Subscribe(t =>
-				{
-					this.ManualLicenseGrid.Visibility = t.Item1 && !t.Item2 ? Visible : Collapsed;
-					this.UploadLicenseGrid.Visibility = t.Item1 && t.Item2 ? Visible : Collapsed;
-
-					if (!t.Item1)
-						ViewModel.XPackLicenseFile = null;
+					this.CertificatesGrid.Visibility = securityEnabled && uploadedNonBasicLicense ? Visible : Collapsed;
+					this.ManualLicenseGrid.Visibility = uploadLicenseFile && !installServiceAndStartAfterInstall ? Visible : Collapsed;
+					this.UploadLicenseGrid.Visibility = uploadLicenseFile && installServiceAndStartAfterInstall ? Visible : Collapsed;
+					this.WhichLicenseGrid.Visibility = uploadLicenseFile ? Collapsed : Visible;
 				});
 		}
 

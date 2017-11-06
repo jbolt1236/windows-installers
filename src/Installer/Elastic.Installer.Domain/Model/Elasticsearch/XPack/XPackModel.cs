@@ -60,6 +60,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			this.LogstashSystemUserPassword = null;
 			this.BootstrapPassword = null;
 			this.XPackSecurityEnabled = true;
+			this.SelfGenerateLicense = true;
 		}
 
 		public SemVersion CurrentVersion { get; }

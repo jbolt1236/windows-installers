@@ -40,8 +40,8 @@
         <RowDefinition Height="30" />
       </Grid.RowDefinitions>
       <Label Grid.Row="0" Grid.Column="0" x:Name="LicenseLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseLabel}" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
-      <RadioButton Grid.Row="0" Grid.Column="1" x:Name="UploadLicenseFileRadioButton" Content="{x:Static resx:ViewResources.XPackView_UploadLicenseFileRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
-      <RadioButton Grid.Row="1" Grid.Column="1" x:Name="CreateLicenseRadioButton" Content="{x:Static resx:ViewResources.XPackView_CreateLicenseRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
+      <RadioButton Grid.Row="0" Grid.Column="1" x:Name="CreateLicenseRadioButton" Content="{x:Static resx:ViewResources.XPackView_CreateLicenseRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
+      <RadioButton Grid.Row="1" Grid.Column="1" x:Name="UploadLicenseFileRadioButton" Content="{x:Static resx:ViewResources.XPackView_UploadLicenseFileRadioButton}" GroupName="LicenseType"  HorizontalAlignment="Left" VerticalAlignment="Center"  Margin="0,0,0,0"/>
     </Grid>
 
     <Grid Grid.Column="0" x:Name="CreateLicenseGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
@@ -53,20 +53,18 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="45" />
       </Grid.RowDefinitions>
-      <!--<Label Grid.Row="0" Grid.Column="0" x:Name="LicenseTypeLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseTypeLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
       <ComboBox Grid.Row="0" Grid.Column="1" x:Name="LicenseDropDown" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
     </Grid>
 
-    <Grid Grid.Column="0" x:Name="UploadLicenseGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto">
+    <Grid x:Name="UploadLicenseGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Grid.ColumnSpan="3">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="80"></ColumnDefinition>
+        <ColumnDefinition Width="100" />
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="45" />
       </Grid.RowDefinitions>
-      <!--<Label Grid.Row="0" Grid.Column="0" x:Name="LicenseFileLabel" Content="{x:Static resx:ViewResources.XPackView_LicenseFileLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
       <TextBox x:Name="LicenseFileTextBox" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
       <Button x:Name="LicenseFileBrowseButton" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
     </Grid>
@@ -134,7 +132,63 @@
              Content="{x:Static resx:ViewResources.XPackView_ManualUserConfigurationLink}" 
              HorizontalAlignment="Left" VerticalAlignment="Top" />
     </Grid>
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="2" Grid.RowSpan="4">
+    <Grid Grid.Column="2" x:Name="CertificatesGrid" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Grid.RowSpan="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="45"/>
+        <RowDefinition Height="45"/>
+        <RowDefinition Height="45"/>
+        <RowDefinition Height="45"/>
+        <RowDefinition Height="45"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="80" />
+      </Grid.ColumnDefinitions>
+      <Label Grid.Row="0" Grid.Column="0" x:Name="CertificateHeaderLabel" Content="{x:Static resx:ViewResources.XPackView_CertificateHeaderLabel}" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
+      <CheckBox Grid.Row="0" Grid.Column="1" x:Name="EnableHttpSecurityCheckBox" Content="{x:Static resx:ViewResources.XPackView_EnableHttpSecurity}" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top"/>
+      <Label Grid.Row="1" Grid.Column="0" x:Name="CertificateLabel" Content="{x:Static resx:ViewResources.XPackView_CertificateLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+      <TextBox x:Name="CertificateTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+      <Button x:Name="CertificateBrowseButton" Grid.Row="1" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+      <Label Grid.Row="2" Grid.Column="0" x:Name="KeyLabel" Content="{x:Static resx:ViewResources.XPackView_KeyLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+      <TextBox x:Name="KeyTextBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+      <Button x:Name="KeyBrowseButton" Grid.Row="2" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+      <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="CertificateAuthoritiesLabel" Content="{x:Static resx:ViewResources.XPackView_CertificateAuthoritiesLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+      <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" x:Name="CertificateAuthoritiesListBox" 
+               Margin="5, 0, 0, 0"
+               VerticalContentAlignment="Stretch" 
+               HorizontalContentAlignment="Stretch" BorderBrush="{StaticResource TextBoxBorderBrush}" BorderThickness="2">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding}" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+      <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="35"/>
+          <ColumnDefinition Width="45"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="AddCertificateAuthorityButton" Grid.Column="0" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+          <Rectangle Width="12" Height="12">
+            <Rectangle.Fill>
+              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
+            </Rectangle.Fill>
+          </Rectangle>
+        </Button>
+        <Button x:Name="RemoveCertificateAuthorityButton" Grid.Column="1" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+          <Rectangle Width="12" Height="2">
+            <Rectangle.Fill>
+              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_minus}" />
+            </Rectangle.Fill>
+          </Rectangle>
+        </Button>
+
+      </Grid>
+    </Grid>
+    <Grid x:Name="WhichLicenseGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="2" Grid.RowSpan="4">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>

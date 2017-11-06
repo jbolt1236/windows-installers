@@ -896,4 +896,22 @@ Alternatively, you may choose to not install Kibana as a service and run it manu
     <value>https://www.elastic.co/guide/en/x-pack/{0}/installing-license.html</value>
     <comment>{0} = major minor version</comment>
   </data>
+  <data name="XPackView_CertificateAuthoritiesLabel" xml:space="preserve">
+    <value>Certificate Authorities</value>
+  </data>
+  <data name="XPackView_CertificateHeaderLabel" xml:space="preserve">
+    <value>Certificates</value>
+  </data>
+  <data name="XPackView_CertificateLabel" xml:space="preserve">
+    <value>Certificate</value>
+  </data>
+  <data name="XPackView_EnableHttpSecurity" xml:space="preserve">
+    <value>Enable TLS on HTTP layer</value>
+  </data>
+  <data name="XPackView_EnableTransportSecurity" xml:space="preserve">
+    <value>Enable TLS on transport layer</value>
+  </data>
+  <data name="XPackView_KeyLabel" xml:space="preserve">
+    <value>Key</value>
+  </data>
 </root>
