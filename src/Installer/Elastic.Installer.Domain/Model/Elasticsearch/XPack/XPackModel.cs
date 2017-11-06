@@ -136,8 +136,8 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 		public bool NeedsPasswords =>
 			this.IsRelevant 
 			&& this.InstallServiceAndStartAfterInstall 
-			&& ((this.XPackLicense == XPackLicenseMode.Trial && this.SelfGenerateLicense) || 
-			    (this.UploadLicenseFile && !string.IsNullOrEmpty(this.UploadedXPackLicense) && this.UploadedXPackLicense != "basic"))
+			&& ((this.XPackLicense == XPackLicenseMode.Trial) || 
+			    (!string.IsNullOrEmpty(this.UploadedXPackLicense) && this.UploadedXPackLicense != "basic"))
 			&& !this.SkipSettingPasswords
 			&& this.XPackSecurityEnabled;
 
@@ -179,9 +179,10 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			sb.AppendLine($"- {nameof(NeedsPasswords)} = " + NeedsPasswords);
 			sb.AppendLine($"- {nameof(XPackLicense)} = " + (XPackLicense.HasValue ? Enum.GetName(typeof(XPackLicenseMode), XPackLicense) : string.Empty));
 			sb.AppendLine($"- {nameof(XPackLicenseFile)} = " + XPackLicenseFile);
+			sb.AppendLine($"- {nameof(UploadedXPackLicense)} = {UploadedXPackLicense}");
 			sb.AppendLine($"- {nameof(InstallServiceAndStartAfterInstall)} = " + InstallServiceAndStartAfterInstall);
 			sb.AppendLine($"- {nameof(SkipSettingPasswords)} = " + SkipSettingPasswords);
-			sb.AppendLine($"- {nameof(XPackSecurityEnabled)} = " + SkipSettingPasswords);
+			sb.AppendLine($"- {nameof(XPackSecurityEnabled)} = " + XPackSecurityEnabled);
 			sb.AppendLine($"- {nameof(BootstrapPassword)} = " + !string.IsNullOrWhiteSpace(BootstrapPassword));
 			sb.AppendLine($"- {nameof(ElasticUserPassword)} = " + !string.IsNullOrWhiteSpace(ElasticUserPassword));
 			sb.AppendLine($"- {nameof(KibanaUserPassword)} = " + !string.IsNullOrWhiteSpace(KibanaUserPassword));

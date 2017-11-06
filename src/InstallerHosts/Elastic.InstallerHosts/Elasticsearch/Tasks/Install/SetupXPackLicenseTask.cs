@@ -1,5 +1,7 @@
 using System;
+using System.Globalization;
 using System.IO.Abstractions;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -35,6 +37,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 				{
 					if (!string.IsNullOrEmpty(password))
 					{
+						this.Session.Log("Using Bootstrap password to apply license");
 						var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"elastic:{password}"));
 						message.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 					}
@@ -42,7 +45,17 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 					var license = this.FileSystem.File.ReadAllText(this.InstallationModel.XPackModel.XPackLicenseFile);			
 					message.Content = new StringContent(license, Encoding.UTF8, "application/json");
 					var response = client.SendAsync(message).Result;
-					response.EnsureSuccessStatusCode();
+					if (!response.IsSuccessStatusCode)
+					{
+						if (response.Content != null)
+						{
+							var responseContent = response.Content.ReadAsStringAsync().Result;
+							response.Content.Dispose();
+							this.Session.Log(responseContent);
+						}
+
+						throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}).");
+					}
 				}
 				this.Session.SendProgress(200, "Updated license");
 			}

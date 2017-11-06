@@ -75,9 +75,17 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				.Subscribe(file => this.BrowseForFile(ViewModel.XPackLicenseFile, result => ViewModel.XPackLicenseFile = result));
 
 			this.ViewModel.WhenAnyValue(vm => vm.SelfGenerateLicense)
-				.Subscribe(generate => ViewModel.XPackLicense = generate 
-					? (XPackLicenseMode)Enum.Parse(typeof(XPackLicenseMode), ((ComboBoxItem)this.LicenseDropDown.SelectedItem).Content.ToString()) 
-					: (XPackLicenseMode?)null);
+				.Subscribe(generate =>
+				{
+					ViewModel.XPackLicense = generate
+						? this.LicenseDropDown.SelectedItem != null
+							? (XPackLicenseMode) Enum.Parse(typeof(XPackLicenseMode),
+								((ComboBoxItem) this.LicenseDropDown.SelectedItem).Content.ToString())
+							: XPackModel.DefaultXPackLicenseMode
+						: (XPackLicenseMode?) null;
+
+					this.CreateLicenseGrid.Visibility = generate ? Visible : Collapsed;
+				});
 
 			this.ViewModel.WhenAnyValue(
 					vm => vm.XPackLicense,
@@ -120,10 +128,10 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				{
 					this.ManualLicenseGrid.Visibility = t.Item1 && !t.Item2 ? Visible : Collapsed;
 					this.UploadLicenseGrid.Visibility = t.Item1 && t.Item2 ? Visible : Collapsed;
-				});
 
-			this.ViewModel.WhenAnyValue(vm => vm.SelfGenerateLicense)
-				.Subscribe(u => this.CreateLicenseGrid.Visibility = u ? Visible : Collapsed);
+					if (!t.Item1)
+						ViewModel.XPackLicenseFile = null;
+				});
 		}
 
 		protected override void UpdateValidState(bool isValid, IList<ValidationFailure> failures)
