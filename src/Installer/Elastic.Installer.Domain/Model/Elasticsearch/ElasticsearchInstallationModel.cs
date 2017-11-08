@@ -18,6 +18,7 @@ using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Model.Base;
 using Elastic.Installer.Domain.Model.Base.Plugins;
 using Elastic.Installer.Domain.Model.Base.Service;
+using Elastic.Installer.Domain.Model.Elasticsearch.Certificates;
 using Elastic.Installer.Domain.Model.Elasticsearch.Closing;
 using Elastic.Installer.Domain.Model.Elasticsearch.Config;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
@@ -42,6 +43,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 		public ConfigurationModel ConfigurationModel { get; }
 		public PluginsModel PluginsModel { get; }
 		public XPackModel XPackModel { get; }
+		public CertificatesModel CertificatesModel { get; }
 		public ServiceModel ServiceModel { get; }
 		public ClosingModel ClosingModel { get; }
 
@@ -97,11 +99,14 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 
 			this.XPackModel = new XPackModel(versionConfig, observeXPackEnabled, installServiceAndStartAfterInstall);
 
-//			this.WhenAnyValue(vm => vm.XPackModel.XPackLicense)
-//				.Subscribe(l =>
-//				{
-//					this.PluginsModel.ChangeXPackSelection(l.HasValue);
-//				});
+			var xPackSecurityEnabled = this.WhenAnyValue(
+				vm => vm.PluginsModel.XPackEnabled, 
+				vm => vm.XPackModel.XPackSecurityEnabled,
+				vm => vm.XPackModel.XPackLicense,
+				vm => vm.XPackModel.UploadedXPackLicense)
+				.Select(t => t.Item1 && ((t.Item2 && t.Item3 == XPackLicenseMode.Trial) || (!string.IsNullOrEmpty(t.Item4) &&  t.Item4 != "basic")));
+
+			this.CertificatesModel = new CertificatesModel(xPackSecurityEnabled);
 
 			var isUpgrade = versionConfig.InstallationDirection == InstallationDirection.Up;
 			var observeHost = this.WhenAnyValue(vm => vm.ConfigurationModel.NetworkHost, vm => vm.ConfigurationModel.HttpPort,
@@ -122,6 +127,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 				this.ConfigurationModel,
 				this.PluginsModel,
 				this.XPackModel,
+				this.CertificatesModel,
 				this.ClosingModel
 			});
 			this.AllSteps.ChangeTrackingEnabled = true;
@@ -132,10 +138,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 				vm => vm.ConfigurationModel.ValidationFailures,
 				vm => vm.PluginsModel.ValidationFailures,
 				vm => vm.XPackModel.ValidationFailures,
+				vm => vm.CertificatesModel.ValidationFailures,
 				vm => vm.ServiceModel.ValidationFailures,
 				vm => vm.ClosingModel.ValidationFailures,
 				vm => vm.TabSelectedIndex,
-				(welcome, locations, configuration, plugins, xpack, service, install, index) =>
+				(welcome, locations, configuration, plugins, xpack, certificates, service, install, index) =>
 				{
 					var firstInvalidScreen = this.Steps.FirstOrDefault(s => !s.IsValid) ?? this.ClosingModel;
 					return firstInvalidScreen;
@@ -157,9 +164,10 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 					vm => vm.ConfigurationModel.IsValid,
 					vm => vm.PluginsModel.IsValid,
 					vm => vm.XPackModel.IsValid,
+					vm => vm.CertificatesModel.IsValid,
 					vm => vm.ServiceModel.IsValid,
 					vm => vm.ClosingModel.IsValid,
-					(welcome, locations, configuration, plugins, xpack, service, install) =>
+					(welcome, locations, configuration, plugins, xpack, certificates, service, install) =>
 					{
                         var count = this.Steps.Count;
 						var steps = this.Steps.Select(s => s.GetType().Name).ToList();
@@ -279,7 +287,6 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 			this.JavaMisconfigured = JavaConfiguration.JavaMisconfigured;
 			this.Using32BitJava = JavaConfiguration.Using32BitJava;
 			this.BadElasticsearchYamlFile = _yamlConfiguration.FoundButNotValid;
-
 			this.MsiLogFileLocation = this.Session.Get<string>("MsiLogFileLocation");
 		}
 
@@ -332,6 +339,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 			sb.AppendLine(this.ConfigurationModel.ToString());
 			sb.AppendLine(this.PluginsModel.ToString());
 			sb.AppendLine(this.XPackModel.ToString());
+			sb.AppendLine(this.CertificatesModel.ToString());
 			return sb.ToString();
 		}
 

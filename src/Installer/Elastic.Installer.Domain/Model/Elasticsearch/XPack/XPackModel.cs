@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Elastic.Installer.Domain.Configuration.Wix;
 using Elastic.Installer.Domain.Model.Base;
 using ReactiveUI;
@@ -61,10 +63,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 			this.BootstrapPassword = null;
 			this.XPackSecurityEnabled = true;
 			this.SelfGenerateLicense = true;
+			this.XPackLicense = DefaultXPackLicenseMode;
 		}
 
 		public SemVersion CurrentVersion { get; }
-		
+
 		string elasticUserPassword;
 		[Argument(nameof(ElasticUserPassword), IsHidden = true)]
 		public string ElasticUserPassword

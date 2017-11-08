@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Elastic.Installer.Domain.Model.Base;
 using Elastic.Installer.Domain.Model.Base.Service;
+using Elastic.Installer.Domain.Model.Elasticsearch.Certificates;
 using Elastic.Installer.Domain.Model.Elasticsearch.Closing;
 using Elastic.Installer.Domain.Model.Elasticsearch.Config;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
@@ -23,6 +24,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch
 			typeof(ServiceModel),
 			typeof(PluginsModel),
 			typeof(XPackModel),
+			typeof(CertificatesModel),
 			typeof(ClosingModel)
 		};
 

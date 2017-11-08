@@ -111,6 +111,9 @@
     <Content Include="Resources\WindowsIcons-license.txt">
       <Paket>True</Paket>
     </Content>
+    <Compile Include="Elasticsearch\Steps\CertificatesView.xaml.cs">
+      <DependentUpon>CertificatesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EmbeddedUI.cs" />
     <Compile Include="Kibana\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -180,6 +183,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Elasticsearch\Steps\CertificatesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Elasticsearch\Steps\XPackView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

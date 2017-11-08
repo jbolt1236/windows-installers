@@ -48,7 +48,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.XPack
 				.When(m => m.UploadLicenseFile)
 				.Must(File.Exists)
 				.WithMessage(XPackLicenseFileDoesNotExist)
-				.When(m => !string.IsNullOrEmpty(m.XPackLicenseFile) && m.UploadLicenseFile);
+				.When(m => !string.IsNullOrEmpty(m.XPackLicenseFile));
 		}
 
 		private static bool NeedsPassword(XPackModel m) => m.NeedsPasswords;

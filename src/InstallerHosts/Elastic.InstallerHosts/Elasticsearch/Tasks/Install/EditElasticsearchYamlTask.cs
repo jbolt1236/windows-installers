@@ -41,11 +41,23 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		{
 			this.Session.SendProgress(1000, "updating elasticsearch.yml with values from x-pack model if needed");
 			var xPack = this.InstallationModel.XPackModel;
+			var certs = this.InstallationModel.CertificatesModel;
 			if (!xPack.IsRelevant)
 			{
 				//make sure we unset all xpack related settings because they might prevent a node from starting
 				settings.XPackLicenseSelfGeneratedType = null;
 				settings.XPackSecurityEnabled = null;
+
+				settings.XPackSecurityTransportEnabled = null;
+				settings.XPackSecurityTransportSslCertificate = null;
+				settings.XPackSecurityTransportSslKey = null;
+				settings.XPackSecurityTransportSslCertificateAuthorities = null;
+
+				settings.XPackSecurityHttpEnabled = null;
+				settings.XPackSecurityHttpSslCertificate = null;
+				settings.XPackSecurityHttpSslKey = null;
+				settings.XPackSecurityHttpSslCertificateAuthorities = null;
+
 				var xPackKeys = settings.Keys.Where(k => k.StartsWith("xpack.")).ToList();
 				foreach (var key in xPackKeys)
 					settings.Remove(key);
@@ -57,6 +69,17 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 					: null;
 
 				settings.XPackSecurityEnabled = !xPack.XPackSecurityEnabled ? false : (bool?) null;
+				settings.XPackSecurityTransportEnabled = 
+					(certs.GenerateTransportCert || !string.IsNullOrEmpty(certs.TransportCertFile));
+				settings.XPackSecurityTransportSslCertificate = certs.TransportCertFile;
+				settings.XPackSecurityTransportSslKey = certs.TransportKeyFile;
+				settings.XPackSecurityTransportSslCertificateAuthorities = certs.TransportCAFiles.ToArray();
+
+				settings.XPackSecurityHttpEnabled = 
+					(certs.GenerateHttpCert || !string.IsNullOrEmpty(certs.HttpCertFile));
+				settings.XPackSecurityHttpSslCertificate = certs.HttpCertFile;
+				settings.XPackSecurityHttpSslKey = certs.HttpKeyFile;
+				settings.XPackSecurityHttpSslCertificateAuthorities = certs.HttpCAFiles.ToArray();
 			}
 		}
 

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -15,7 +13,6 @@ using FluentValidation.Results;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ReactiveUI;
 using static System.Windows.Visibility;
-using EventsMixin = System.Windows.Controls.Primitives.EventsMixin;
 
 namespace Elastic.Installer.UI.Elasticsearch.Steps
 {
@@ -98,10 +95,12 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				)
 				.Subscribe(t =>
 				{
+	
+					var xPackLicense = t.Item1;
 					var uploadLicenseFile = t.Item6;
 					var uploadedXPackLicense = t.Item7;
-					var uploadedNonBasicLicense = (uploadLicenseFile && !string.IsNullOrEmpty(uploadedXPackLicense) && uploadedXPackLicense != "basic");
-					var selfGenerateTrialLicense = (t.Item1 == XPackLicenseMode.Trial && t.Item5);
+					var uploadedNonBasicLicense = uploadLicenseFile && !string.IsNullOrEmpty(uploadedXPackLicense) && uploadedXPackLicense != "basic";
+					var selfGenerateTrialLicense = xPackLicense == XPackLicenseMode.Trial && t.Item5;
 					var isNonBasicLicense = selfGenerateTrialLicense || uploadedNonBasicLicense;
 					var securityEnabled = t.Item3;
 					var installServiceAndStartAfterInstall = t.Item4;
@@ -127,7 +126,6 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 					this.SkipPasswordGenerationCheckBox.Visibility = isNonBasicLicense && securityEnabled ? Visible : Collapsed;
 					this.SkipPasswordGenerationCheckBox.IsEnabled = securityEnabled && installServiceAndStartAfterInstall;
 
-					this.CertificatesGrid.Visibility = securityEnabled && uploadedNonBasicLicense ? Visible : Collapsed;
 					this.ManualLicenseGrid.Visibility = uploadLicenseFile && !installServiceAndStartAfterInstall ? Visible : Collapsed;
 					this.UploadLicenseGrid.Visibility = uploadLicenseFile && installServiceAndStartAfterInstall ? Visible : Collapsed;
 					this.WhichLicenseGrid.Visibility = uploadLicenseFile ? Collapsed : Visible;

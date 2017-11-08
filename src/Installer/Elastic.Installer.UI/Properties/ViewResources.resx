@@ -896,22 +896,43 @@ Alternatively, you may choose to not install Kibana as a service and run it manu
     <value>https://www.elastic.co/guide/en/x-pack/{0}/installing-license.html</value>
     <comment>{0} = major minor version</comment>
   </data>
-  <data name="XPackView_CertificateAuthoritiesLabel" xml:space="preserve">
+  <data name="CertificatesView_TransportCertAuthoritiesLabel" xml:space="preserve">
     <value>Certificate Authorities</value>
   </data>
-  <data name="XPackView_CertificateHeaderLabel" xml:space="preserve">
-    <value>Certificates</value>
+  <data name="CertificatesView_TransportCertHeaderLabel" xml:space="preserve">
+    <value>Transport Layer</value>
   </data>
-  <data name="XPackView_CertificateLabel" xml:space="preserve">
+  <data name="CertificatesView_TransportCertLabel" xml:space="preserve">
     <value>Certificate</value>
   </data>
-  <data name="XPackView_EnableHttpSecurity" xml:space="preserve">
-    <value>Enable TLS on HTTP layer</value>
+  <data name="CertificatesView_GenerateTransportCert" xml:space="preserve">
+    <value>Generate Transport Layer Certificate</value>
   </data>
-  <data name="XPackView_EnableTransportSecurity" xml:space="preserve">
-    <value>Enable TLS on transport layer</value>
+  <data name="CertificatesView_GenerateHttpCert" xml:space="preserve">
+    <value>Generate Http Layer Certificate</value>
   </data>
-  <data name="XPackView_KeyLabel" xml:space="preserve">
+  <data name="CertificatesView_TransportKeyLabel" xml:space="preserve">
     <value>Key</value>
+  </data>
+  <data name="CertificatesView_Elasticsearch_Help" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CertificatesView_Elasticsearch_Help_Header" xml:space="preserve">
+    <value>Certificates Help</value>
+  </data>
+  <data name="CertificatesView_HttpCertAuthoritiesLabel" xml:space="preserve">
+    <value>Certificate Authorities</value>
+  </data>
+  <data name="CertificatesView_HttpCertHeaderLabel" xml:space="preserve">
+    <value>HTTP Layer</value>
+  </data>
+  <data name="CertificatesView_HttpCertLabel" xml:space="preserve">
+    <value>Certificate</value>
+  </data>
+  <data name="CertificatesView_HttpKeyLabel" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="CertificatesView_OptionalLabel" xml:space="preserve">
+    <value>(Optional)</value>
   </data>
 </root>

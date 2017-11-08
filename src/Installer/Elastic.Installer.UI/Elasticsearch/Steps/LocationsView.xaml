@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:controls="clr-namespace:Elastic.Installer.UI.Controls"
+             xmlns:controls="clr-namespace:Elastic.Installer.UI.Controls"
              xmlns:resx="clr-namespace:Elastic.Installer.UI.Properties"
              xmlns:steps="clr-namespace:Elastic.Installer.UI.Elasticsearch.Steps"
              xmlns:locations="clr-namespace:Elastic.Installer.Domain.Model.Elasticsearch.Locations;assembly=Elastic.Installer.Domain"

@@ -73,5 +73,37 @@ namespace Elastic.Configuration.FileBased.Yaml
 		[YamlMember("xpack.security.enabled")]
 		[DefaultValue(null)]
 		public bool? XPackSecurityEnabled { get; set; }
+
+		[YamlMember("xpack.security.transport.ssl.enabled")]
+		[DefaultValue(null)]
+		public bool? XPackSecurityTransportEnabled { get; set; }
+
+		[YamlMember("xpack.security.transport.ssl.certificate")]
+		[DefaultValue(null)]
+		public string XPackSecurityTransportSslCertificate { get; set; }
+
+		[YamlMember("xpack.security.transport.ssl.key")]
+		[DefaultValue(null)]
+		public string XPackSecurityTransportSslKey { get; set; }
+
+		[YamlMember("xpack.security.transport.ssl.certificate_authorities")]
+		[DefaultValue(null)]
+		public string[] XPackSecurityTransportSslCertificateAuthorities { get; set; }
+
+		[YamlMember("xpack.security.http.ssl.enabled")]
+		[DefaultValue(null)]
+		public bool? XPackSecurityHttpEnabled { get; set; }
+
+		[YamlMember("xpack.security.http.ssl.certificate")]
+		[DefaultValue(null)]
+		public string XPackSecurityHttpSslCertificate { get; set; }
+
+		[YamlMember("xpack.security.http.ssl.key")]
+		[DefaultValue(null)]
+		public string XPackSecurityHttpSslKey { get; set; }
+
+		[YamlMember("xpack.security.http.ssl.certificate_authorities")]
+		[DefaultValue(null)]
+		public string[] XPackSecurityHttpSslCertificateAuthorities { get; set; }
 	}
 }

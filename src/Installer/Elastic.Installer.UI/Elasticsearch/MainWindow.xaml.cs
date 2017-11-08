@@ -29,6 +29,7 @@ using Elastic.Installer.Domain.Model.Base;
 using Elastic.Installer.Domain.Model.Base.Closing;
 using Elastic.Installer.Domain.Model.Base.Service;
 using Elastic.Installer.Domain.Model.Elasticsearch;
+using Elastic.Installer.Domain.Model.Elasticsearch.Certificates;
 using Elastic.Installer.Domain.Model.Elasticsearch.Closing;
 using Elastic.Installer.Domain.Model.Elasticsearch.Config;
 using Elastic.Installer.Domain.Model.Elasticsearch.Locations;
@@ -135,6 +136,8 @@ namespace Elastic.Installer.UI.Elasticsearch
 				ViewResources.PluginsView_Elasticsearch_Help_Header, ViewResources.PluginsView_Elasticsearch_Help) },
 			{ typeof(XPackModel), (m, s) => Step(s, new XPackView { ViewModel = m as XPackModel }, 
 				ViewResources.XPackView_Elasticsearch_Help_Header, ViewResources.XPackView_Elasticsearch_Help) },
+			{ typeof(CertificatesModel), (m, s) => Step(s, new CertificatesView { ViewModel = m as CertificatesModel }, 
+				ViewResources.CertificatesView_Elasticsearch_Help_Header, ViewResources.CertificatesView_Elasticsearch_Help) },
 			{ typeof(ClosingModel), (m, s) => Step(s, new ClosingView { ViewModel = m as ClosingModel }, null, null) },
 		};
 		private readonly IDictionary<Type, MetroTabItem> CachedTabs = new Dictionary<Type, MetroTabItem>();

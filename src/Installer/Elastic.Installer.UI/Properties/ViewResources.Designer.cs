@@ -61,6 +61,123 @@ namespace Elastic.Installer.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string CertificatesView_Elasticsearch_Help {
+            get {
+                return ResourceManager.GetString("CertificatesView_Elasticsearch_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificates Help.
+        /// </summary>
+        public static string CertificatesView_Elasticsearch_Help_Header {
+            get {
+                return ResourceManager.GetString("CertificatesView_Elasticsearch_Help_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate Http Layer Certificate.
+        /// </summary>
+        public static string CertificatesView_GenerateHttpCert {
+            get {
+                return ResourceManager.GetString("CertificatesView_GenerateHttpCert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate Transport Layer Certificate.
+        /// </summary>
+        public static string CertificatesView_GenerateTransportCert {
+            get {
+                return ResourceManager.GetString("CertificatesView_GenerateTransportCert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificate Authorities.
+        /// </summary>
+        public static string CertificatesView_HttpCertAuthoritiesLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_HttpCertAuthoritiesLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HTTP Layer.
+        /// </summary>
+        public static string CertificatesView_HttpCertHeaderLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_HttpCertHeaderLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificate.
+        /// </summary>
+        public static string CertificatesView_HttpCertLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_HttpCertLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key.
+        /// </summary>
+        public static string CertificatesView_HttpKeyLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_HttpKeyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Optional).
+        /// </summary>
+        public static string CertificatesView_OptionalLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_OptionalLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificate Authorities.
+        /// </summary>
+        public static string CertificatesView_TransportCertAuthoritiesLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_TransportCertAuthoritiesLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transport Layer.
+        /// </summary>
+        public static string CertificatesView_TransportCertHeaderLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_TransportCertHeaderLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Certificate.
+        /// </summary>
+        public static string CertificatesView_TransportCertLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_TransportCertLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Key.
+        /// </summary>
+        public static string CertificatesView_TransportKeyLabel {
+            get {
+                return ResourceManager.GetString("CertificatesView_TransportKeyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.elastic.co/guide/en/elasticsearch/client/index.html.
         /// </summary>
         public static string ClosingView_Elasticsearch_OpenFindYourClient {
@@ -433,7 +550,7 @@ namespace Elastic.Installer.UI.Properties {
         ///   Looks up a localized string similar to This step allows you to specify some settings found in the [b]elasticsearch.yml[/b] and [b]jvm.options[/b] files located in the [b]config[/b] folder.  We&apos;re only exposing common settings here that you almost always want to change.  Any options not shown here must be set manually in the files after the installation has been completed.
         ///
         ///
-        ///[b]Cluster name[/b]: The name of the cluster this Elasticsearch node should be a part of.  The cluster name is used to discover and auto-join other nodes.  It is important [rest of string was truncated]&quot;;.
+        ///[b]Cluster name[/b]: The name of the cluster this Elasticsearch node should be a part of.  The cluster name is used to discover and auto-join other nodes.  It is important no [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ConfigurationView_Elasticsearch_Help {
             get {
@@ -485,7 +602,7 @@ namespace Elastic.Installer.UI.Properties {
         ///
         ///[b]Server name[/b]: A human-readable display name that identifies this Kibana instance.
         ///
-        ///[b]Base Path[/b]: Enables you to specify a pa [rest of string was truncated]&quot;;.
+        ///[b]Base Path[/b]: Enables you to specify a path to m [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ConfigurationView_Kibana_Help {
             get {
@@ -762,7 +879,7 @@ namespace Elastic.Installer.UI.Properties {
         ///
         ///[b]Index Name[/b]: Kibana uses an index in Elasticsearch to store saved searches, visualizations and dashboards. Kibana creates a new index if the index doesn’t already exist.
         ///
-        ///[b]Username[/b] and [b]Password[/b]: If your Elasticsearch is protected with basic authentication, these settings provide the username and password that t [rest of string was truncated]&quot;;.
+        ///[b]Username[/b] and [b]Password[/b]: If your Elasticsearch is protected with basic authentication, these settings provide the username and password that the Kiba [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ConnectingView_Kibana_Help {
             get {
@@ -1060,7 +1177,7 @@ namespace Elastic.Installer.UI.Properties {
         ///
         ///[b]Config[/b]: The directory where Elasticsearch will store its configuration files.
         ///
-        ///It is a best practice to keep your logs, config, and data directories separa [rest of string was truncated]&quot;;.
+        ///It is a best practice to keep your logs, config, and data directories separate from yo [rest of string was truncated]&quot;;.
         /// </summary>
         public static string LocationsView_Elasticsearch_Help {
             get {
@@ -1406,7 +1523,7 @@ namespace Elastic.Installer.UI.Properties {
         ///
         ///We&apos;ve only listed the official Elasticsearch plugins here, but there are many more community plugins that can be installed manually. Plugins are downloaded at installation time.
         ///
-        ///It is common for many companies to set up a proxy through which resources will be downloaded from the internet. As such, you may need to spe [rest of string was truncated]&quot;;.
+        ///It is common for many companies to set up a proxy through which resources will be downloaded from the internet. As such, you may need to specify [rest of string was truncated]&quot;;.
         /// </summary>
         public static string PluginsView_Elasticsearch_Help {
             get {
@@ -1820,33 +1937,6 @@ namespace Elastic.Installer.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Certificate Authorities.
-        /// </summary>
-        public static string XPackView_CertificateAuthoritiesLabel {
-            get {
-                return ResourceManager.GetString("XPackView_CertificateAuthoritiesLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Certificates.
-        /// </summary>
-        public static string XPackView_CertificateHeaderLabel {
-            get {
-                return ResourceManager.GetString("XPackView_CertificateHeaderLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Certificate.
-        /// </summary>
-        public static string XPackView_CertificateLabel {
-            get {
-                return ResourceManager.GetString("XPackView_CertificateLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Which license is for me?.
         /// </summary>
         public static string XPackView_ChooseYourLicense {
@@ -1873,7 +1963,7 @@ namespace Elastic.Installer.UI.Properties {
         ///
         ///    A [b]Trial license[/b] provides access to all of the X-Pack Enterprise features, including Machine Learning, Graph, Alerting, Security, amongst others.
         ///
-        ///    Both Basic and Trial licenses applied are valid for 30 days. You can register to receive a free 1 year Basic  [rest of string was truncated]&quot;;.
+        ///    Both Basic and Trial licenses applied are valid for 30 days. You can register to receive a free 1 year Basic license  [rest of string was truncated]&quot;;.
         /// </summary>
         public static string XPackView_Elasticsearch_Help {
             get {
@@ -1900,38 +1990,11 @@ namespace Elastic.Installer.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable TLS on HTTP layer.
-        /// </summary>
-        public static string XPackView_EnableHttpSecurity {
-            get {
-                return ResourceManager.GetString("XPackView_EnableHttpSecurity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable TLS on transport layer.
-        /// </summary>
-        public static string XPackView_EnableTransportSecurity {
-            get {
-                return ResourceManager.GetString("XPackView_EnableTransportSecurity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable X-Pack Security.
         /// </summary>
         public static string XPackView_EnableXPackSecurity {
             get {
                 return ResourceManager.GetString("XPackView_EnableXPackSecurity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Key.
-        /// </summary>
-        public static string XPackView_KeyLabel {
-            get {
-                return ResourceManager.GetString("XPackView_KeyLabel", resourceCulture);
             }
         }
         
