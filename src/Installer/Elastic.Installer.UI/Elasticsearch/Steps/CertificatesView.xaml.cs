@@ -10,6 +10,7 @@ using Elastic.Installer.UI.Controls;
 using FluentValidation.Results;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ReactiveUI;
+using static System.Windows.Visibility;
 
 namespace Elastic.Installer.UI.Elasticsearch.Steps
 {
@@ -97,6 +98,12 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 					"Key (PEM encoded)",
 					"*.key",
 					result => ViewModel.HttpKeyFile = result));
+
+			this.WhenAnyValue(m => m.ViewModel.GenerateTransportCert)
+				.Subscribe(g => this.TransportCertGrid.Visibility = g ? Collapsed : Visible);
+
+			this.WhenAnyValue(m => m.ViewModel.GenerateHttpCert)
+				.Subscribe(g => this.HttpCertGrid.Visibility = g ? Collapsed : Visible);
 		}
 
 		protected override void UpdateValidState(bool isValid, IList<ValidationFailure> failures)

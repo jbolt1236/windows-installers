@@ -49,11 +49,13 @@
     <Compile Include="Elasticsearch\Tasks\Install\EditJvmOptionsTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\ElasticsearchInstallationTaskBase.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\ElasticsearchRunningInstallationTaskBase.cs" />
+    <Compile Include="Elasticsearch\Tasks\Install\InstallCertsTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\InstallPluginsTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\InstallServiceTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\PreserveInstallTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\SetBootstrapPasswordPropertyTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\SetBootstrapPasswordTask.cs" />
+    <Compile Include="Elasticsearch\Tasks\Install\SetCertsPropertyTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\SetEnvironmentVariablesTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\SetupXPackLicenseTask.cs" />
     <Compile Include="Elasticsearch\Tasks\Install\SetupXPackPasswordsTask.cs" />

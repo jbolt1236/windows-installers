@@ -29,11 +29,7 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="40"/>
         <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
         <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -43,48 +39,67 @@
 
       <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="TransportHeaderLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportCertHeaderLabel}" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
 
-      <CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="GenerateTransportCertificateCheckBox" Content="{x:Static resx:ViewResources.CertificatesView_GenerateTransportCert}" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top"/>
+      <CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="GenerateTransportCertificateCheckBox" Content="{x:Static resx:ViewResources.CertificatesView_GenerateTransportCert}" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
 
-      <Label Grid.Row="2" Grid.Column="0" x:Name="TransportCertLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportCertLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
-      <TextBox x:Name="TransportCertTextBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
-      <Button x:Name="TransportCertBrowseButton" Grid.Row="2" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
-
-      <Label Grid.Row="3" Grid.Column="0" x:Name="TransportKeyLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportKeyLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
-      <TextBox x:Name="TransportKeyTextBox" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
-      <Button x:Name="TransportKeyBrowseButton" Grid.Row="3" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
-
-      <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TransportCertAuthoritiesLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportCertAuthoritiesLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-      <ListBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TransportCertAuthoritiesListBox" 
-               Margin="5, 0, 0, 0"
-               VerticalContentAlignment="Stretch" 
-               HorizontalContentAlignment="Stretch" BorderBrush="{StaticResource TextBoxBorderBrush}" BorderThickness="2">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding}" />
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-      <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3">
+      <Grid x:Name="TransportCertGrid" Grid.Row="2" Grid.Column="0" ColumnSpan="3">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="35"/>
-          <ColumnDefinition Width="45"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="80" />
         </Grid.ColumnDefinitions>
-        <Button x:Name="AddTransportCertAuthorityButton" Grid.Column="0" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
-          <Rectangle Width="12" Height="12">
-            <Rectangle.Fill>
-              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
-            </Rectangle.Fill>
-          </Rectangle>
-        </Button>
-        <Button x:Name="RemoveTransportCertAuthorityButton" Grid.Column="1" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
-          <Rectangle Width="12" Height="2">
-            <Rectangle.Fill>
-              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_minus}" />
-            </Rectangle.Fill>
-          </Rectangle>
-        </Button>
+
+        <Label Grid.Row="0" Grid.Column="0" x:Name="TransportCertLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportCertLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+        <TextBox x:Name="TransportCertTextBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+        <Button x:Name="TransportCertBrowseButton" Grid.Row="0" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+
+        <Label Grid.Row="1" Grid.Column="0" x:Name="TransportKeyLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportKeyLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+        <TextBox x:Name="TransportKeyTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+        <Button x:Name="TransportKeyBrowseButton" Grid.Row="1" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+
+        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TransportCertAuthoritiesLabel" Content="{x:Static resx:ViewResources.CertificatesView_TransportCertAuthoritiesLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <ListBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="TransportCertAuthoritiesListBox" 
+                 Margin="5, 0, 0, 0"
+                 VerticalContentAlignment="Stretch" 
+                 HorizontalContentAlignment="Stretch" BorderBrush="{StaticResource TextBoxBorderBrush}" BorderThickness="2">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid x:Name="TransportCertAuthorityControlGrid" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="45"/>
+          </Grid.ColumnDefinitions>
+          <Button x:Name="AddTransportCertAuthorityButton" Grid.Column="0" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+            <Rectangle Width="12" Height="12">
+              <Rectangle.Fill>
+                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
+              </Rectangle.Fill>
+            </Rectangle>
+          </Button>
+          <Button x:Name="RemoveTransportCertAuthorityButton" Grid.Column="1" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+            <Rectangle Width="12" Height="2">
+              <Rectangle.Fill>
+                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_minus}" />
+              </Rectangle.Fill>
+            </Rectangle>
+          </Button>
+        </Grid>
+
+
 
       </Grid>
+      
+
     </Grid>
 
 
@@ -92,11 +107,7 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="40"/>
         <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
-        <RowDefinition Height="45"/>
         <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -108,47 +119,61 @@
       <Label Grid.Row="0" Grid.Column="2" Content="{x:Static resx:ViewResources.CertificatesView_OptionalLabel}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{DynamicResource DescriptionHeaderDisabledStyle}" />
 
 
-      <CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="GenerateHttpCertificateCheckBox" Content="{x:Static resx:ViewResources.CertificatesView_GenerateHttpCert}" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top"/>
+      <CheckBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="GenerateHttpCertificateCheckBox" Content="{x:Static resx:ViewResources.CertificatesView_GenerateHttpCert}" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
 
-      <Label Grid.Row="2" Grid.Column="0" x:Name="HttpCertLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpCertLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
-      <TextBox x:Name="HttpCertTextBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
-      <Button x:Name="HttpCertBrowseButton" Grid.Row="2" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
-
-      <Label Grid.Row="3" Grid.Column="0" x:Name="HttpKeyLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpKeyLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
-      <TextBox x:Name="HttpKeyTextBox" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
-      <Button x:Name="HttpKeyBrowseButton" Grid.Row="3" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
-
-      <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" x:Name="HttpCertAuthoritiesLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpCertAuthoritiesLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
-      <ListBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" x:Name="HttpCertAuthoritiesListBox" 
-               Margin="5, 0, 0, 0"
-               VerticalContentAlignment="Stretch" 
-               HorizontalContentAlignment="Stretch" BorderBrush="{StaticResource TextBoxBorderBrush}" BorderThickness="2">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding}" />
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-      <Grid Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3">
+      <Grid x:Name="HttpCertGrid" Grid.Row="2" ColumnSpan="3">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="45"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="35"/>
-          <ColumnDefinition Width="45"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="80" />
         </Grid.ColumnDefinitions>
-        <Button x:Name="AddHttpCertAuthorityButton" Grid.Column="0" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
-          <Rectangle Width="12" Height="12">
-            <Rectangle.Fill>
-              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
-            </Rectangle.Fill>
-          </Rectangle>
-        </Button>
-        <Button x:Name="RemoveHttpCertAuthorityButton" Grid.Column="1" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
-          <Rectangle Width="12" Height="2">
-            <Rectangle.Fill>
-              <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_minus}" />
-            </Rectangle.Fill>
-          </Rectangle>
-        </Button>
 
+        <Label Grid.Row="0" Grid.Column="0" x:Name="HttpCertLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpCertLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+        <TextBox x:Name="HttpCertTextBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+        <Button x:Name="HttpCertBrowseButton" Grid.Row="0" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+
+        <Label Grid.Row="1" Grid.Column="0" x:Name="HttpKeyLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpKeyLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0" />
+        <TextBox x:Name="HttpKeyTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" />
+        <Button x:Name="HttpKeyBrowseButton" Grid.Row="1" Grid.Column="2" Content="{x:Static resx:ViewResources.LocationsView_InstallDirectoryBrowseButton}" Height="30" VerticalAlignment="Center" />
+
+        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" x:Name="HttpCertAuthoritiesLabel" Content="{x:Static resx:ViewResources.CertificatesView_HttpCertAuthoritiesLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <ListBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="HttpCertAuthoritiesListBox" 
+                 Margin="5, 0, 0, 0"
+                 VerticalContentAlignment="Stretch" 
+                 HorizontalContentAlignment="Stretch" BorderBrush="{StaticResource TextBoxBorderBrush}" BorderThickness="2">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="45"/>
+          </Grid.ColumnDefinitions>
+          <Button x:Name="AddHttpCertAuthorityButton" Grid.Column="0" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+            <Rectangle Width="12" Height="12">
+              <Rectangle.Fill>
+                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}" />
+              </Rectangle.Fill>
+            </Rectangle>
+          </Button>
+          <Button x:Name="RemoveHttpCertAuthorityButton" Grid.Column="1" Width="36" Height="36" HorizontalAlignment="Left" FontWeight="Normal" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}">
+            <Rectangle Width="12" Height="2">
+              <Rectangle.Fill>
+                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_minus}" />
+              </Rectangle.Fill>
+            </Rectangle>
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
 

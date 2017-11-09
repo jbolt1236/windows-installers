@@ -79,7 +79,7 @@ namespace Elastic.Installer.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate Http Layer Certificate.
+        ///   Looks up a localized string similar to Generate TLS Certificate for HTTP layer.
         /// </summary>
         public static string CertificatesView_GenerateHttpCert {
             get {
@@ -88,7 +88,7 @@ namespace Elastic.Installer.UI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generate Transport Layer Certificate.
+        ///   Looks up a localized string similar to Generate TLS Certificate for Transport layer.
         /// </summary>
         public static string CertificatesView_GenerateTransportCert {
             get {

@@ -11,7 +11,9 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Certificates
 			RuleFor(c => c.TransportCertFile)
 				.NotEmpty()
 				.WithMessage("Transport Certificate is required")
-				.When(m => !m.GenerateTransportCert)
+				.When(m => !m.GenerateTransportCert);
+
+			RuleFor(c => c.TransportCertFile)
 				.Must(File.Exists)
 				.WithMessage("Transport Certificate must exist")
 				.When(m => !string.IsNullOrEmpty(m.TransportCertFile));
@@ -19,7 +21,9 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Certificates
 			RuleFor(c => c.TransportKeyFile)
 				.NotEmpty()
 				.WithMessage("Transport Key is required")
-				.When(m => !m.GenerateTransportCert)
+				.When(m => !m.GenerateTransportCert);
+
+			RuleFor(c => c.TransportKeyFile)
 				.Must(File.Exists)
 				.WithMessage("Transport Key must exist")
 				.When(m => !string.IsNullOrEmpty(m.TransportKeyFile));
@@ -33,6 +37,31 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Certificates
 				.Must(File.Exists)
 				.WithMessage("Transport Certificate Authority must exist")
 				.When(m => m.TransportCAFiles.Any());
+
+			RuleFor(c => c.HttpCertFile)
+				.Must(File.Exists)
+				.WithMessage("HTTP Certificate must exist")
+				.When(m => !string.IsNullOrEmpty(m.HttpCertFile));
+
+			RuleFor(c => c.HttpKeyFile)
+				.NotEmpty()
+				.WithMessage("HTTP Key is required")
+				.When(m => !string.IsNullOrEmpty(m.HttpKeyFile));
+
+			RuleFor(c => c.HttpKeyFile)
+				.Must(File.Exists)
+				.WithMessage("HTTP Key must exist")
+				.When(m => !string.IsNullOrEmpty(m.HttpKeyFile));
+
+			RuleFor(c => c.HttpCAFiles)
+				.NotEmpty()
+				.WithMessage("HTTP Certificate Authorities is required")
+				.When(m => !string.IsNullOrEmpty(m.HttpCertFile));
+
+			RuleForEach(c => c.HttpCAFiles)
+				.Must(File.Exists)
+				.WithMessage("HTTP Certificate Authority must exist")
+				.When(m => m.HttpCAFiles.Any());
 		}
 	}
 }

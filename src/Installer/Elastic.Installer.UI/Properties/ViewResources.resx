@@ -906,10 +906,10 @@ Alternatively, you may choose to not install Kibana as a service and run it manu
     <value>Certificate</value>
   </data>
   <data name="CertificatesView_GenerateTransportCert" xml:space="preserve">
-    <value>Generate Transport Layer Certificate</value>
+    <value>Generate TLS Certificate for Transport layer</value>
   </data>
   <data name="CertificatesView_GenerateHttpCert" xml:space="preserve">
-    <value>Generate Http Layer Certificate</value>
+    <value>Generate TLS Certificate for HTTP layer</value>
   </data>
   <data name="CertificatesView_TransportKeyLabel" xml:space="preserve">
     <value>Key</value>
