@@ -14,9 +14,35 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 
 		protected override bool ExecuteTask()
 		{
-			// TODO: Implement
+			var certificatesModel = InstallationModel.CertificatesModel;
+
+			if (!certificatesModel.IsRelevant)
+				return true;
+
+			// only set generated properties if explicit values have not been provided
+			if (certificatesModel.GenerateTransportCert && 
+				string.IsNullOrEmpty(certificatesModel.TransportCertFile))
+			{
+				SetProperty(nameof(certificatesModel.TransportCertFile), "transport.crt");
+				SetProperty(nameof(certificatesModel.TransportKeyFile), "transport.key");
+				SetProperty(nameof(certificatesModel.TransportCAFiles), "transport-ca.crt");
+			}
+
+			if (certificatesModel.GenerateHttpCert &&
+			    string.IsNullOrEmpty(certificatesModel.HttpCertFile))
+			{
+				SetProperty(nameof(certificatesModel.HttpCertFile), "http.crt");
+				SetProperty(nameof(certificatesModel.HttpKeyFile), "http.key");
+				SetProperty(nameof(certificatesModel.HttpCAFiles), "http-ca.crt");
+			}
 
 			return true;
+		}
+
+		private void SetProperty(string name, string value)
+		{
+			var path = this.FileSystem.Path.Combine(InstallationModel.LocationsModel.ConfigDirectory, "x-pack", "certs", value);
+			this.Session.Set(name.ToUpperInvariant(), path);
 		}
 	}
 }
