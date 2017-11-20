@@ -56,7 +56,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 			this.Header = "Locations";
 			this._elasticsearchEnvironmentConfiguration = elasticsearchEnvironmentConfiguration;
 			this._yamlConfiguration = yamlConfiguration;
-			_versionConfig = versionConfig;
+			this._versionConfig = versionConfig;
 			this.CurrentVersion = versionConfig.CurrentVersion.ToString();
 			this.ExistingVersion = versionConfig.ExistingVersion?.ToString();
 
@@ -121,6 +121,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 			//todo duplication?
 			this.InstallDir = this._elasticsearchEnvironmentConfiguration.TargetInstallationDirectory ?? DefaultProductInstallationDirectory;
 			this.ConfigDirectory = this._elasticsearchEnvironmentConfiguration.TargetInstallationConfigDirectory ?? DefaultConfigDirectory;
+			this.PreviousInstallationDirectory = this._elasticsearchEnvironmentConfiguration.PreviousInstallationDirectory;
 			this.DataDirectory = this._yamlConfiguration?.Settings?.DataPath ?? DefaultDataDirectory;
 			this.LogsDirectory = this._yamlConfiguration?.Settings?.LogsPath ?? DefaultLogsDirectory;
 
