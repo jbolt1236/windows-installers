@@ -21,7 +21,11 @@ $tags = @('PreviousVersions')
 Describe -Name "Silent Install upgrade different volume install $($previousVersion.Description)" -Tags $tags {
 
 	$v = $previousVersion.FullVersion
-	$ExeArgs = "INSTALLDIR=$InstallDir\$v","DATADIRECTORY=$DataDir","CONFIGDIRECTORY=$ConfigDir","LOGSDIRECTORY=$LogsDir","PLUGINS=ingest-geoip"
+
+	# append the version to install dir, depending on version
+	$homeDir = Get-InstallDir -Path $InstallDir
+
+	$ExeArgs = "INSTALLDIR=$homeDir","DATADIRECTORY=$DataDir","CONFIGDIRECTORY=$ConfigDir","LOGSDIRECTORY=$LogsDir","PLUGINS=ingest-geoip"
 
     Invoke-SilentInstall -Exeargs $ExeArgs -Version $v
 
@@ -67,7 +71,11 @@ Describe -Name "Silent Install upgrade different volume install $($previousVersi
 Describe -Name "Silent Install upgrade different volume from $($previousVersion.Description) to $($version.Description)" -Tags $tags {
 
 	$v = $version.FullVersion
-	$ExeArgs = "INSTALLDIR=$InstallDir\$v","DATADIRECTORY=$DataDir","CONFIGDIRECTORY=$ConfigDir","LOGSDIRECTORY=$LogsDir","PLUGINS=ingest-geoip"
+
+	# append the version to install dir, depending on version
+	$homeDir = Get-InstallDir -Path $InstallDir
+
+	$ExeArgs = "INSTALLDIR=$homeDir","DATADIRECTORY=$DataDir","CONFIGDIRECTORY=$ConfigDir","LOGSDIRECTORY=$LogsDir","PLUGINS=ingest-geoip"
 
     Invoke-SilentInstall -Exeargs $ExeArgs -Version $v -Upgrade
 
@@ -128,7 +136,7 @@ Describe -Name "Silent Uninstall upgrade different volume uninstall $($version.D
 
 	Context-ElasticsearchServiceNotInstalled
 
-	Context-EmptyInstallDirectory -Path "$InstallDir\$($version.FullVersion)"
+	Context-EmptyInstallDirectory -Path "$InstallDir\$v"
 
 	Context-DataDirectories -Path @($ConfigDir, $DataDir, $LogsDir) -DeleteAfter
 }

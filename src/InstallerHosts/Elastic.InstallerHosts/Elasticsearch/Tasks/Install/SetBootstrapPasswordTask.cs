@@ -27,9 +27,9 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 				!pluginsModel.Plugins.Any(plugin => plugin.Equals("x-pack", StringComparison.OrdinalIgnoreCase)))
 				return true;
 
-			var installationDir = locationsModel.InstallDir;
+			var homeDirectory = locationsModel.HomeDirectory;
 			var password = xPackModel.BootstrapPassword;
-			var binary = this.FileSystem.Path.Combine(installationDir, "bin", "elasticsearch-keystore.bat");
+			var binary = this.FileSystem.Path.Combine(homeDirectory, "bin", "elasticsearch-keystore.bat");
 
 			var p = new Process
 			{

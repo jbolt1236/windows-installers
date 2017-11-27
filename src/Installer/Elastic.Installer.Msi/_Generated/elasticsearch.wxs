@@ -9,12 +9,12 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
         <Directory Id="Elastic" Name="Elastic">
-          <Directory Id="Product" Name="Elasticsearch">
-            <Directory Id="INSTALLDIR" Name="6.0.0">
+          <Directory Id="INSTALLDIR" Name="Elasticsearch">
+            <Directory Id="HomeDirectory" Name="6.0.0">
 
-              <Component Id="Component.INSTALLDIR" Guid="daaa2cba-a1ed-4f29-afbf-547894a67c19" Win64="yes">
-                <RemoveFile Id="INSTALLDIR.all" Name="*" On="both" />
-                <RemoveFolder Id="INSTALLDIR.dir" On="both" />
+              <Component Id="Component.HomeDirectory" Guid="daaa2cba-a1ed-4f29-afbf-5478184a991a" Win64="yes">
+                <RemoveFile Id="HomeDirectory.all" Name="*" On="both" />
+                <RemoveFolder Id="HomeDirectory.dir" On="both" />
               </Component>
 
               <Component Id="Component.LICENSE.txt" Guid="daaa2cba-a1ed-4f29-afbf-5478ddff8dfd" Win64="yes">
@@ -29,19 +29,11 @@
                 <File Id="README.textile" Source="..\..\..\build\in\elasticsearch-6.0.0\README.textile" />
               </Component>
 
-              <Directory Id="INSTALLDIR.bin" Name="bin">
-                <Directory Id="INSTALLDIR.bin.xpack" Name="x-pack">
+              <Directory Id="HomeDirectory.bin" Name="bin">
 
-                  <Component Id="Component.INSTALLDIR.bin.xpack" Guid="daaa2cba-a1ed-4f29-afbf-5478a19229fb" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.bin.xpack" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.bin.xpack.dir" On="both" />
-                  </Component>
-
-                </Directory>
-
-                <Component Id="Component.INSTALLDIR.bin" Guid="daaa2cba-a1ed-4f29-afbf-54784d7ee1d0" Win64="yes">
-                  <RemoveFile Id="INSTALLDIR.bin.all" Name="*" On="both" />
-                  <RemoveFolder Id="INSTALLDIR.bin.dir" On="both" />
+                <Component Id="Component.HomeDirectory.bin" Guid="daaa2cba-a1ed-4f29-afbf-547859fe8503" Win64="yes">
+                  <RemoveFile Id="HomeDirectory.bin.all" Name="*" On="both" />
+                  <RemoveFolder Id="HomeDirectory.bin.dir" On="both" />
                 </Component>
 
                 <Component Id="Component.elasticsearch_env.bat" Guid="daaa2cba-a1ed-4f29-afbf-5478f708a154" Win64="yes">
@@ -72,11 +64,11 @@
 
               </Directory>
 
-              <Directory Id="INSTALLDIR.config" Name="config">
+              <Directory Id="HomeDirectory.config" Name="config">
 
-                <Component Id="Component.INSTALLDIR.config" Guid="daaa2cba-a1ed-4f29-afbf-54787f783bf2" Win64="yes">
-                  <RemoveFile Id="INSTALLDIR.config.all" Name="*" On="both" />
-                  <RemoveFolder Id="INSTALLDIR.config.dir" On="both" />
+                <Component Id="Component.HomeDirectory.config" Guid="daaa2cba-a1ed-4f29-afbf-54780196d611" Win64="yes">
+                  <RemoveFile Id="HomeDirectory.config.all" Name="*" On="both" />
+                  <RemoveFolder Id="HomeDirectory.config.dir" On="both" />
                 </Component>
 
                 <Component Id="Component.elasticsearch.yml" Guid="daaa2cba-a1ed-4f29-afbf-547839fb66cf" Win64="yes">
@@ -93,11 +85,11 @@
 
               </Directory>
 
-              <Directory Id="INSTALLDIR.lib" Name="lib">
+              <Directory Id="HomeDirectory.lib" Name="lib">
 
-                <Component Id="Component.INSTALLDIR.lib" Guid="daaa2cba-a1ed-4f29-afbf-5478c4c8e1d0" Win64="yes">
-                  <RemoveFile Id="INSTALLDIR.lib.all" Name="*" On="both" />
-                  <RemoveFolder Id="INSTALLDIR.lib.dir" On="both" />
+                <Component Id="Component.HomeDirectory.lib" Guid="daaa2cba-a1ed-4f29-afbf-5478ce60b291" Win64="yes">
+                  <RemoveFile Id="HomeDirectory.lib.all" Name="*" On="both" />
+                  <RemoveFolder Id="HomeDirectory.lib.dir" On="both" />
                 </Component>
 
                 <Component Id="Component.elasticsearch_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-5478194c58cc" Win64="yes">
@@ -242,12 +234,12 @@
 
               </Directory>
 
-              <Directory Id="INSTALLDIR.modules" Name="modules">
-                <Directory Id="INSTALLDIR.modules.aggs_matrix_stats" Name="aggs-matrix-stats">
+              <Directory Id="HomeDirectory.modules" Name="modules">
+                <Directory Id="HomeDirectory.modules.aggs_matrix_stats" Name="aggs-matrix-stats">
 
-                  <Component Id="Component.INSTALLDIR.modules.aggs_matrix_stats" Guid="daaa2cba-a1ed-4f29-afbf-5478d778be1a" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.aggs_matrix_stats.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.aggs_matrix_stats.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.aggs_matrix_stats" Guid="daaa2cba-a1ed-4f29-afbf-5478b56dc287" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.aggs_matrix_stats.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.aggs_matrix_stats.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.aggs_matrix_stats_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-5478f2680833" Win64="yes">
@@ -260,11 +252,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.analysis_common" Name="analysis-common">
+                <Directory Id="HomeDirectory.modules.analysis_common" Name="analysis-common">
 
-                  <Component Id="Component.INSTALLDIR.modules.analysis_common" Guid="daaa2cba-a1ed-4f29-afbf-54787e8ca882" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.analysis_common.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.analysis_common.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.analysis_common" Guid="daaa2cba-a1ed-4f29-afbf-547822a8c61c" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.analysis_common.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.analysis_common.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.analysis_common_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-547813257a2a" Win64="yes">
@@ -277,11 +269,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.ingest_common" Name="ingest-common">
+                <Directory Id="HomeDirectory.modules.ingest_common" Name="ingest-common">
 
-                  <Component Id="Component.INSTALLDIR.modules.ingest_common" Guid="daaa2cba-a1ed-4f29-afbf-54781548e39c" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.ingest_common.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.ingest_common.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.ingest_common" Guid="daaa2cba-a1ed-4f29-afbf-5478952d05c2" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.ingest_common.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.ingest_common.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.ingest_common_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-5478fee39ca2" Win64="yes">
@@ -302,11 +294,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.lang_expression" Name="lang-expression">
+                <Directory Id="HomeDirectory.modules.lang_expression" Name="lang-expression">
 
-                  <Component Id="Component.INSTALLDIR.modules.lang_expression" Guid="daaa2cba-a1ed-4f29-afbf-547858b69d8c" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.lang_expression.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.lang_expression.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.lang_expression" Guid="daaa2cba-a1ed-4f29-afbf-547858d40639" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.lang_expression.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.lang_expression.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.antlr4_runtime_4.5.1_1.jar" Guid="daaa2cba-a1ed-4f29-afbf-54789ca4f8e5" Win64="yes">
@@ -343,11 +335,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.lang_mustache" Name="lang-mustache">
+                <Directory Id="HomeDirectory.modules.lang_mustache" Name="lang-mustache">
 
-                  <Component Id="Component.INSTALLDIR.modules.lang_mustache" Guid="daaa2cba-a1ed-4f29-afbf-54787002cabb" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.lang_mustache.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.lang_mustache.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.lang_mustache" Guid="daaa2cba-a1ed-4f29-afbf-5478cfd6bf9f" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.lang_mustache.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.lang_mustache.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.compiler_0.9.3.jar" Guid="daaa2cba-a1ed-4f29-afbf-547820e67731" Win64="yes">
@@ -368,11 +360,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.lang_painless" Name="lang-painless">
+                <Directory Id="HomeDirectory.modules.lang_painless" Name="lang-painless">
 
-                  <Component Id="Component.INSTALLDIR.modules.lang_painless" Guid="daaa2cba-a1ed-4f29-afbf-54782b2ee3bc" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.lang_painless.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.lang_painless.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.lang_painless" Guid="daaa2cba-a1ed-4f29-afbf-54789cecdcc4" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.lang_painless.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.lang_painless.dir" On="both" />
                   </Component>
 
                   <Component Guid="daaa2cba-a1ed-4f29-afbf-547876342478" Win64="yes" Id="Component.lang_painless.antlr4_runtime_4.5.1_1.jar">
@@ -397,11 +389,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.parent_join" Name="parent-join">
+                <Directory Id="HomeDirectory.modules.parent_join" Name="parent-join">
 
-                  <Component Id="Component.INSTALLDIR.modules.parent_join" Guid="daaa2cba-a1ed-4f29-afbf-5478ae140b27" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.parent_join.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.parent_join.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.parent_join" Guid="daaa2cba-a1ed-4f29-afbf-54785e844c7f" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.parent_join.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.parent_join.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.parent_join_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-54789de0a048" Win64="yes">
@@ -414,11 +406,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.percolator" Name="percolator">
+                <Directory Id="HomeDirectory.modules.percolator" Name="percolator">
 
-                  <Component Id="Component.INSTALLDIR.modules.percolator" Guid="daaa2cba-a1ed-4f29-afbf-5478db7e09c0" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.percolator.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.percolator.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.percolator" Guid="daaa2cba-a1ed-4f29-afbf-54787910c3f5" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.percolator.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.percolator.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.percolator_6.0.0.jar" Guid="daaa2cba-a1ed-4f29-afbf-5478f975ddf2" Win64="yes">
@@ -431,11 +423,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.reindex" Name="reindex">
+                <Directory Id="HomeDirectory.modules.reindex" Name="reindex">
 
-                  <Component Id="Component.INSTALLDIR.modules.reindex" Guid="daaa2cba-a1ed-4f29-afbf-547818784f72" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.reindex.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.reindex.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.reindex" Guid="daaa2cba-a1ed-4f29-afbf-5478fb168db2" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.reindex.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.reindex.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.commons_codec_1.10.jar" Guid="daaa2cba-a1ed-4f29-afbf-5478796f5d50" Win64="yes">
@@ -480,11 +472,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.repository_url" Name="repository-url">
+                <Directory Id="HomeDirectory.modules.repository_url" Name="repository-url">
 
-                  <Component Id="Component.INSTALLDIR.modules.repository_url" Guid="daaa2cba-a1ed-4f29-afbf-5478768138be" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.repository_url.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.repository_url.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.repository_url" Guid="daaa2cba-a1ed-4f29-afbf-54787850432b" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.repository_url.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.repository_url.dir" On="both" />
                   </Component>
 
                   <Component Guid="daaa2cba-a1ed-4f29-afbf-5478fa248f9a" Win64="yes" Id="Component.repository_url.plugin_descriptor.properties">
@@ -501,11 +493,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.transport_netty4" Name="transport-netty4">
+                <Directory Id="HomeDirectory.modules.transport_netty4" Name="transport-netty4">
 
-                  <Component Id="Component.INSTALLDIR.modules.transport_netty4" Guid="daaa2cba-a1ed-4f29-afbf-547805893f3f" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.transport_netty4.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.transport_netty4.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.transport_netty4" Guid="daaa2cba-a1ed-4f29-afbf-54782310f791" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.transport_netty4.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.transport_netty4.dir" On="both" />
                   </Component>
 
                   <Component Id="Component.netty_buffer_4.1.13.Final.jar" Guid="daaa2cba-a1ed-4f29-afbf-547881350591" Win64="yes">
@@ -550,11 +542,11 @@
 
                 </Directory>
 
-                <Directory Id="INSTALLDIR.modules.tribe" Name="tribe">
+                <Directory Id="HomeDirectory.modules.tribe" Name="tribe">
 
-                  <Component Id="Component.INSTALLDIR.modules.tribe" Guid="daaa2cba-a1ed-4f29-afbf-547852e655ed" Win64="yes">
-                    <RemoveFile Id="INSTALLDIR.modules.tribe.all" Name="*" On="both" />
-                    <RemoveFolder Id="INSTALLDIR.modules.tribe.dir" On="both" />
+                  <Component Id="Component.HomeDirectory.modules.tribe" Guid="daaa2cba-a1ed-4f29-afbf-5478ada6ebe5" Win64="yes">
+                    <RemoveFile Id="HomeDirectory.modules.tribe.all" Name="*" On="both" />
+                    <RemoveFolder Id="HomeDirectory.modules.tribe.dir" On="both" />
                   </Component>
 
                   <Component Guid="daaa2cba-a1ed-4f29-afbf-5478ada2480d" Win64="yes" Id="Component.tribe.plugin_descriptor.properties">
@@ -569,8 +561,8 @@
               </Directory>
 
               <Component Id="EnvVars1" Guid="daaa2cba-a1ed-4f29-afbf-54788c6bd3d3" Win64="yes" KeyPath="yes">
-                <Environment Id="ES_HOME" Name="ES_HOME" Action="set" Value="[INSTALLDIR]" System="yes" />
-                <RemoveFolder Id="INSTALLDIR" On="uninstall" />
+                <Environment Id="ES_HOME" Name="ES_HOME" Action="set" Value="[HomeDirectory]" System="yes" />
+                <RemoveFolder Id="HomeDirectory" On="uninstall" />
               </Component>
 
               <Component Id="EnvVars2" Guid="daaa2cba-a1ed-4f29-afbf-547818d0d3d3" Win64="yes" KeyPath="yes">
@@ -776,23 +768,22 @@
       <ComponentRef Id="EnvVars1" />
       <ComponentRef Id="EnvVars2" />
       <ComponentRef Id="EnvVars3" />
-      <ComponentRef Id="Component.INSTALLDIR" />
-      <ComponentRef Id="Component.INSTALLDIR.bin.xpack" />
-      <ComponentRef Id="Component.INSTALLDIR.bin" />
-      <ComponentRef Id="Component.INSTALLDIR.config" />
-      <ComponentRef Id="Component.INSTALLDIR.lib" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.aggs_matrix_stats" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.analysis_common" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.ingest_common" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.lang_expression" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.lang_mustache" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.lang_painless" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.parent_join" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.percolator" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.reindex" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.repository_url" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.transport_netty4" />
-      <ComponentRef Id="Component.INSTALLDIR.modules.tribe" />
+      <ComponentRef Id="Component.HomeDirectory" />
+      <ComponentRef Id="Component.HomeDirectory.bin" />
+      <ComponentRef Id="Component.HomeDirectory.config" />
+      <ComponentRef Id="Component.HomeDirectory.lib" />
+      <ComponentRef Id="Component.HomeDirectory.modules.aggs_matrix_stats" />
+      <ComponentRef Id="Component.HomeDirectory.modules.analysis_common" />
+      <ComponentRef Id="Component.HomeDirectory.modules.ingest_common" />
+      <ComponentRef Id="Component.HomeDirectory.modules.lang_expression" />
+      <ComponentRef Id="Component.HomeDirectory.modules.lang_mustache" />
+      <ComponentRef Id="Component.HomeDirectory.modules.lang_painless" />
+      <ComponentRef Id="Component.HomeDirectory.modules.parent_join" />
+      <ComponentRef Id="Component.HomeDirectory.modules.percolator" />
+      <ComponentRef Id="Component.HomeDirectory.modules.reindex" />
+      <ComponentRef Id="Component.HomeDirectory.modules.repository_url" />
+      <ComponentRef Id="Component.HomeDirectory.modules.transport_netty4" />
+      <ComponentRef Id="Component.HomeDirectory.modules.tribe" />
     </Feature>
 
     <InstallExecuteSequence>

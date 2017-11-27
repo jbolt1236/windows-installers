@@ -25,7 +25,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 			}
 
 			var locationsModel = this.InstallationModel.LocationsModel;
-			var installDirectory = locationsModel.InstallDir;
+			var homeDirectory = locationsModel.HomeDirectory;
 			var configDirectory = locationsModel.ConfigDirectory;
 			var provider = pluginsModel.PluginStateProvider;
 			var ticksPerPlugin = new[] { 20, 1930, 50 };
@@ -58,7 +58,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 			foreach (var plugin in plugins)
 			{
 				this.Session.SendProgress(ticksPerPlugin[0], $"installing {plugin}");
-				provider.Install(ticksPerPlugin[1], installDirectory, configDirectory, plugin, new [] {"--batch"}, environmentVariables);
+				provider.Install(ticksPerPlugin[1], homeDirectory, configDirectory, plugin, new [] {"--batch"}, environmentVariables);
 				this.Session.SendProgress(ticksPerPlugin[2], $"installed {plugin}");
 			}
 			return true;

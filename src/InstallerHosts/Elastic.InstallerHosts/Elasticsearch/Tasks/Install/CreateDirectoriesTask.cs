@@ -39,8 +39,8 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		private void CreatePluginsDirectory()
 		{
 			var pluginsDirectoryName = "plugins";
-			var installDirectory = this.InstallationModel.LocationsModel.InstallDir;			
-			var pluginsDirectory = this.FileSystem.Path.Combine(installDirectory, pluginsDirectoryName);
+			var homeDirectory = this.InstallationModel.LocationsModel.HomeDirectory;			
+			var pluginsDirectory = this.FileSystem.Path.Combine(homeDirectory, pluginsDirectoryName);
 
 			if (!this.FileSystem.Directory.Exists(pluginsDirectory))
 			{
@@ -83,24 +83,25 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		{
 			//create new config directory if it does not already exist
 			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-			var installDirectory = this.InstallationModel.LocationsModel.InstallDir;
+			var homeDirectory = this.InstallationModel.LocationsModel.HomeDirectory;
 			var configDirectoryName = "config";
-			var installConfigDirectory = this.FileSystem.Path.Combine(installDirectory, configDirectoryName);
+			var fs = this.FileSystem;
+			var installConfigDirectory = fs.Path.Combine(homeDirectory, configDirectoryName);
 
 			int actionsTaken = 0;
-			if (!this.FileSystem.Directory.Exists(configDirectory))
+			if (!fs.Directory.Exists(configDirectory))
 			{
 				var message = $"default config directory not found. Creating directory {configDirectory}.";
 				this.Session.SendProgress(1000, message);
 				this.Session.Log(message);
-				this.FileSystem.Directory.CreateDirectory(configDirectory);
+				fs.Directory.CreateDirectory(configDirectory);
 				actionsTaken++;
 			}
 
 			SetAccessControl(configDirectory, rule);
 
 			//make sure we move files and folders in ES_HOME/config to new ES_CONFIG as long as they are different
-			if (this.FileSystem.Directory.Exists(installConfigDirectory) && !this.SamePathAs(installConfigDirectory, configDirectory))
+			if (fs.Directory.Exists(installConfigDirectory) && !this.SamePathAs(installConfigDirectory, configDirectory))
 			{
 				var message = $"syncing install config directory {installConfigDirectory} with {configDirectory}.";
 				this.Session.SendProgress(1000, message);
@@ -109,28 +110,28 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 				if (!installConfigDirectory.EndsWith(@"\") || !installConfigDirectory.EndsWith("/"))
 					installConfigDirectory += @"\";
 
-				foreach (var file in this.FileSystem.Directory.EnumerateFiles(installConfigDirectory))
+				foreach (var file in fs.Directory.EnumerateFiles(installConfigDirectory))
 				{
-					var fileName = this.FileSystem.Path.GetFileName(file);
-					var to = this.FileSystem.Path.Combine(configDirectory, fileName);
+					var fileName = fs.Path.GetFileName(file);
+					var to = fs.Path.Combine(configDirectory, fileName);
 					//do not overwrite existing files
-					if (this.FileSystem.File.Exists(to)) continue;
+					if (fs.File.Exists(to)) continue;
 
 					this.Session.Log($"moving file: {file} to {to}");
-					this.FileSystem.File.Move(file, to);
+					fs.File.Move(file, to);
 				}
-				foreach (var dir in this.FileSystem.Directory.EnumerateDirectories(installConfigDirectory))
+				foreach (var dir in fs.Directory.EnumerateDirectories(installConfigDirectory))
 				{
-					var directoryName = this.FileSystem.DirectoryInfo.FromDirectoryName(dir).Name;
-					var to = this.FileSystem.Path.Combine(configDirectory, directoryName);
+					var directoryName = fs.DirectoryInfo.FromDirectoryName(dir).Name;
+					var to = fs.Path.Combine(configDirectory, directoryName);
 					//do not overwrite existing directories
-					if (this.FileSystem.Directory.Exists(to)) continue;
+					if (fs.Directory.Exists(to)) continue;
 
 					this.Session.Log($"moving directory: {dir} to {to}");
-					this.FileSystem.Directory.Move(dir, to);
+					fs.Directory.Move(dir, to);
 				}
 				this.Session.Log($"removing ES_HOME config dir: {installConfigDirectory}");
-				this.FileSystem.Directory.Delete(installConfigDirectory, true);
+				fs.Directory.Delete(installConfigDirectory, true);
 			}
 
 			var completedMessage = $"Created config directory {configDirectory}.";

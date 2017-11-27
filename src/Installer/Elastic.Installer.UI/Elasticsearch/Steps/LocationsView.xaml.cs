@@ -39,7 +39,6 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 				.Subscribe(x =>
 				{
 					this.DefaultLocationsRadioButton.IsChecked = !x;
-					//this.InstallDirectoryLabel.IsEnabled = x;
 					this.InstallDirectoryTextBox.IsEnabled = x;
 					this.InstallDirectoryBrowseButton.IsEnabled = x;
 					this.CustomLocationsCheckBox.IsEnabled = x;
@@ -59,7 +58,7 @@ namespace Elastic.Installer.UI.Elasticsearch.Steps
 					this.LogsDirectoryBrowseButton.IsEnabled = x;
 				});
 
-			this.Bind(ViewModel, vm => vm.InstallDir, v => v.InstallDirectoryTextBox.Text);
+			this.OneWayBind(ViewModel, vm => vm.HomeDirectory, v => v.InstallDirectoryTextBox.Text);
 			this.Bind(ViewModel, vm => vm.DataDirectory, v => v.DataDirectoryTextBox.Text);
 			this.Bind(ViewModel, vm => vm.ConfigDirectory, v => v.ConfigDirectoryTextBox.Text);
 			this.Bind(ViewModel, vm => vm.LogsDirectory, v => v.LogsDirectoryTextBox.Text);

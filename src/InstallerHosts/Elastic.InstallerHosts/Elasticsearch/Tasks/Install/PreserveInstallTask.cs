@@ -42,7 +42,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Install
 		{
 			var fs = this.FileSystem;
 			var path = fs.Path;
-			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
+			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.HomeDirectory, "plugins");
 			var tempPluginsDirectory = path.Combine(this.TempProductInstallationDirectory, "plugins");
 
 			//make sure if for some reason the tempPluginsDirectory is there its empty before copying over the current state

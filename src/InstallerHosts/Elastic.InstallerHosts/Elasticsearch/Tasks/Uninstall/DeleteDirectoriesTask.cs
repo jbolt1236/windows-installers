@@ -28,13 +28,13 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Uninstall
 				return true;
 			}
 
-			var installDirectory = this.InstallationModel.LocationsModel.InstallDir;
+			var homeDirectory = this.InstallationModel.LocationsModel.HomeDirectory;
 			var directories = new List<string>();
 			var fs = this.FileSystem;
 
-			if (fs.Directory.Exists(installDirectory))
+			if (fs.Directory.Exists(homeDirectory))
 			{
-				var installSubDirectories = fs.Directory.GetDirectories(installDirectory)
+				var installSubDirectories = fs.Directory.GetDirectories(homeDirectory)
 					.Where(d => d != this.InstallationModel.LocationsModel.ConfigDirectory &&
 					            d != this.InstallationModel.LocationsModel.LogsDirectory &&
 					            d != this.InstallationModel.LocationsModel.DataDirectory);
@@ -52,10 +52,10 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Uninstall
 				this.Session.SendProgress(1000, $"{directory} removed");
 			}
 
-			if (IsDirectoryEmpty(installDirectory))
+			if (IsDirectoryEmpty(homeDirectory))
 			{
-				this.Session.Log($"{installDirectory} exists and is empty. deleting");
-				fs.Directory.Delete(installDirectory, true);
+				this.Session.Log($"{homeDirectory} exists and is empty. deleting");
+				fs.Directory.Delete(homeDirectory, true);
 			}
 
 			if (IsDirectoryEmpty(LocationsModel.DefaultProductInstallationDirectory))

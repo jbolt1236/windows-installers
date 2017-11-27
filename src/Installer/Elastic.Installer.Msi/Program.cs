@@ -117,11 +117,11 @@ namespace Elastic.Installer.Msi
 							{
 								Dirs = new []
 								{
-									new Dir(new Id("Product"), _productTitle)
+									new Dir(new Id("INSTALLDIR"), _productTitle)
 									{
 										Dirs = new[]
 										{
-											new Dir(new Id("INSTALLDIR"), version)
+											new Dir(new Id("HomeDirectory"), version)
 											{
 												DirFileCollections = new[]
 												{

@@ -36,8 +36,6 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 		public static readonly string DefaultLogsDirectory = Path.Combine(DefaultProductDataDirectory, Logs);
 		public static readonly string DefaultDataDirectory = Path.Combine(DefaultProductDataDirectory, Data);
 		public static readonly string DefaultConfigDirectory = Path.Combine(DefaultProductDataDirectory, Config);
-		
-		public string DefaultProductVersionInstallationDirectory => Path.Combine(DefaultProductInstallationDirectory, CurrentVersion);
 
 		private bool _refreshing;
 		private readonly ElasticsearchEnvironmentConfiguration _elasticsearchEnvironmentConfiguration;
@@ -62,7 +60,7 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 			this._refreshing = true;
 
 			//when configurelocations is checked and place paths in samefolder is not set, set configureall locations to true
-			var prop = this.WhenAny(
+			this.WhenAny(
 				vm => vm.ConfigureLocations,
 				vm => vm.PlaceWritableLocationsInSamePath,
 				vm => vm.InstallDir,
@@ -99,6 +97,15 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 				(c) => !this._refreshing && !c.Value
 				)
 				.Subscribe(x => { if (x) this.Refresh(); });
+
+			this.WhenAny(vm => vm.InstallDir, (i) =>
+				{
+					var v = i.GetValue();
+					return !string.IsNullOrEmpty(v)
+						? Path.Combine(v, CurrentVersion)
+						: null;
+				})
+				.ToProperty(this, vm => vm.HomeDirectory, out homeDirectory);
 
 			this._refreshing = false;
 		}
@@ -152,9 +159,15 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 		{
 			if (!sameFolder) return;
 			this._refreshing = true;
-			this.DataDirectory = Path.Combine(this.InstallDir, Data);
-			this.ConfigDirectory = Path.Combine(this.InstallDir, Config);
-			this.LogsDirectory = Path.Combine(this.InstallDir, Logs);
+			this.DataDirectory = !string.IsNullOrEmpty(this.HomeDirectory) 
+				? Path.Combine(this.HomeDirectory, Data)
+				: null;
+			this.ConfigDirectory = !string.IsNullOrEmpty(this.HomeDirectory)
+				? Path.Combine(this.HomeDirectory, Config)
+				: null;
+			this.LogsDirectory = !string.IsNullOrEmpty(this.HomeDirectory)
+				? Path.Combine(this.HomeDirectory, Logs)
+				: null;
 			this._refreshing = false;
 		}
 
@@ -186,16 +199,17 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 			set => this.RaiseAndSetIfChanged(ref configureLocations, value);
 		}
 
+		readonly ObservableAsPropertyHelper<string> homeDirectory;
+		public string HomeDirectory => homeDirectory.Value;
 
 		string installDirectory;
 		[Argument(nameof(InstallDir))]
 		public string InstallDir
 		{
-			get => string.IsNullOrWhiteSpace(installDirectory) ? installDirectory : Path.Combine(installDirectory, CurrentVersion);
+			get => installDirectory;
 			set
 			{
-				var rooted = GetRootedPathIfNecessary(value);
-				this.RaiseAndSetIfChanged(ref installDirectory, rooted);
+				this.RaiseAndSetIfChanged(ref installDirectory, value);
 				this.SetWritableLocationsToInstallDirectory(this.PlaceWritableLocationsInSamePath);
 			}
 		}
@@ -206,23 +220,6 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 		{
 			get => previousInstallationDirectory;
 			set => this.RaiseAndSetIfChanged(ref previousInstallationDirectory, value);
-		}
-
-		private string GetRootedPathIfNecessary(string value)
-		{
-			if (string.IsNullOrEmpty(value)) return value;
-			try
-			{
-				var directory = new DirectoryInfo(value);
-				if (directory.Name.Equals(CurrentVersion, StringComparison.OrdinalIgnoreCase)
-				    || directory.Name.Equals(ExistingVersion, StringComparison.OrdinalIgnoreCase))
-					return directory.Parent?.FullName;
-			}
-			catch
-			{
-				// ignored
-			}
-			return value;
 		}
 
 		string dataDirectory;

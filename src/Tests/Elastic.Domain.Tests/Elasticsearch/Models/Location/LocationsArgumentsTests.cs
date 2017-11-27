@@ -29,15 +29,10 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Location
 		});
 
 		[Fact]
-		void InstallDirectory()
+		void InstallDirectory() => Argument(nameof(LocationsModel.InstallDir), this.CustomHome, (m, s) =>
 		{
-			var customHome = this.CustomHome;
-			var customHomeVersion = Path.Combine(this.CustomHome, TestSetupStateProvider.DefaultTestVersion);
-			Argument(nameof(LocationsModel.InstallDir), customHome, customHomeVersion, (m, s) =>
-			{
-				m.LocationsModel.InstallDir.Should().Be(customHomeVersion);
-				m.LocationsModel.ConfigureLocations.Should().BeTrue();
-			});
-		}
+			m.LocationsModel.InstallDir.Should().Be(this.CustomHome);
+			m.LocationsModel.ConfigureLocations.Should().BeTrue();
+		});
 	}
 }

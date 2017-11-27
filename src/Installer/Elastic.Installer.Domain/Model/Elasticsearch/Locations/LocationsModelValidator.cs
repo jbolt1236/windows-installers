@@ -34,10 +34,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 				.Must(this.InstallOnKnownDrive)
 				.WithMessage(DirectoryUsesUnknownDrive, x => ConfigurationText, x => new DirectoryInfo(x.ConfigDirectory).Root.Name)
 				.Must(this.NotBeChildOfProgramFiles).WithMessage(DirectorySetToNonWritableLocation, ConfigurationText);
+
 			RuleFor(vm => vm.ConfigDirectory)
 				.Must((vm, conf) => this.IsSubPathOf(vm.InstallDir, conf))
 				.When(vm => vm.PlaceWritableLocationsInSamePath)
-				.WithMessage(DirectoryMustBeChildOf, vm => ConfigurationText, vm => vm.InstallDir);
+				.WithMessage(DirectoryMustBeChildOf, vm => ConfigurationText, vm => vm.HomeDirectory);
 
 			RuleFor(vm => vm.DataDirectory)
 				.Cascade(CascadeMode.StopOnFirstFailure)
@@ -46,10 +47,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 				.Must(this.InstallOnKnownDrive)
 				.WithMessage(DirectoryUsesUnknownDrive, x => DataText, x => new DirectoryInfo(x.DataDirectory).Root.Name)
 				.Must(this.NotBeChildOfProgramFiles).WithMessage(DirectorySetToNonWritableLocation, DataText);
+
 			RuleFor(vm => vm.DataDirectory)
 				.Must((vm, data) => this.IsSubPathOf(vm.InstallDir, data))
 				.When(vm => vm.PlaceWritableLocationsInSamePath)
-				.WithMessage(DirectoryMustBeChildOf, vm => DataText, vm => vm.InstallDir);
+				.WithMessage(DirectoryMustBeChildOf, vm => DataText, vm => vm.HomeDirectory);
 
 			RuleFor(vm => vm.LogsDirectory)
 				.Cascade(CascadeMode.StopOnFirstFailure)
@@ -58,10 +60,11 @@ namespace Elastic.Installer.Domain.Model.Elasticsearch.Locations
 				.Must(this.InstallOnKnownDrive)
 				.WithMessage(DirectoryUsesUnknownDrive, x => LogsText, x => new DirectoryInfo(x.LogsDirectory).Root.Name)
 				.Must(this.NotBeChildOfProgramFiles).WithMessage(DirectorySetToNonWritableLocation, LogsText);
+
 			RuleFor(vm => vm.LogsDirectory)
 				.Must((vm, logs) => this.IsSubPathOf(vm.InstallDir, logs))
 				.When(vm => vm.PlaceWritableLocationsInSamePath)
-				.WithMessage(DirectoryMustBeChildOf, vm => LogsText, vm => vm.InstallDir);
+				.WithMessage(DirectoryMustBeChildOf, vm => LogsText, vm => vm.HomeDirectory);
 		}
 
 		public bool MustBeRooted(string path)

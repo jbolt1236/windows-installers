@@ -63,7 +63,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Location
 			.ClickRefresh()
 			.OnStep(m=>m.LocationsModel, step =>
 			{
-				step.InstallDir.Should().Be(step.DefaultProductVersionInstallationDirectory);
+				step.InstallDir.Should().Be(LocationsModel.DefaultProductInstallationDirectory);
 				step.PreviousInstallationDirectory.Should().BeNullOrEmpty();
 			});
 		
@@ -76,7 +76,8 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Location
             .CanClickNext()
             .OnStep(m=>m.LocationsModel, step =>
             {
-                step.InstallDir.Should().Be(Path.Combine(CustomInstallationFolder, "6.1.0"));
+                step.InstallDir.Should().Be(CustomInstallationFolder);
+                step.HomeDirectory.Should().Be(Path.Combine(CustomInstallationFolder, "6.1.0"));
                 step.PreviousInstallationDirectory.Should().Be(Path.Combine(CustomInstallationFolder, "6.0.0"));
             });
 		
@@ -89,8 +90,9 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Location
             .CanClickNext()
             .OnStep(m=>m.LocationsModel, step =>
             {
-                step.InstallDir.Should().Be(Path.Combine(CustomInstallationFolder, "6.0.0"));
-                step.PreviousInstallationDirectory.Should().Be(Path.Combine(CustomInstallationFolder));
+				step.InstallDir.Should().Be(CustomInstallationFolder);
+				step.HomeDirectory.Should().Be(Path.Combine(CustomInstallationFolder, "6.0.0"));
+                step.PreviousInstallationDirectory.Should().Be(CustomInstallationFolder);
             });		
 	}
 }

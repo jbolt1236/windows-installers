@@ -30,11 +30,7 @@ Describe -Name "Silent Install upgrade with plugins install $($previousVersion.D
 
     Context-PingNode -XPackSecurityInstalled
 
-    $ProgramFiles = Get-ProgramFilesFolder
-	$ChildPath = Get-ChildPath $previousVersion
-    $ExpectedHomeFolder = Join-Path -Path $ProgramFiles -ChildPath $ChildPath
-
-    Context-EsHomeEnvironmentVariable -Expected $ExpectedHomeFolder
+    Context-EsHomeEnvironmentVariable
 
     $ProfileFolder = $env:ALLUSERSPROFILE
     $ExpectedConfigFolder = Join-Path -Path $ProfileFolder -ChildPath "Elastic\Elasticsearch\config"

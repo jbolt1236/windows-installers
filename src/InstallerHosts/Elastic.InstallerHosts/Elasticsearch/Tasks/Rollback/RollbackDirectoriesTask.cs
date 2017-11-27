@@ -76,7 +76,7 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Rollback
 			var fs = this.FileSystem;
 			var path = fs.Path;
 			var pluginsTempDirectory = path.Combine(this.TempProductInstallationDirectory, "plugins");
-			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.InstallDir, "plugins");
+			var pluginsDirectory = path.Combine(this.InstallationModel.LocationsModel.HomeDirectory, "plugins");
 
 			if (!fs.Directory.Exists(pluginsTempDirectory)) return;
 

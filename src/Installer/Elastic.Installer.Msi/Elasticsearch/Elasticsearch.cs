@@ -40,9 +40,10 @@ namespace Elastic.Installer.Msi.Elasticsearch
 		public override EnvironmentVariable[] EnvironmentVariables =>
 			new[]
 			{
+				// matches the name of the Id given to the directory inside INSTALLDIR
 				new EnvironmentVariable(
 					ElasticsearchEnvironmentStateProvider.EsHome,
-					$"[{nameof(LocationsModel.InstallDir).ToUpperInvariant()}]")
+					$"[{nameof(LocationsModel.HomeDirectory)}]") 
 				{
 					Action = EnvVarAction.set,
 					System = true
@@ -143,30 +144,58 @@ namespace Elastic.Installer.Msi.Elasticsearch
 				));
 
 				// Add a Directory entry to remove all files in bin/x-pack, if present
-				if (directoryId == "INSTALLDIR.bin")
+				if (directoryId == "HomeDirectory.bin")
 				{
-					var installdirBinXpack = "INSTALLDIR.bin.xpack";
-					var componentInstalldirBinXpack = $"Component.{installdirBinXpack}";
+					var homeDirBinXpack = "HomeDirectory.bin.xpack";
+					var componentHomeDirBinXpack = $"Component.{homeDirBinXpack}";
 					directory.AddFirst(new XElement(ns + "Directory",
-						new XAttribute("Id", installdirBinXpack),
+						new XAttribute("Id", homeDirBinXpack),
 						new XAttribute("Name", "x-pack"),
 						new XElement(ns + "Component",
-							new XAttribute("Id", componentInstalldirBinXpack),
-							new XAttribute("Guid", WixGuid.NewGuid(componentInstalldirBinXpack)),
+							new XAttribute("Id", componentHomeDirBinXpack),
+							new XAttribute("Guid", WixGuid.NewGuid(componentHomeDirBinXpack)),
 							new XAttribute("Win64", "yes"),
 							new XElement(ns + "RemoveFile",
-								new XAttribute("Id", installdirBinXpack),
+								new XAttribute("Id", homeDirBinXpack),
 								new XAttribute("Name", "*"), // remove all files in x-pack dir
 								new XAttribute("On", "both")
 							),
 							new XElement(ns + "RemoveFolder",
-								new XAttribute("Id", installdirBinXpack + ".dir"), // remove (now empty) x-pack dir
+								new XAttribute("Id", homeDirBinXpack + ".dir"), // remove (now empty) x-pack dir
 								new XAttribute("On", "both")
 							)
 						)
 					));
 
-					feature.Add(new XElement(ns + "ComponentRef", new XAttribute("Id", componentInstalldirBinXpack)));
+
+					feature.Add(new XElement(ns + "ComponentRef", new XAttribute("Id", componentHomeDirBinXpack)));
+				}
+
+				// Add a Directory entry to remove all files in plugins, if present
+				if (directoryId == "HomeDirectory")
+				{ 
+					var homeDirPlugins = "HomeDirectory.plugins";
+					var componentHomeDirPlugins = $"Component.{homeDirPlugins}";
+					directory.AddFirst(new XElement(ns + "Directory",
+						new XAttribute("Id", homeDirPlugins),
+						new XAttribute("Name", "plugins"),
+						new XElement(ns + "Component",
+							new XAttribute("Id", componentHomeDirPlugins),
+							new XAttribute("Guid", WixGuid.NewGuid(componentHomeDirPlugins)),
+							new XAttribute("Win64", "yes"),
+							new XElement(ns + "RemoveFile",
+								new XAttribute("Id", homeDirPlugins),
+								new XAttribute("Name", "*"), // remove all files in plugins (does not recurse)
+								new XAttribute("On", "both")
+							),
+							new XElement(ns + "RemoveFolder",
+								new XAttribute("Id", homeDirPlugins + ".dir"), // remove plugins directory, if empty
+								new XAttribute("On", "both")
+							)
+						)
+					));
+
+					feature.Add(new XElement(ns + "ComponentRef", new XAttribute("Id", componentHomeDirPlugins)));
 				}
 
 				feature.Add(new XElement(ns + "ComponentRef", new XAttribute("Id", componentId)));

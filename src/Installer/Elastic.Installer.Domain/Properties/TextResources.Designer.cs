@@ -514,7 +514,7 @@ namespace Elastic.Installer.Domain.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An elasticsearch plugin written in Clojure that provides clojure as a scripting language for elasticsearch queries..
+        ///   Looks up a localized string similar to An Elasticsearch plugin written in Clojure that provides clojure as a scripting language for Elasticsearch queries..
         /// </summary>
         public static string PluginsModel_ClojureLanguagePlugin {
             get {

@@ -17,8 +17,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Location
 			))
 			.OnStep(m => m.LocationsModel, step =>
 			{
-				var customHomeVersion = Path.Combine(_customHome, TestSetupStateProvider.DefaultTestVersion);
-				step.InstallDir.Should().Be(customHomeVersion);
+				step.InstallDir.Should().Be(_customHome);
 				step.ConfigureLocations.Should().BeTrue();
 			});
 

@@ -676,3 +676,15 @@ function Get-ChildPath($Version = $Global:Version) {
 
 	return $ChildPath
 }
+
+function Get-InstallDir($Version = $Global:Version, $Path) {
+	# anything released before 6.0.0 won't include version in INSTALLDIR
+	if ((Compare-SemanticVersion $Version $(ConvertTo-SemanticVersion "6.0.0") -lt 0) -and $Version.SourceType -ne "Compile") {
+		$InstallDir = "$Path\$($Version.FullVersion)\"
+	}
+	else {
+		$InstallDir = $Path
+	}
+
+	return $InstallDir
+}
