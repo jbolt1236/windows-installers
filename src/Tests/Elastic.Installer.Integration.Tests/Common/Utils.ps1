@@ -550,19 +550,7 @@ function Get-ConfigEnvironmentVariableForVersion($Version) {
 	}
 }
 
-function Ping-Node([System.Timespan]$Timeout, $Domain, $Port) {
-    if (!$Timeout) {
-        $Timeout = New-Timespan -Seconds 3
-    }
-
-	if (!$Domain) {
-		$Domain = "localhost"
-	}
-
-	if (!$Port) {
-		$Port = "9200"
-	}
-
+function Ping-Node([System.Timespan]$Timeout = (New-Timespan -Seconds 3), $Domain = "localhost", $Port = 9200) {
     $Result = @{
         Success = $false
         XPackSecurityInstalled = $false
@@ -611,8 +599,15 @@ function Get-ElasticsearchWin32Product() {
     return Get-WmiObject Win32_Product | Where-Object { $_.Vendor -match 'Elastic' }
 }
 
-function Get-MachineEnvironmentVariable($Name) {
-    return [Environment]::GetEnvironmentVariable($Name,"Machine")
+function Get-MachineEnvironmentVariable {
+	[CmdletBinding()]
+	Param (
+		[Parameter(ValueFromPipeline)]
+		[ValidateNotNullOrEmpty()]
+		[string]$Name
+	)
+
+	return [Environment]::GetEnvironmentVariable($Name,"Machine")
 }
 
 function Get-TotalPhysicalMemory() {

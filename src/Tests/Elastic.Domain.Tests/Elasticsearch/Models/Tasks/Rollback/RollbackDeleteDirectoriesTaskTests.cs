@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO.Abstractions.TestingHelpers;
+﻿using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Text;
-using Elastic.Installer.Domain.Configuration.Service;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
-using Elastic.InstallerHosts.Elasticsearch.Tasks;
+using Elastic.InstallerHosts.Elasticsearch.Tasks.Rollback;
 using FluentAssertions;
 using Xunit;
 
@@ -22,7 +20,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Rollback
 				fs.Directory.CreateDirectory(m.LocationsModel.ConfigDirectory);
 				fs.Directory.CreateDirectory(m.LocationsModel.LogsDirectory);
 				fs.Directory.CreateDirectory(m.LocationsModel.InstallDir);
-				return new DeleteDirectoriesTask(m, s, fs);
+				return new RollbackDirectoriesTask(m, s, fs);
 			},
 			(m, t) =>
 			{
@@ -50,7 +48,7 @@ namespace Elastic.Installer.Domain.Tests.Elasticsearch.Models.Tasks.Rollback
 				fs.Directory.CreateDirectory(m.LocationsModel.ConfigDirectory);
 				fs.Directory.CreateDirectory(m.LocationsModel.LogsDirectory);
 				fs.Directory.CreateDirectory(m.LocationsModel.InstallDir);
-				return new DeleteDirectoriesTask(m, s, fs);
+				return new RollbackDirectoriesTask(m, s, fs);
 			},
 			(m, t) =>
 			{

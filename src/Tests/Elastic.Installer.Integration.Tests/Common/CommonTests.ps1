@@ -132,7 +132,7 @@ function Context-PluginsInstalled($Expected) {
     }
 }
 
-function Context-EsHomeEnvironmentVariable($Expected) {
+function Context-EsHomeEnvironmentVariable($Expected = (Join-Path -Path $(Get-ProgramFilesFolder) -ChildPath $(Get-ChildPath))) {
     Context "ES_HOME Environment Variable" {
         $EsHome = Get-MachineEnvironmentVariable "ES_HOME"
 
@@ -208,7 +208,7 @@ function Context-MsiRegistered($Expected) {
     }
 }
 
-function Context-ServiceRunningUnderAccount($Expected) {
+function Context-ServiceRunningUnderAccount($Expected = "LocalSystem") {
     Context "Service installed to run with account" {
         $Service = Get-ElasticsearchWin32Service
 
@@ -495,7 +495,7 @@ function Context-ReadData($Domain = "localhost", $Port = 9200, $Credentials) {
 	}
 }
 
-function Context-EmptyInstallDirectory($Path) {    
+function Context-EmptyInstallDirectory($Path = (Join-Path -Path $(Get-ProgramFilesFolder) -ChildPath $(Get-ChildPath))) {    
 	Context "Installation directory" {
         It "Installation directory should not exist or is empty" {
 			if (Test-Path $Path) {
@@ -584,6 +584,45 @@ function Context-FiddlerSessionContainsEntry() {
 
 		It "Contains $artifactsUrl" {
 			$session | Should Match ([regex]::Escape($artifactsUrl))
+		}
+	}
+}
+
+function Context-DirectoryExists([string]$Path, [switch]$DeleteAfter) {
+	Context "Directory $Path" {
+		It "Directory exists" {
+			Test-Path $Path | Should Be $true
+		}
+	}
+
+	if ((Test-Path $Path) -and $DeleteAfter) {
+		Remove-Item $Path -Force -Recurse
+	}
+}
+
+function Context-DirectoryNotExist([string]$Path, [switch]$DeleteAfter) {
+	Context "Directory $Path" {
+		It "Directory does not exist" {
+			Test-Path $Path | Should Be $false
+		}
+	}
+
+	if ((Test-Path $Path) -and $DeleteAfter) {
+		Remove-Item $Path -Force -Recurse
+	}
+}
+
+function Context-DataDirectories($Version=$Global:Version, [string[]]$Path, [switch]$DeleteAfter)
+{
+	# anything released 6.0.0 and previous deletes directories on uninstall
+	if ((Compare-SemanticVersion $Version $(ConvertTo-SemanticVersion "6.0.0") -lte 0) -and $Version.SourceType -ne "Compile") {
+		foreach($p in $Path) {
+			Context-DirectoryNotExist -Path $p -DeleteAfter:$DeleteAfter
+		}
+	}
+	else {
+		foreach($p in $Path) {
+			Context-DirectoryExists -Path $p -DeleteAfter:$DeleteAfter
 		}
 	}
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Elastic.Installer.Domain.Configuration.Wix.Session;
 using Elastic.Installer.Domain.Extensions;
 using Elastic.Installer.Domain.Model.Base;

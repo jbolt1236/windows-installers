@@ -116,6 +116,10 @@ Describe -Name "Silent Install upgrade from $($previousVersion.Description) to $
 }
 
 Describe -Name "Silent Uninstall upgrade uninstall $($version.Description)" -Tags $tags {
+	
+	$configDirectory = Get-ConfigEnvironmentVariableForVersion | Get-MachineEnvironmentVariable
+	$dataDirectory = $configDirectory | Split-Path | Join-Path -ChildPath "data"
+	$logsDirectory = $configDirectory | Split-Path | Join-Path -ChildPath "logs"
 
 	$v = $version.FullVersion
 
@@ -131,9 +135,7 @@ Describe -Name "Silent Uninstall upgrade uninstall $($version.Description)" -Tag
 
 	Context-ElasticsearchServiceNotInstalled
 
-	$ProgramFiles = Get-ProgramFilesFolder
-	$ChildPath = Get-ChildPath $version
-    $ExpectedHomeFolder = Join-Path -Path $ProgramFiles -ChildPath $ChildPath
+	Context-EmptyInstallDirectory
 
-	Context-EmptyInstallDirectory -Path $ExpectedHomeFolder
+	Context-DataDirectories -Path @($configDirectory, $dataDirectory, $logsDirectory) -DeleteAfter
 }
