@@ -25,37 +25,35 @@ namespace Elastic.InstallerHosts.Elasticsearch.Tasks.Rollback
 			}
 
 			var fs = this.FileSystem;
+			var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
 
-			if (this.Session.IsInstalling)
+			// executed when rolling back during installation
+			if (this.Session.IsInstalling && fs.Directory.Exists(configDirectory))
 			{
-				var configDirectory = this.InstallationModel.LocationsModel.ConfigDirectory;
-				if (fs.Directory.Exists(configDirectory))
+				this.Session.SendActionStart(1000, ActionName, "Removing data, logs, and config directory",
+					"Removing directories: [1]");
+
+				var yamlConfiguration = ElasticsearchYamlConfiguration.FromFolder(configDirectory, fs);
+				var dataDirectory = yamlConfiguration?.Settings?.DataPath ?? this.InstallationModel.LocationsModel.DataDirectory;
+				var logsDirectory = yamlConfiguration?.Settings?.LogsPath ?? this.InstallationModel.LocationsModel.LogsDirectory;
+
+				if (fs.Directory.Exists(dataDirectory))
+					this.DeleteDirectory(dataDirectory);
+				else this.Session.Log($"Data Directory does not exist, skipping {dataDirectory}");
+
+				if (fs.Directory.Exists(logsDirectory))
 				{
-					this.Session.SendActionStart(1000, ActionName, "Removing data, logs, and config directory",
-						"Removing directories: [1]");
-
-					var yamlConfiguration = ElasticsearchYamlConfiguration.FromFolder(configDirectory, fs);
-					var dataDirectory = yamlConfiguration?.Settings?.DataPath ?? this.InstallationModel.LocationsModel.DataDirectory;
-					var logsDirectory = yamlConfiguration?.Settings?.LogsPath ?? this.InstallationModel.LocationsModel.LogsDirectory;
-
-					if (fs.Directory.Exists(dataDirectory))
-						this.DeleteDirectory(dataDirectory);
-					else this.Session.Log($"Data Directory does not exist, skipping {dataDirectory}");
-
-					if (fs.Directory.Exists(logsDirectory))
-					{
-						DumpElasticsearchLogOnRollback(logsDirectory);
-						this.DeleteDirectory(logsDirectory);
-					}
-					else this.Session.Log($"Logs Directory does not exist, skipping {logsDirectory}");
-
-					if (fs.Directory.Exists(configDirectory))
-						this.DeleteDirectory(configDirectory);
-					else this.Session.Log($"Config Directory does not exist, skipping {configDirectory}");
-
-					this.Session.SendProgress(1000, "data, logs, and config directories removed");
-					this.Session.Log("data, logs, and config directories removed");
+					DumpElasticsearchLogOnRollback(logsDirectory);
+					this.DeleteDirectory(logsDirectory);
 				}
+				else this.Session.Log($"Logs Directory does not exist, skipping {logsDirectory}");
+
+				if (fs.Directory.Exists(configDirectory))
+					this.DeleteDirectory(configDirectory);
+				else this.Session.Log($"Config Directory does not exist, skipping {configDirectory}");
+
+				this.Session.SendProgress(1000, "data, logs, and config directories removed");
+				this.Session.Log("data, logs, and config directories removed");
 			}
 
 			return base.ExecuteTask();
