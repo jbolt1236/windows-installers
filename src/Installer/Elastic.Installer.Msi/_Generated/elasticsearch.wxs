@@ -811,7 +811,7 @@
       <Custom Action="Set_ElasticsearchCleanupAction_Props" After="InstallInitialize" />
       <Custom Action="ElasticsearchCleanupAction" Before="InstallFinalize" />
       <Custom Action="Set_ElasticsearchUninstallDirectoriesAction_Props" After="InstallInitialize" />
-      <Custom Action="ElasticsearchUninstallDirectoriesAction" After="RemoveEnvironmentStrings">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+      <Custom Action="ElasticsearchUninstallDirectoriesAction" After="RemoveFolders"> (REMOVE="ALL") </Custom>
       <Custom Action="Set_ElasticsearchPreserveInstallAction_Props" After="InstallInitialize" />
       <Custom Action="ElasticsearchPreserveInstallAction" After="StopServices"> (NOT (REMOVE="ALL")) </Custom>
       <Custom Action="ElasticsearchSetBootstrapPasswordAction" After="ElasticsearchValidateArgumentsAction">(NOT Installed) AND BOOTSTRAPPASSWORD=""</Custom>
