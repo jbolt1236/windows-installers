@@ -358,8 +358,14 @@ namespace Elastic.Installer.UI.Elasticsearch
 				Process.Start(string.Format(ViewResources.MainWindow_LicenseLink, "elasticsearch", _currentVersion)));
 			licenseModel.Close.Subscribe(async x => await this.HideMetroDialogAsync(customDialog));
 			customDialog.Content = new LicenseDialog { DataContext = licenseModel };
+			try
+			{
+				await this.ShowMetroDialogAsync(customDialog);
+			}
+			catch(Exception ex)
+			{
 
-			await this.ShowMetroDialogAsync(customDialog);
+			}
 		}
 
 		private async Task<IObservable<ClosingResult>> InstallAsync()

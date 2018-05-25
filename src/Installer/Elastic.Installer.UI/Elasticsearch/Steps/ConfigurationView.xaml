@@ -103,20 +103,18 @@
       <TextBox Grid.Row="1" Grid.Column="1" x:Name="NetworkHostTextBox" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="30"  VerticalAlignment="Center" />
       <Label Grid.Row="2" Grid.Column="0" x:Name="HttpPortLabel" Content="{x:Static resx:ViewResources.ConfigurationView_HttpPortLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
       <mahapps:NumericUpDown  Grid.Row="2" Grid.Column="1" x:Name="HttpPortTextBox" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" 
-         StringFormat="{}{0:0}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+         StringFormat="{}{0:0}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left"
       />
       <Label Grid.Row="2" Grid.Column="2" x:Name="TransportPortLabel" Content="{x:Static resx:ViewResources.ConfigurationView_TransportPortLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" />
       <mahapps:NumericUpDown  Grid.Row="2" Grid.Column="3" x:Name="TransportPortTextBox" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center" 
-          StringFormat="{}{0:0}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+          StringFormat="{}{0:0}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left"
       />
-      
-      
       <Label Grid.Row="3" Grid.Column="0" x:Name="DiscoveryLabel" Content="{x:Static resx:ViewResources.ConfigurationView_DiscoveryLabel}" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{DynamicResource DescriptionHeaderStyle}" />
       <Label Grid.Row="3" Grid.Column="3" Content="{x:Static resx:ViewResources.ConfigurationView_OptionalLabel}" HorizontalAlignment="Right" Margin="0,5,0,0" VerticalAlignment="Center" Style="{DynamicResource DescriptionHeaderDisabledStyle}" />
       <mahapps:NumericUpDown Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" x:Name="MinimumMasterTextBox" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Center"
                                    Value="0"  Minimum="0" Foreground="{DynamicResource AccentColorBrush}" FontWeight="Bold" 
                                    Margin="5, 0,0,0"
-                                   TextAlignment="Left" IsReadOnly="True"
+                                   TextAlignment="Left" InterceptManualEnter="false"
                                      StringFormat="{x:Static resx:ViewResources.ConfigurationView_MinimumMasterNodesNotSet}"
                                      />
       <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"  x:Name="UnicastHostsLabel" Content="{x:Static resx:ViewResources.ConfigurationView_UnicastHostsLabel}" HorizontalAlignment="Left" VerticalAlignment="Center"/>

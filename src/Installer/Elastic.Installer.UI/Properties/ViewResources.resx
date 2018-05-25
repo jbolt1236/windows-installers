@@ -145,10 +145,10 @@
     <value>Discovery</value>
   </data>
   <data name="ConfigurationView_MinimumMasterNodesSet" xml:space="preserve">
-    <value> {0} minimum master-eligible nodes</value>
+    <value>{0} minimum master-eligible nodes</value>
   </data>
   <data name="ConfigurationView_MinimumMasterNodesNotSet" xml:space="preserve">
-    <value> Minimum master nodes not set</value>
+    <value>Minimum master nodes not set</value>
   </data>
   <data name="ConfigurationView_LockMemoryCheckBox" xml:space="preserve">
     <value>Lock JVM memory</value>
