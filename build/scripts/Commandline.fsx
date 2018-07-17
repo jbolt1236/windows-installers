@@ -206,6 +206,7 @@ Integration tests against a local vagrant provider support several switches
 
     let private (|IsTarget|_|) (candidate: string) =
         match candidate.ToLowerInvariant() with
+        | "listbuildcandidates"
         | "buildservices"
         | "buildinstallers"
         | "test"
