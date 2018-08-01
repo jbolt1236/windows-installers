@@ -7,6 +7,7 @@
 #load "Build.fsx"
 #load "BuildConfig.fsx"
 #load "Commandline.fsx"
+#load "Versions.fsx"
 
 open System
 open System.IO
@@ -21,6 +22,7 @@ open Products.Paths
 open Build.Builder
 open Commandline
 open FSharp.Data
+open Versions
 
 let productsToBuild = Commandline.parse()
 
@@ -41,32 +43,11 @@ Target "Clean" (fun _ ->
     |> List.iter(fun p -> CleanDirs [OutDir @@ p.Name; p.ServiceBinDir])
 )
 
-let getVersions = (
-    use webClient = new System.Net.WebClient()
-    let url = "https://artifacts-api.elastic.co/v1/versions"
-    let versions = webClient.DownloadString url |> JsonValue.Parse
-    let arrayValue = versions.GetProperty "versions"
-    arrayValue.AsArray()
-    |> Seq.rev
-    |> Seq.map (fun x -> x.AsString())
- )
-
-let getBuilds version = (
-   use webClient = new System.Net.WebClient()
-   let url = "https://artifacts-api.elastic.co/v1/versions/" + version + "/builds"
-   let versions = webClient.DownloadString url |> JsonValue.Parse
-   let arrayValue = versions.GetProperty "builds"
-   arrayValue.AsArray()
-   |> Seq.rev
-   |> Seq.map (fun x -> x.AsString())
-   |> Seq.map (fun s -> (Seq.last( s.Split '-'), version, s))
-)
-
 Target "ListBuildCandidates" (fun () ->
-    getVersions
-    |> Seq.map (fun x -> getBuilds x)
+    Versions.getStagingVersions
+    |> Seq.map (fun x -> Versions.getStagingBuilds x)
     |> Seq.concat
-    |> Seq.iter (fun x -> printfn "%s:%s (%s)" <||| x)
+    |> Seq.iter (fun x -> printfn "%s:%s" <|| x)
 )
 
 Target "DownloadProducts" (fun () ->

@@ -1,8 +1,8 @@
 #I "../../packages/build/FAKE.x64/tools"
-#I @"../../packages/build/Fsharp.Data/lib/net40"
-#I @"../../packages/build/FSharp.Text.RegexProvider/lib/net40"
+#I "../../packages/build/Fsharp.Data/lib/net40"
+#I "../../packages/build/FSharp.Text.RegexProvider/lib/net40"
 
-#r @"FakeLib.dll"
+#r "FakeLib.dll"
 #r "Fsharp.Data.dll"
 #r "Fsharp.Text.RegexProvider.dll"
 #r "System.Xml.Linq.dll"
