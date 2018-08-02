@@ -145,7 +145,7 @@ module Versions =
             new (product, version, distribution, source) = { Product = product; Version = version; Distribution = distribution; Source = source }
         end
 
-    let RequestedAsset (candidate:string) =
+    let requestedAsset (candidate:string) =
         if candidate = null || candidate = "" then new RequestedAsset (Elasticsearch, RequestedVersion.Version (Latest, Latest, Latest, Stable), Zip, Official)
         else
             match candidate.Split(':') with
@@ -250,8 +250,13 @@ module Versions =
         | Version (Number major, Number minor, Number patch, Prerelease prerelease)
             -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Patch = patch && item.Prerelease = prerelease)
 
-    let VersionResolver (requested : RequestedAsset) = (
+    let versionResolver (requested : RequestedAsset) = (
        match requested.Source with
        | Official -> findInOfficialFeed requested
        | Staging -> findInStagingFeed requested
+    )
+
+    let resolve (candidate : string) = (
+       let requested = requestedAsset candidate
+       versionResolver requested
     )

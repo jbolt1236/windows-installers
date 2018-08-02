@@ -51,6 +51,13 @@ Target:
   - downloads the products if not already downloaded, and unzips them
     if not already unzipped
 
+* listbuildcandidates
+    - lists all available build candidates
+
+* revolve [Version string]
+    - output results of resolving a version string to an asset
+     e.g. "build resolve es:6:zip:staging"
+
 * release [Products] [Versions] [CertFile] [PasswordFile]
   - create a release versions of each MSI by building and then signing the service executable and installer for each.
   - when CertFile and PasswordFile are specified, these will be used for signing otherwise the values in ELASTIC_CERT_FILE
@@ -206,6 +213,7 @@ Integration tests against a local vagrant provider support several switches
 
     let private (|IsTarget|_|) (candidate: string) =
         match candidate.ToLowerInvariant() with
+        | "resolve"
         | "listbuildcandidates"
         | "buildservices"
         | "buildinstallers"

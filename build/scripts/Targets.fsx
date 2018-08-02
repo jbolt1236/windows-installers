@@ -50,6 +50,14 @@ Target "ListBuildCandidates" (fun () ->
     |> Seq.iter (fun x -> printfn "%s:%s" <|| x)
 )
 
+Target "Resolve" (fun () ->
+    let candidate = List.last (Commandline.arguments)
+    let requested = Versions.requestedAsset candidate
+    tracefn "Requested: %A" (requested.Distribution, requested.Product, requested.Source, requested.Version)
+    let resolved = Versions.versionResolver requested
+    tracefn "Resolved: %A" resolved
+)
+
 Target "DownloadProducts" (fun () ->
     productsToBuild
     |> List.iter (fun p -> p.Download())
