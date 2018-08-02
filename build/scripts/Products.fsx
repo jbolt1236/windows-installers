@@ -37,6 +37,7 @@ module Products =
     type Product =
         | Elasticsearch
         | Kibana
+        static member All = [Elasticsearch;Kibana]
 
         member this.Name =
             match this with
@@ -60,8 +61,6 @@ module Products =
 
         member this.Title =
             CultureInfo.InvariantCulture.TextInfo.ToTitleCase this.Name
-
-    let All = [Elasticsearch; Kibana]
 
     type Source =
         | Compile

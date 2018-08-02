@@ -52,11 +52,12 @@ Target:
     if not already unzipped
 
 * listbuildcandidates
-    - lists all available build candidates
+  - lists all available build candidates
 
-* revolve [Version string]
-    - output results of resolving a version string to an asset
-     e.g. "build resolve es:6:zip:staging"
+* resolve [VersionString]
+  - output results of resolving a version string to an asset
+
+  Example: build.bat resolve es:6:zip:staging
 
 * release [Products] [Versions] [CertFile] [PasswordFile]
   - create a release versions of each MSI by building and then signing the service executable and installer for each.
@@ -93,17 +94,38 @@ optional comma separated collection of products to build. can use
 Versions:
 ---------
 
-optional version(s) to build. Multiple versions can be specified, separated by commas. 
+Optional version(s) to build. Multiple versions can be specified, separated by commas.
+
+Examples of versions:
+
+    es:7-alpha1:zip:staging  = Latest Elasticsearch 7 alpha1 pre-release from staging
+
+    es:6.4.1:zip:official    = Elasticsearch ZIP 6.4.1 from official
+
+    es:6.4:msi:official      = Latest patch version of Elasticsearch 6.4.* MSI from official
+
+    es:6.4.*:msi:official    = Latest patch version of Elasticsearch 6.4.* MSI from official
+                            
+    es:6.*:msi:official      = Latest minor version of Elasticsearch 6.* MSI from official
+                            
+    es:6:msi:official        = Latest version of Elasticsearch 6 MSI from official
+                            
+    es:6.*.*:msi:official    = Latest version of Elasticsearch 6 MSI from official
+                            
+    es:6.*                   = Latest version of Elasticsearch 6 ZIP from official
+    
+    es:*-*                   = Latest version of Elasticsearch ZIP from official
+
+    es:*                     = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch ZIP from official
+
+    es:6:zip:staging         = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch 6 ZIP from staging
+                            
+    es:92839eab              = Elasticsearch build from staging with hash 92839eab
+                            
+    92839eab                 = Elasticsearch build from staging with hash 92839eab
 
 When specified, for build targets other than release, the product version zip files will
 be downloaded and extracted to build/in directory if they don't already exist. 
-
-A release version can be downloaded for integration tests by prefixing the version with r: e.g. r:5.5.2
-A build candidate version can be downloaded for integration tests by prefixing the version with [buildhash]: e.g. e824d65e:5.6.0
-
-when not specified
-    - for build targets other than release, the latest non-prelease version of each product will be downloaded
-    - for release, the build/in directory will be checked and a single version found there will be used
 
 TestTargets:
 ------------
@@ -136,7 +158,6 @@ Integration tests against a local vagrant provider support several switches
                                           the build/in directory, that should be installed
                                           within integration tests instead of downloading. The plugin
                                           zip names must match the installer version.
-
 """
 
     [<Literal>]
@@ -270,7 +291,7 @@ Integration tests against a local vagrant provider support several switches
         let productFromValue value =
             match value with
             | "all"
-            | "a" -> All
+            | "a" -> Product.All
             | "e"
             | "es"
             | "elasticsearch" -> [Elasticsearch]
@@ -317,7 +338,7 @@ Integration tests against a local vagrant provider support several switches
                        | ["release"] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
-                           All |> List.map (ProductVersions.CreateFromProduct versionFromInDir)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct versionFromInDir)
                        | ["release"; IsProductList products ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
@@ -325,7 +346,7 @@ Integration tests against a local vagrant provider support several switches
                        | ["release"; IsVersionList versions ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | ["release"; IsProductList products; IsVersionList versions ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
@@ -337,7 +358,7 @@ Integration tests against a local vagrant provider support several switches
                        | ["release"; IsVersionList versions; certFile; passwordFile ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromFile certFile passwordFile
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | ["release"; IsProductList products; certFile; passwordFile ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromFile certFile passwordFile
@@ -345,7 +366,7 @@ Integration tests against a local vagrant provider support several switches
                        | ["release"; certFile; passwordFile ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromFile certFile passwordFile
-                           All |> List.map (ProductVersions.CreateFromProduct versionFromInDir)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct versionFromInDir)
 
                        | ["integrate"; IsProductList products; IsVersionList versions; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
@@ -364,10 +385,10 @@ Integration tests against a local vagrant provider support several switches
                        | ["integrate"; IsVersionList versions; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            setBuildParam "vagrantprovider" provider
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
                        | ["integrate"; IsVersionList versions; testTargets] ->
                            setBuildParam "testtargets" testTargets
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                            
                        | ["integrate"; IsProductList products; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
@@ -383,35 +404,35 @@ Integration tests against a local vagrant provider support several switches
                            products |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)        
                        | ["integrate"; IsVersionList versions; IsVagrantProvider provider] ->
                            setBuildParam "vagrantprovider" provider
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
                        | ["integrate"; IsVersionList versions] ->
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | ["integrate"; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            setBuildParam "vagrantprovider" provider
-                           All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)      
+                           Product.All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)      
                        | ["integrate"; IsVagrantProvider provider] ->
                            setBuildParam "vagrantprovider" provider
-                           All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)                
+                           Product.All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)                
                        | ["integrate"; testTargets] ->
                            setBuildParam "testtargets" testTargets
-                           All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
                        | [IsProductList products; IsVersionList versions] ->
                            products |> List.map(ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | [IsProductList products] ->
                            products |> List.map(ProductVersions.CreateFromProduct lastFeedVersion)
                        | [IsVersionList versions] ->
-                           All |> List.map(ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map(ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | [IsTarget target; IsVersionList versions] ->
-                           All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | [IsTarget target; IsProductList products] ->
                            products |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
                        | [IsTarget target; IsProductList products; IsVersionList versions] ->
                            products |> List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
                        | [IsTarget target] ->
-                           All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
                        | [] ->
-                           All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           Product.All |> List.map (ProductVersions.CreateFromProduct lastFeedVersion)
                        | _ ->
                            traceError usage
                            exit 2

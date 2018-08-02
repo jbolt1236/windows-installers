@@ -7,34 +7,15 @@
 #r "Fsharp.Text.RegexProvider.dll"
 #r "System.Xml.Linq.dll"
 
+#load "Products.fsx"
+
 open System
-open System.Globalization
 open System.Text.RegularExpressions
 open FSharp.Data
 open FSharp.Text.RegexProvider
+open Products
 
 module Versions =
-
-    type Product =
-        | Elasticsearch
-        | Kibana
-        static member All = [Elasticsearch;Kibana]
-        member this.Name =
-             match this with
-             | Elasticsearch -> "elasticsearch"
-             | Kibana -> "kibana"
-        member this.Title =
-            CultureInfo.InvariantCulture.TextInfo.ToTitleCase this.Name
-
-    type AvailableAsset = {
-        Product : string;
-        FullVersion : string;
-        Major : int;
-        Minor : int;
-        Patch : int;
-        Prerelease : string;
-        Hash : string;
-    }
 
     type Distribution =
         | MSI
@@ -60,9 +41,9 @@ module Versions =
         match candidate with
         | "e"
         | "es"
-        | "elasticsearch" -> Elasticsearch
+        | "elasticsearch" -> Products.Elasticsearch
         | "k"
-        | "kibana" -> Kibana
+        | "kibana" -> Products.Kibana
         | _ -> failwith "Not a valid product"
 
     type RequestedVersionPart =
@@ -88,6 +69,16 @@ module Versions =
         member this.Display = match this with
                               | Version (major, minor, patch, prerelease) -> sprintf "%s.%s.%s%s" (major.Display) (minor.Display) (patch.Display) (prerelease.Display)
                               | Hash hash -> sprintf "%s" hash
+
+    type ResolvedVersion = {
+        Product : string;
+        FullVersion : string;
+        Major : int;
+        Minor : int;
+        Patch : int;
+        Prerelease : string;
+        Hash : string;
+    }
 
     let (|Int|_|) str =
        match System.Int32.TryParse(str) with
@@ -138,7 +129,7 @@ module Versions =
 
     type RequestedAsset =
         struct
-            val Product : Product;
+            val Product : Products.Product;
             val Version : RequestedVersion;
             val Distribution : Distribution;
             val Source : Source;
@@ -146,7 +137,7 @@ module Versions =
         end
 
     let requestedAsset (candidate:string) =
-        if candidate = null || candidate = "" then new RequestedAsset (Elasticsearch, RequestedVersion.Version (Latest, Latest, Latest, Stable), Zip, Official)
+        if candidate = null || candidate = "" then new RequestedAsset (Products.Elasticsearch, RequestedVersion.Version (Latest, Latest, Latest, Stable), Zip, Official)
         else
             match candidate.Split(':') with
             | [|ProductMatch product; HashMatch hash|] -> new RequestedAsset (product, Hash hash, Zip, Staging)
@@ -185,7 +176,7 @@ module Versions =
                           |> Seq.map (fun item -> parseVersion (item.Title, ""))                   
                           |> Seq.filter (fun version -> version.Product = requested.Product.Title)
         match requested.Version with
-        | Hash hash -> None // Official releases do not contain hashes
+        | Hash _ -> None // Official releases do not contain hashes
         | Version (Latest, _, _, Stable)
             -> Some (Seq.head(allVersions))
         | Version (Number major, Latest, _, Stable)

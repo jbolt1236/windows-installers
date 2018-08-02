@@ -53,7 +53,7 @@ Target "ListBuildCandidates" (fun () ->
 Target "Resolve" (fun () ->
     let candidate = List.last (Commandline.arguments)
     let requested = Versions.requestedAsset candidate
-    tracefn "Requested: %A" (requested.Distribution, requested.Product, requested.Source, requested.Version)
+    tracefn "Requested: %A" (requested.Product, requested.Version, requested.Distribution,  requested.Source)
     let resolved = Versions.versionResolver requested
     tracefn "Resolved: %A" resolved
 )
