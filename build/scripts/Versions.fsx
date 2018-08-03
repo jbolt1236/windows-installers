@@ -22,20 +22,22 @@ module Versions =
         | Zip
 
     type Source =
-        | Official
-        | Staging
+        | Official // Official releases
+        | Staging  // Build candidates for official release
+        | Snapshot // On-demand and nightly builds
 
     let (|DistributionMatch|) (candidate:string) =
         match candidate with
         | "msi" -> MSI
         | "zip" -> Zip
-        | _ -> failwith "Not a valid distribution"
+        | _ -> failwithf "Not a valid distribution: %s" candidate
 
     let (|SourceMatch|) (candidate:string) =
         match candidate with
         | "official" -> Official
         | "staging" -> Staging
-        | _ -> failwith "Not a valid source"
+        | "snapshot" -> Snapshot
+        | _ -> failwithf "Not a valid source: %s" candidate
 
     let (|ProductMatch|) (candidate:string) =
         match candidate with
@@ -245,6 +247,7 @@ module Versions =
        match requested.Source with
        | Official -> findInOfficialFeed requested
        | Staging -> findInStagingFeed requested
+       | Snapshot -> findInStagingFeed requested
     )
 
     let resolve (candidate : string) = (

@@ -27,137 +27,155 @@ module Commandline =
     let usage = """
 USAGE:
 
-build.bat [Target] [Products] [Versions] [Target specific params] [skiptests]
+build.bat [Target] [VersionString(s)] [Target specific params] [skiptests]
 
 Target:
 -------
 
-* buildinstallers
-  - default target if none provided. Builds installers for products
+    * buildinstallers
+      - default target if none provided. Builds installers for products
 
-* buildservices
-  - Builds services for products
+    * buildservices
+      - Builds services for products
 
-* clean
-  - cleans build output folders
+    * clean
+      - cleans build output folders
 
-* patchguids
-  - ensures a product GUID exists for the specified products and versions
+    * patchguids
+      - ensures a product GUID exists for the specified products and versions
 
-* unittest
-  - build and unit test
+    * unittest
+      - build and unit test
 
-* downloadproducts
-  - downloads the products if not already downloaded, and unzips them
-    if not already unzipped
+    * downloadproducts
+      - downloads the products if not already downloaded, and unzips them
+        if not already unzipped
 
-* listbuildcandidates
-  - lists all available build candidates
+    * listbuildcandidates
+      - lists all available build candidates
 
-* resolve [VersionString]
-  - output results of resolving a version string to an asset
+    * resolve [VersionString]
+      - output results of resolving a version string to an asset
 
-  Example: build.bat resolve es:6:zip:staging
+      Example: build.bat resolve es:6:zip:staging
 
-* release [Products] [Versions] [CertFile] [PasswordFile]
-  - create a release versions of each MSI by building and then signing the service executable and installer for each.
-  - when CertFile and PasswordFile are specified, these will be used for signing otherwise the values in ELASTIC_CERT_FILE
-    and ELASTIC_CERT_PASSWORD environment variables will be used
+    * release [Products] [VersionString] [CertFile] [PasswordFile]
+      - create a release versions of each MSI by building and then signing the service executable and installer for each.
+      - when CertFile and PasswordFile are specified, these will be used for signing otherwise the values in ELASTIC_CERT_FILE
+        and ELASTIC_CERT_PASSWORD environment variables will be used
 
-  Example: build.bat release es 5.5.3 C:/path_to_cert_file C:/path_to_password_file
+      Example: build.bat release es:5.5.3 C:/path_to_cert_file C:/path_to_password_file
 
-* integrate [Products] [Versions] [VagrantProvider] [TestTargets] [switches] [skiptests]  -
-  - run integration tests. Can filter tests by wildcard [TestTargets], 
-    which match against the directory names of tests
+    * integrate [Products] [VersionString] [VagrantProvider] [TestTargets] [switches] [skiptests]  -
+      - run integration tests. Can filter tests by wildcard [TestTargets], 
+        which match against the directory names of tests
 
-  Example: build.bat integrate es 5.5.1,5.5.2 local * skiptests
+      Example: build.bat integrate es:5.5.1,es:5.5.2 local * skiptests
 
-* help or ?
-  - show this usage summary
+    * help or ?
+      - show this usage summary
 
-Products:
----------
+VersionString:
+--------------
 
-optional comma separated collection of products to build. can use
+    Optional version strings for build targets. Multiple product & versions can be specified, separated by commas.
 
-* a
-* all
-    - build all products
-* e
-* es
-* elasticsearch
-    - build elasticsearch
-* k
-* kibana
-    - build kibana
+    Components of a version string are seperated by colons and refer to:
 
-Versions:
----------
+        [Product]:[Version]:[Distribution]:[Source]
 
-Optional version(s) to build. Multiple versions can be specified, separated by commas.
+    A version string is eventually resolved to an asset. To test this process it is possible to call:
 
-Examples of versions:
+        build.bat resolve [VersionString]
 
-    es:7-alpha1:zip:staging  = Latest Elasticsearch 7 alpha1 pre-release from staging
+    This will output the resolved asset.
 
-    es:6.4.1:zip:official    = Elasticsearch ZIP 6.4.1 from official
+    The version string format is explained below:
 
-    es:6.4:msi:official      = Latest patch version of Elasticsearch 6.4.* MSI from official
+    [Product]
 
-    es:6.4.*:msi:official    = Latest patch version of Elasticsearch 6.4.* MSI from official
-                            
-    es:6.*:msi:official      = Latest minor version of Elasticsearch 6.* MSI from official
-                            
-    es:6:msi:official        = Latest version of Elasticsearch 6 MSI from official
-                            
-    es:6.*.*:msi:official    = Latest version of Elasticsearch 6 MSI from official
-                            
-    es:6.*                   = Latest version of Elasticsearch 6 ZIP from official
-    
-    es:*-*                   = Latest version of Elasticsearch ZIP from official
+        e / es / elasticsearch = Elasticsearch
+        k / kibana             = Kibana
 
-    es:*                     = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch ZIP from official
+    [Version]
 
-    es:6:zip:staging         = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch 6 ZIP from staging
-                            
-    es:92839eab              = Elasticsearch build from staging with hash 92839eab
-                            
-    92839eab                 = Elasticsearch build from staging with hash 92839eab
+        Can refer to a complete version (Major.Minor.Patch-Prerelease) or can use wildcards (*) to
+        denote latest versions. If no prerelease part is specified, then stable versions are only considered.
 
-When specified, for build targets other than release, the product version zip files will
-be downloaded and extracted to build/in directory if they don't already exist. 
+        Examples:
+
+        7 / 7.* / 7.*.* = Latest stable (not alpha1, beta1, beta2, rc1...) 7 version
+        7-*             = Latest 7 version (including prereleases)
+        7-beta1         = Latest 7 version with beta1 prerelease moniker
+        7.5-rc1         = Latest 7.5 minor version with rc1 prerelease moniker
+        6.5 / 6.5.*     = Latest stable (not alpha1, beta1, beta2, rc1...) patch release in the 6.5 minor version
+        * / *.*.*       = Latest stable version (not alpha1, beta1, beta2, rc1...)
+        *-* / *.*.*-*   = Latest version (including prereleases)
+
+    [Distribution]
+
+        official = Official releases for general public download
+        staging  = Build candidates for official release
+        snapshot = On-demand and nightly builds
+
+    [Source]
+
+        zip = Bundled ZIP version
+        msi = Compiled MSI from bundled ZIP version (typically used for integration tests)
+
+    Complete examples
+    -----------------
+
+    Examples of complete version strings:
+
+        es:7-alpha1:zip:staging = Latest Elasticsearch 7 alpha1 prerelease from staging
+        es:6.4.1:zip:official   = Elasticsearch ZIP 6.4.1 from official
+        es:6.4:msi:official     = Latest patch version of Elasticsearch 6.4.* MSI from official
+        es:6.4.*:msi:official   = Latest patch version of Elasticsearch 6.4.* MSI from official
+        es:6.*:msi:official     = Latest minor version of Elasticsearch 6.* MSI from official
+        es:6:msi:official       = Latest version of Elasticsearch 6 MSI from official
+        es:6.*.*:msi:official   = Latest version of Elasticsearch 6 MSI from official
+        es:6.*                  = Latest version of Elasticsearch 6 ZIP from official
+        es:*-*                  = Latest version (including prereleases) of Elasticsearch ZIP from official
+        es:*                    = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch ZIP from official
+        es:6:zip:staging        = Latest stable version (not alpha1, beta1, beta2, rc1...) of Elasticsearch 6 ZIP from staging
+        es:92839eab             = Elasticsearch from snapshot with build hash 92839eab
+        92839eab                = Elasticsearch from snapshot with build hash 92839eab
+
+    When specified, for build targets other than release, the product version zip files will
+    be downloaded and extracted to build/in directory if they don't already exist. 
 
 TestTargets:
 ------------
 
-Wildcard pattern for integration tests to target within test directories 
-in <root>/src/Tests/Elastic.Installer.Integration.Tests/Tests.
+    Wildcard pattern for integration tests to target within test directories 
+    in <root>/src/Tests/Elastic.Installer.Integration.Tests/Tests.
 
-When not specified, defaults to *
+    When not specified, defaults to *
 
 VagrantProvider:
 ----------------
 
-The provider that vagrant should use to bring up vagrant boxes
-    - local: use Virtualbox on the local machine
-    - azure: use Azure provider to provision a machine on Azure for each integration test scenario
-    - quick-azure: use Azure provider to provision a single machine on Azure on which to run all integration tests sequentially
+    The provider that vagrant should use to bring up vagrant boxes
+        - local: use Virtualbox on the local machine
+        - azure: use Azure provider to provision a machine on Azure for each integration test scenario
+        - quick-azure: use Azure provider to provision a single machine on Azure on which to run all integration tests sequentially
 
 skiptests:
 ----------
 
-Whether to skip unit tests.
+    Whether to skip unit tests.
 
 switches:
 ---------
 
-Integration tests against a local vagrant provider support several switches
-    - -gui: launch vagrant with a GUI
-    - -nodestroy: do not destroy the vagrant box after the test has run
-    - -plugins:<comma separated plugins>: a list of plugin zips that exist within
-                                          the build/in directory, that should be installed
-                                          within integration tests instead of downloading. The plugin
-                                          zip names must match the installer version.
+    Integration tests against a local vagrant provider support several switches
+        - -gui: launch vagrant with a GUI
+        - -nodestroy: do not destroy the vagrant box after the test has run
+        - -plugins:<comma separated plugins>: a list of plugin zips that exist within
+                                              the build/in directory, that should be installed
+                                              within integration tests instead of downloading. The plugin
+                                              zip names must match the installer version.
 """
 
     [<Literal>]
