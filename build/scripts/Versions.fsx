@@ -10,12 +10,15 @@
 #load "Products.fsx"
 
 open System
+open System.IO
 open System.Text.RegularExpressions
 open FSharp.Data
 open FSharp.Text.RegexProvider
 open Microsoft.FSharp.Reflection
 open Products
 open Paths
+open Fake.FileHelper
+open Fake
 
 module Versions =
 
@@ -62,8 +65,7 @@ module Versions =
         end
         static member Latest = new RequestedAsset (Products.Elasticsearch, RequestedVersion.Latest, Zip, Official)
 
-    type ResolvedVersion = {
-        RequestedAsset : RequestedAsset;
+    type Version = {
         Product : Products.Product;
         FullVersion : string;
         Major : int;
@@ -71,7 +73,68 @@ module Versions =
         Patch : int;
         Prerelease : string;
         Hash : string;
-    }
+    } with
+        member this.ServiceDir() =
+            ProcessHostsDir @@ sprintf "Elastic.ProcessHosts.%s/" this.Product.Title
+
+        member this.ServiceBinDir() =
+            this.ServiceDir() @@ "bin/AnyCPU/Release/"
+        
+        member this.BinDir() =
+            InDir @@ sprintf "%s-%s/bin/" this.Product.Name this.FullVersion
+
+        member this.OutMsiPath() = 
+            OutDir @@ this.Product.Name @@ (sprintf "%s-%s.msi" this.Product.Name this.FullVersion)
+
+        member private this.ZipFile () =
+            let fullPathInDir = InDir |> Path.GetFullPath
+            Path.Combine(fullPathInDir, sprintf "%s-%s.zip" this.Product.Name this.FullVersion)
+
+        member private this.ExtractedDirectory () =
+            let fullPathInDir = InDir |> Path.GetFullPath            
+            Path.Combine(fullPathInDir, sprintf "%s-%s" this.Product.Name this.FullVersion)
+
+    let ArtifactDownloadsUrl = "https://artifacts.elastic.co/downloads"
+    let StagingDownloadsUrl product hash fullVersion = sprintf "https://staging.elastic.co/%s-%s/downloads/%s/%s-%s.msi" fullVersion hash product product fullVersion
+    let SnapshotDownloadsUrl product versionNumber hash fullVersion = sprintf "https://snapshots.elastic.co/%s-%s/downloads/%s/%s-%s.msi" versionNumber hash product product fullVersion
+
+    type ResolvedAsset = {
+            Requested : RequestedAsset;
+            Resolved: Version;
+        } with
+        member this.DownloadUrl () =
+            let extension = match this.Requested.Distribution with
+                            | MSI -> "msi"
+                            | Zip -> "zip"
+            match this.Requested.Product with
+            | Elasticsearch ->
+                match this.Requested.Source with
+                | Official ->
+                    sprintf "%s/elasticsearch/elasticsearch-%s.%s" ArtifactDownloadsUrl this.Resolved.FullVersion extension
+                | Staging
+                | Snapshot ->
+                    sprintf "%s/%s/%s-%s.%s" ArtifactDownloadsUrl this.Resolved.Product.Name this.Resolved.Product.Name this.Resolved.FullVersion extension
+            | Kibana ->
+                match this.Requested.Source with
+                | Official ->
+                    sprintf "%s/kibana/kibana-%s-windows-x86.zip" ArtifactDownloadsUrl this.Resolved.FullVersion 
+                | Staging
+                | Snapshot ->
+                    sprintf ""
+            //match version.RequestedAsset.Source with
+            //| Versions.Official ->
+            //    match version.RequestedAsset.Product with
+            //    | Product.Elasticsearch ->
+            //        sprintf "%s/elasticsearch/elasticsearch-%s.zip" ArtifactDownloadsUrl version.FullVersion
+            //    | Product.Kibana ->               
+            //        sprintf "%s/kibana/kibana-%s-windows-x86.zip" ArtifactDownloadsUrl version.FullVersion 
+            //| Versions.Staging
+            //| Versions.Snapshot ->
+            //    sprintf "%s/%s/%s-%s.msi" ArtifactDownloadsUrl this.Name this.Name version.FullVersion 
+            //| BuildCandidate hash ->
+            //    if (version.FullVersion.EndsWith("snapshot", StringComparison.OrdinalIgnoreCase))
+            //    then SnapshotDownloadsUrl this.Name (sprintf "%i.%i.%i" version.Major version.Minor version.Patch) hash version.FullVersion
+            //    else StagingDownloadsUrl this.Name hash version.FullVersion
 
     let (|DistributionMatch|) (candidate:string) =
         match candidate with
@@ -179,33 +242,37 @@ module Versions =
         |_ -> None
 
     let parseVersion (requested: RequestedAsset, version:string, hash:string) =
-        let m = VersionRegex().Match version
-        if m.Success |> not then failwithf "Could not parse version from %s" version
-        { RequestedAsset = requested;
-          FullVersion = m.Version.Value;
-          Product = (fromString<Products.Product> m.Product.Value).Value;
-          Major = m.Major.Value |> int;
-          Minor = m.Minor.Value |> int;
-          Patch = m.Patch.Value |> int;
-          Prerelease = m.Prerelease.Value;
-          Hash = hash }
+        let matched = VersionRegex().Match version
+        if matched.Success |> not then failwithf "Could not parse version from %s" version
+        {
+            Requested = requested;
+            Resolved = {
+                        FullVersion = matched.Version.Value;
+                        Product = (fromString<Products.Product> matched.Product.Value).Value;
+                        Major = matched.Major.Value |> int;
+                        Minor = matched.Minor.Value |> int;
+                        Patch = matched.Patch.Value |> int;
+                        Prerelease = matched.Prerelease.Value;
+                        Hash = hash
+            }
+        }
           
     let private findInOfficialFeed (requested : RequestedAsset) =
         let feed = DownloadFeed.Load feedUrl
         let allVersions = feed.Channel.Items
                           |> Seq.filter (fun item -> item.Title.StartsWith(requested.Product.Title))
                           |> Seq.map (fun item -> parseVersion (requested, item.Title, ""))                   
-                          |> Seq.filter (fun version -> version.Product = requested.Product )
+                          |> Seq.filter (fun version -> version.Resolved.Product = requested.Product )
         match requested.Version with
         | Hash _ -> None // Official releases do not contain hashes
         | Version (Latest, _, _, Stable)
             -> Some (Seq.head(allVersions))
         | Version (Number major, Latest, _, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major)
         | Version (Number major, Number minor, Latest, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor)
         | Version (Number major, Number minor, Number patch, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Patch = patch)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Patch = patch)
         | _ -> None
 
     let getStagingVersions = (
@@ -236,31 +303,31 @@ module Versions =
                           |> Seq.map (fun item -> parseVersion (requested, snd item, fst item))
         match requested.Version with
         | Hash hash
-            -> allVersions |> Seq.tryFind (fun item -> item.Hash = hash)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Hash = hash)
         | Version (Latest, _, _, Any)
             -> Some (Seq.head(allVersions))        
         | Version (Number major, Latest, _, Any)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major)        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major)        
         | Version (Number major, Number minor, Latest, Any)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor)        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor)        
         | Version (Number major, Number minor, Number patch, Any)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Patch = patch)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Patch = patch)
         | Version (Latest, _, _, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Prerelease = "")        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Prerelease = "")        
         | Version (Number major, Latest, _, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Prerelease = "")        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Prerelease = "")        
         | Version (Number major, Number minor, Latest, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Prerelease = "")        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Prerelease = "")        
         | Version (Number major, Number minor, Number patch, Stable)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Patch = patch && item.Prerelease = "")
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Patch = patch && item.Resolved.Prerelease = "")
         | Version (Latest, _, _, Prerelease prerelease)
-            -> allVersions |> Seq.tryFind (fun item -> item.Prerelease = prerelease)        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Prerelease = prerelease)        
         | Version (Number major, Latest, _, Prerelease prerelease)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Prerelease = prerelease)        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Prerelease = prerelease)        
         | Version (Number major, Number minor, Latest, Prerelease prerelease)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Prerelease = prerelease)        
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Prerelease = prerelease)        
         | Version (Number major, Number minor, Number patch, Prerelease prerelease)
-            -> allVersions |> Seq.tryFind (fun item -> item.Major = major && item.Minor = minor && item.Patch = patch && item.Prerelease = prerelease)
+            -> allVersions |> Seq.tryFind (fun item -> item.Resolved.Major = major && item.Resolved.Minor = minor && item.Resolved.Patch = patch && item.Resolved.Prerelease = prerelease)
 
     let versionResolver (requested : RequestedAsset) = (
        let resolved = match requested.Source with
@@ -276,98 +343,45 @@ module Versions =
         | _ -> failwithf "Not a valid version: %s" candidate
     )
 
-    type ResolvedVersionAssets(versions:ResolvedVersion list) =
+    type ResolvedAssets(versions:ResolvedAsset list) =
 
-        member this.Versions = versions
-
-        member private this.DownloadUrl (version : ResolvedVersion) =
-            match version.RequestedAsset.Product with
-            | Elasticsearch ->
-                match version.RequestedAsset.Source with
-                | Official ->
-                    sprintf "%s/elasticsearch/elasticsearch-%s.zip" ArtifactDownloadsUrl version.FullVersion
-                | Staging
-                | Snapshot ->
-                    sprintf "%s/%s/%s-%s.msi" ArtifactDownloadsUrl this.Name this.Name version.FullVersion 
-            | Kibana ->
-                match version.RequestedAsset.Source with
-                | Official ->
-                    sprintf "%s/kibana/kibana-%s-windows-x86.zip" ArtifactDownloadsUrl version.FullVersion 
-                | Staging
-                | Snapshot ->
-                    sprintf ""
-
-            //match version.RequestedAsset.Source with
-            //| Versions.Official ->
-            //    match version.RequestedAsset.Product with
-            //    | Product.Elasticsearch ->
-            //        sprintf "%s/elasticsearch/elasticsearch-%s.zip" ArtifactDownloadsUrl version.FullVersion
-            //    | Product.Kibana ->               
-            //        sprintf "%s/kibana/kibana-%s-windows-x86.zip" ArtifactDownloadsUrl version.FullVersion 
-            //| Versions.Staging
-            //| Versions.Snapshot ->
-            //    sprintf "%s/%s/%s-%s.msi" ArtifactDownloadsUrl this.Name this.Name version.FullVersion 
-            //| BuildCandidate hash ->
-            //    if (version.FullVersion.EndsWith("snapshot", StringComparison.OrdinalIgnoreCase))
-            //    then SnapshotDownloadsUrl this.Name (sprintf "%i.%i.%i" version.Major version.Minor version.Patch) hash version.FullVersion
-            //    else StagingDownloadsUrl this.Name hash version.FullVersion
-
-        member private this.ZipFile (version:ResolvedVersion) =
-            let fullPathInDir = InDir |> Path.GetFullPath
-            Path.Combine(fullPathInDir, sprintf "%s-%s.zip" this.Name version.FullVersion)
-
-        member private this.ExtractedDirectory (version:ResolvedVersion) =
-            let fullPathInDir = InDir |> Path.GetFullPath            
-            Path.Combine(fullPathInDir, sprintf "%s-%s" this.Name version.FullVersion)
-
-        member this.BinDirs = 
-            this.Versions
-            |> List.filter (fun v -> v.Source = Compile)
-            |> List.map(fun v -> InDir @@ sprintf "%s-%s/bin/" this.Name v.FullVersion)
-
-        member this.ServiceDir =
-            ProcessHostsDir @@ sprintf "Elastic.ProcessHosts.%s/" this.Title
-
-        member this.ServiceBinDir = this.ServiceDir @@ "bin/AnyCPU/Release/"
-
-        member this.DownloadPath (version:ResolvedVersion) =
+        member this.DownloadPath (version:ResolvedAsset) =
             let fullPathInDir = InDir |> Path.GetFullPath 
-            let releaseFile version dir =
-                let downloadUrl = this.DownloadUrl version     
+            let downloadUrl = version.DownloadUrl()
+            let releaseFile dir =
                 Path.Combine(fullPathInDir, dir, Path.GetFileName downloadUrl)
-            match version.Source with
-            | Compile ->  this.ZipFile version
-            | Released -> releaseFile version "releases"
-            | BuildCandidate hash -> releaseFile version hash
+            //match version.Source with
+            //| Compile ->  this.ZipFile version
+            //| Released -> releaseFile version "releases"
+            //| BuildCandidate hash -> releaseFile version hash
 
-        member this.Download () =
-            this.Versions
-            |> List.iter (fun version ->
-                match (this.DownloadUrl version, this.DownloadPath version) with
+            releaseFile "releases"
+
+        member this.Download (version:ResolvedAsset) =
+                match (version.DownloadUrl(), this.DownloadPath version) with
                 | (_, file) when fileExists file ->
-                    tracefn "Already downloaded %s to %s" this.Name file
+                    tracefn "Already downloaded %s to %s" version.Resolved.Product.Name file
                 | (url, file) ->
-                    tracefn "Downloading %s from %s" this.Name url 
+                    tracefn "Downloading %s from %s" version.Resolved.Product.Name url 
                     let targetDirectory = file |> Path.GetDirectoryName
                     if (directoryExists targetDirectory |> not) then CreateDir targetDirectory
                     use webClient = new System.Net.WebClient()
                     (url, file) |> webClient.DownloadFile
-                    tracefn "Done downloading %s from %s to %s" this.Name url file 
+                    tracefn "Done downloading %s from %s to %s" version.Resolved.Product.Name url file 
 
-                match version.Source with
-                | Compile -> 
-                    let extractedDirectory = this.ExtractedDirectory version
-                    let zipFile = this.DownloadPath version
-                    if directoryExists extractedDirectory |> not
-                    then
-                        tracefn "Unzipping %s %s" this.Name zipFile
-                        Unzip InDir zipFile
-                        match this.Product with
-                            | Kibana ->
-                                let original = sprintf "kibana-%s-windows-x86" version.FullVersion
-                                if directoryExists original |> not then
-                                    Rename (InDir @@ (sprintf "kibana-%s" version.FullVersion)) (InDir @@ original)
-                            | _ -> ()
-                    else tracefn "Extracted directory %s already exists" extractedDirectory   
-                | _ -> ()
-            )
+                //match version.Source with
+                //| Compile -> 
+                //    let extractedDirectory = this.ExtractedDirectory version
+                //    let zipFile = this.DownloadPath version
+                //    if directoryExists extractedDirectory |> not
+                //    then
+                //        tracefn "Unzipping %s %s" version.Product.Name zipFile
+                //        Unzip InDir zipFile
+                //        match version.Product with
+                //            | Kibana ->
+                //                let original = sprintf "kibana-%s-windows-x86" version.FullVersion
+                //                if directoryExists original |> not then
+                //                    Rename (InDir @@ (sprintf "kibana-%s" version.FullVersion)) (InDir @@ original)
+                //            | _ -> ()
+                //    else tracefn "Extracted directory %s already exists" extractedDirectory   
+                //| _ -> ()

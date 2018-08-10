@@ -7,7 +7,6 @@
 #r "Fsharp.Text.RegexProvider.dll"
 #r "System.Xml.Linq.dll"
 
-#load "Products.fsx"
 #load "Versions.fsx"
 
 open System
@@ -180,19 +179,19 @@ switches:
                                               zip names must match the installer version.
 """
 
-    let private versionFromInDir (product : Product) =
-        let extractVersion (fileInfo:FileInfo) =
-            Regex.Replace(fileInfo.Name, "^" + product.Name + "\-(.*)\.zip$", "$1")
-        let zips = InDir
-                   |> directoryInfo
-                   |> filesInDirMatching (product.Name + "*.zip")
-        match zips.Length with
-        | 0 -> failwithf "No %s zip file found in %s" product.Name InDir
-        | 1 ->
-            let version = zips.[0] |> extractVersion |> parseVersion
-            tracefn "Extracted %s from %s" version.FullVersion zips.[0].FullName
-            [version]
-        | _ -> failwithf "Expecting one %s zip file in %s but found %i" product.Name InDir zips.Length
+    //let private versionFromInDir (product : Product) =
+    //    let extractVersion (fileInfo:FileInfo) =
+    //        Regex.Replace(fileInfo.Name, "^" + product.Name + "\-(.*)\.zip$", "$1")
+    //    let zips = InDir
+    //               |> directoryInfo
+    //               |> filesInDirMatching (product.Name + "*.zip")
+    //    match zips.Length with
+    //    | 0 -> failwithf "No %s zip file found in %s" product.Name InDir
+    //    | 1 ->
+    //        let version = zips.[0] |> extractVersion |> parseVersion
+    //        tracefn "Extracted %s from %s" version.FullVersion zips.[0].FullName
+    //        [version]
+    //    | _ -> failwithf "Expecting one %s zip file in %s but found %i" product.Name InDir zips.Length
 
     let private args = getBuildParamOrDefault "cmdline" "buildinstallers" |> split ' '
     let private skipTests = args |> List.exists (fun x -> x = "skiptests")
@@ -281,51 +280,51 @@ switches:
                        | ["release"] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
-                           List.map (ProductVersions.CreateFromProduct versionFromInDir)
+                           [Versions.RequestedAsset.Latest]
                        | ["release"; IsVersionList versions ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromEnvVariables ()
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | ["release"; IsVersionList versions; certFile; passwordFile ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromFile certFile passwordFile
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | ["release"; certFile; passwordFile ] ->
                            setBuildParam "release" "1"
                            certAndPasswordFromFile certFile passwordFile
-                           List.map (ProductVersions.CreateFromProduct versionFromInDir)
+                           [Versions.RequestedAsset.Latest]
 
                        | ["integrate"; IsVersionList versions; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            setBuildParam "vagrantprovider" provider
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
+                           versions                    
                        | ["integrate"; IsVersionList versions; testTargets] ->
                            setBuildParam "testtargets" testTargets
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | ["integrate"; IsVersionList versions; IsVagrantProvider provider] ->
                            setBuildParam "vagrantprovider" provider
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)                       
+                           versions                     
                        | ["integrate"; IsVersionList versions] ->
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | ["integrate"; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            setBuildParam "vagrantprovider" provider
-                           List.map (ProductVersions.CreateFromProduct lastFeedVersion)      
+                           [Versions.RequestedAsset.Latest]
                        | ["integrate"; IsVagrantProvider provider] ->
                            setBuildParam "vagrantprovider" provider
-                           List.map (ProductVersions.CreateFromProduct lastFeedVersion)                
+                           [Versions.RequestedAsset.Latest]            
                        | ["integrate"; testTargets] ->
                            setBuildParam "testtargets" testTargets
-                           List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           [Versions.RequestedAsset.Latest]
                        
                        | [IsVersionList versions] ->
-                           List.map(ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | [IsTarget target; IsVersionList versions] ->
-                           List.map (ProductVersions.CreateFromProduct <| fun _ -> versions)
+                           versions
                        | [IsTarget target] ->
-                           List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           [Versions.RequestedAsset.Latest]
                        | [] ->
-                           List.map (ProductVersions.CreateFromProduct lastFeedVersion)
+                           [Versions.RequestedAsset.Latest]
                        | _ ->
                            traceError usage
                            exit 2

@@ -3,6 +3,7 @@
 
 #r "FakeLib.dll"
 #r "System.Management.Automation.dll"
+
 #load "Products.fsx"
 #load "Build.fsx"
 #load "BuildConfig.fsx"
@@ -17,31 +18,29 @@ open Fake.FileHelper
 open Scripts
 open Fake.Testing.XUnit2
 open Products
-open Products.Products
 open Products.Paths
 open Build.Builder
 open Commandline
-open FSharp.Data
 open Versions
 
 let productsToBuild = Commandline.parse()
 
-let productDescriptions = productsToBuild
-                          |> List.map(fun p ->
-                                 p.Versions 
-                                 |> List.map(fun v -> sprintf "%s %s (%s)" p.Title v.FullVersion v.Source.Description)
-                             )
-                          |> List.concat
-                          |> String.concat Environment.NewLine
+//let productDescriptions = productsToBuild
+//                          |> List.map(fun p ->
+//                                 p.Versions 
+//                                 |> List.map(fun v -> sprintf "%s %s (%s)" p.Title v.FullVersion v.Source.Description)
+//                             )
+//                          |> List.concat
+//                          |> String.concat Environment.NewLine
 
-if (getBuildParam "target" |> toLower <> "help") then 
-    traceHeader (sprintf "Products:%s%s%s" Environment.NewLine Environment.NewLine productDescriptions)
+//if (getBuildParam "target" |> toLower <> "help") then 
+//    traceHeader (sprintf "Products:%s%s%s" Environment.NewLine Environment.NewLine productDescriptions)
 
-Target "Clean" (fun _ ->
-    CleanDirs [MsiBuildDir; OutDir; ResultsDir]
-    productsToBuild
-    |> List.iter(fun p -> CleanDirs [OutDir @@ p.Name; p.ServiceBinDir])
-)
+//Target "Clean" (fun _ ->
+//    CleanDirs [MsiBuildDir; OutDir; ResultsDir]
+//    productsToBuild
+//    |> List.iter(fun p -> CleanDirs [OutDir @@ p.Name; p.ServiceBinDir])
+//)
 
 Target "ListBuildCandidates" (fun () ->
     Versions.getStagingVersions
@@ -52,21 +51,20 @@ Target "ListBuildCandidates" (fun () ->
 
 Target "Resolve" (fun () ->
     let candidate = List.last (Commandline.arguments)
-    let requested = Versions.requestedAsset candidate
-    tracefn "Requested: %A" (requested.Product, requested.Version, requested.Distribution,  requested.Source)
-    let resolved = Versions.versionResolver requested
-    tracefn "Resolved: %A" resolved
+    let resolvedAsset = (Versions.resolve candidate).Value
+    tracefn "Requested: %A" resolvedAsset.Requested
+    tracefn "Resolved: %A" resolvedAsset.Resolved
 )
 
-Target "DownloadProducts" (fun () ->
-    productsToBuild
-    |> List.iter (fun p -> p.Download())
-)
+//Target "DownloadProducts" (fun () ->
+//    productsToBuild
+//    |> List.iter (fun p -> p.Download())
+//)
 
 Target "PatchGuids" (fun () ->
-    tracefn "Making sure guids exist for %s %s" Environment.NewLine productDescriptions
-    BuildConfig.versionGuid productsToBuild
-)
+//    tracefn "Making sure guids exist for %s %s" Environment.NewLine productDescriptions
+//    BuildConfig.versionGuid productsToBuild
+//)
 
 Target "UnitTest" (fun () ->
     let unitTestBuildDir = UnitTestsDir @@ "bin" @@ "Release"
