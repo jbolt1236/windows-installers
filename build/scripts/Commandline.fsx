@@ -13,15 +13,11 @@ open System
 open System.Collections.Generic
 open System.IO
 open System.Text.RegularExpressions
-open System.Net
 open Fake
 open FSharp.Text.RegexProvider
 open Products.Products
 open Products.Paths
 open Versions
-
-ServicePointManager.SecurityProtocol <- SecurityProtocolType.Ssl3 ||| SecurityProtocolType.Tls ||| SecurityProtocolType.Tls11 ||| SecurityProtocolType.Tls12;
-ServicePointManager.ServerCertificateValidationCallback <- (fun _ _ _ _ -> true)
 
 module Commandline =
 
@@ -179,19 +175,16 @@ switches:
                                               zip names must match the installer version.
 """
 
-    //let private versionFromInDir (product : Product) =
-    //    let extractVersion (fileInfo:FileInfo) =
-    //        Regex.Replace(fileInfo.Name, "^" + product.Name + "\-(.*)\.zip$", "$1")
-    //    let zips = InDir
-    //               |> directoryInfo
-    //               |> filesInDirMatching (product.Name + "*.zip")
-    //    match zips.Length with
-    //    | 0 -> failwithf "No %s zip file found in %s" product.Name InDir
-    //    | 1 ->
-    //        let version = zips.[0] |> extractVersion |> parseVersion
-    //        tracefn "Extracted %s from %s" version.FullVersion zips.[0].FullName
-    //        [version]
-    //    | _ -> failwithf "Expecting one %s zip file in %s but found %i" product.Name InDir zips.Length
+    let private versionFromInDir (product : Product) =
+        let extractVersion (fileInfo:FileInfo) = Regex.Replace(fileInfo.Name, "^" + product.Name + "\-(.*)\.zip$", "$1")
+        let zips = InDir |> directoryInfo |> filesInDirMatching (product.Name + "*.zip")
+        match zips.Length with
+        | 0 -> failwithf "No %s zip file found in %s" product.Name InDir
+        | 1 ->
+            let version = zips.[0] |> extractVersion |> Versions.parseVersionString
+            tracefn "Extracted %s from %s" version.FullVersion zips.[0].FullName
+            [version]
+        | _ -> failwithf "Expecting one %s zip file in %s but found %i zip files" product.Name InDir zips.Length
 
     let private args = getBuildParamOrDefault "cmdline" "buildinstallers" |> split ' '
     let private skipTests = args |> List.exists (fun x -> x = "skiptests")
@@ -237,7 +230,7 @@ switches:
         | [] -> [target]
         | _ -> target :: filteredArgs
 
-    let private (|IsVersionList|_|) candidate =
+    let private (|IsRequestedAssetList|_|) candidate =
         let versionStrings = splitStr "," candidate
         let versions = new List<Versions.RequestedAsset>()
         versionStrings
@@ -277,34 +270,35 @@ switches:
     let parse () =
         setEnvironVar "FAKEBUILD" "1"
         let products = match arguments with
-                       | ["release"] ->
-                           setBuildParam "release" "1"
-                           certAndPasswordFromEnvVariables ()
-                           [Versions.RequestedAsset.Latest]
-                       | ["release"; IsVersionList versions ] ->
-                           setBuildParam "release" "1"
-                           certAndPasswordFromEnvVariables ()
-                           versions
-                       | ["release"; IsVersionList versions; certFile; passwordFile ] ->
-                           setBuildParam "release" "1"
-                           certAndPasswordFromFile certFile passwordFile
-                           versions
-                       | ["release"; certFile; passwordFile ] ->
-                           setBuildParam "release" "1"
-                           certAndPasswordFromFile certFile passwordFile
-                           [Versions.RequestedAsset.Latest]
+                       //| ["release"] ->
+                       //    setBuildParam "release" "1"
+                       //    certAndPasswordFromEnvVariables ()
+                       //    [versionFromInDir]
+                       //| ["release"; certFile; passwordFile ] ->
+                       //    setBuildParam "release" "1"
+                       //    certAndPasswordFromFile certFile passwordFile
+                       //    [versionFromInDir]
 
-                       | ["integrate"; IsVersionList versions; IsVagrantProvider provider; testTargets] ->
+                       | ["release"; IsRequestedAssetList versions ] ->
+                           setBuildParam "release" "1"
+                           certAndPasswordFromEnvVariables ()
+                           versions
+                       | ["release"; IsRequestedAssetList versions; certFile; passwordFile ] ->
+                           setBuildParam "release" "1"
+                           certAndPasswordFromFile certFile passwordFile
+                           versions
+
+                       | ["integrate"; IsRequestedAssetList versions; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            setBuildParam "vagrantprovider" provider
                            versions                    
-                       | ["integrate"; IsVersionList versions; testTargets] ->
+                       | ["integrate"; IsRequestedAssetList versions; testTargets] ->
                            setBuildParam "testtargets" testTargets
                            versions
-                       | ["integrate"; IsVersionList versions; IsVagrantProvider provider] ->
+                       | ["integrate"; IsRequestedAssetList versions; IsVagrantProvider provider] ->
                            setBuildParam "vagrantprovider" provider
                            versions                     
-                       | ["integrate"; IsVersionList versions] ->
+                       | ["integrate"; IsRequestedAssetList versions] ->
                            versions
                        | ["integrate"; IsVagrantProvider provider; testTargets] ->
                            setBuildParam "testtargets" testTargets
@@ -317,9 +311,9 @@ switches:
                            setBuildParam "testtargets" testTargets
                            [Versions.RequestedAsset.Latest]
                        
-                       | [IsVersionList versions] ->
+                       | [IsRequestedAssetList versions] ->
                            versions
-                       | [IsTarget target; IsVersionList versions] ->
+                       | [IsTarget target; IsRequestedAssetList versions] ->
                            versions
                        | [IsTarget target] ->
                            [Versions.RequestedAsset.Latest]

@@ -2,11 +2,8 @@
 
 #r "FakeLib.dll"
 
-open System
 open System.Globalization
-open System.IO
 open Fake
-open Fake.FileHelper
 
 module Paths =
     let BuildDir = "./build/"
@@ -52,14 +49,3 @@ module Products =
 
         member this.Title =
             CultureInfo.InvariantCulture.TextInfo.ToTitleCase this.Name
-
-    type Source =
-        | Compile
-        | Released
-        | BuildCandidate of hash:string
-
-        member this.Description =
-            match this with
-            | Compile -> "compiled from source"
-            | Released -> "official release"
-            | BuildCandidate hash -> sprintf "build candidate %s" hash

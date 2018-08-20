@@ -1,6 +1,7 @@
 ﻿#I "../../packages/build/FAKE.x64/tools"
 
 #r "FakeLib.dll"
+
 #load "Versions.fsx"
 #load "BuildConfig.fsx"
 
@@ -93,26 +94,26 @@ module Builder =
             |> ignore
         
             let serviceAssembly = (version.ServiceBinDir()) @@ (sprintf "%s.exe" version.Product.Name)
-            let service = binDir @@ (sprintf "%s.exe" product.Name)
+            let service = (version.BinDir()) @@ (sprintf "%s.exe" version.Product.Name)
             CopyFile service serviceAssembly
-            Sign service product
+            Sign service version
 
-    let BuildMsi (version:Version, compile:bool) =
+    //let BuildMsi (version:Version, compile:bool) =
 
-        let filePath = version.OutMsiPath()
-        if (compile) then
-            !! (MsiDir @@ "*.csproj")
-            |> MSBuildRelease MsiBuildDir "Build"
-            |> ignore
-            let exitCode = ExecProcess (fun info ->
-                             info.FileName <- sprintf "%sElastic.Installer.Msi" MsiBuildDir
-                             info.WorkingDirectory <- MsiDir
-                             info.Arguments <- [version.Product.Name; version.FullVersion; Path.GetFullPath(InDir)] |> String.concat " "
-                            ) <| TimeSpan.FromMinutes 20.
+    //    let filePath = version.OutMsiPath()
+    //    if (compile) then
+    //        !! (MsiDir @@ "*.csproj")
+    //        |> MSBuildRelease MsiBuildDir "Build"
+    //        |> ignore
+    //        let exitCode = ExecProcess (fun info ->
+    //                         info.FileName <- sprintf "%sElastic.Installer.Msi" MsiBuildDir
+    //                         info.WorkingDirectory <- MsiDir
+    //                         info.Arguments <- [version.Product.Name; version.FullVersion; Path.GetFullPath(InDir)] |> String.concat " "
+    //                        ) <| TimeSpan.FromMinutes 20.
     
-            if exitCode <> 0 then failwithf "Error building MSI for %s" version.Product.Name
-            CopyFile filePath (MsiDir @@ (sprintf "%s.msi" version.Product.Name))
-            Sign filePath version
-        else
-            if not <| fileExists (version.DownloadPath()) then failwithf "No file found at %s" (product.DownloadPath version)
-            CopyFile (filePath product version) (version.Product.DownloadPath)
+    //        if exitCode <> 0 then failwithf "Error building MSI for %s" version.Product.Name
+    //        CopyFile filePath (MsiDir @@ (sprintf "%s.msi" version.Product.Name))
+    //        Sign filePath version
+    //    else
+    //        if not <| fileExists (version.DownloadPath) then failwithf "No file found at %s" (product.DownloadPath version)
+    //        CopyFile filePath (version.Produ.DownloadPath)

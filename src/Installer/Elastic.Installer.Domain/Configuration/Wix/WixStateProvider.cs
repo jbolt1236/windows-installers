@@ -61,11 +61,16 @@ namespace Elastic.Installer.Domain.Configuration.Wix
 
 		public WixStateProvider(Product product, string currentVersion) 
 		{
-			var installed = IsAlreadyInstalled(product, out var existingVersions);
 			this.CurrentVersion = currentVersion;
-			// use the latest existing version installed.
-			// TODO: What should we do about prerelease versions here?
-			if (installed) this.UpgradeFromVersion = existingVersions.OrderByDescending(v => v).First();
+
+			// Use the latest existing version installed.
+			// TODO: What should we do about pre-release versions here?
+			var installed = IsAlreadyInstalled(product, out var existingVersions);
+			if (installed)
+			{
+				var latestUpgradeVersion = existingVersions.OrderByDescending(v => v).First();
+				this.UpgradeFromVersion = latestUpgradeVersion;
+			}
 		}
 
 		private static string GetVersion(Product product, Guid currentProductCode)

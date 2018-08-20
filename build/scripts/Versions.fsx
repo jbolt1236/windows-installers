@@ -27,9 +27,9 @@ module Versions =
         | Zip
 
     type Source =
-        | Official // Official releases
-        | Staging  // Build candidates for official release
-        | Snapshot // On-demand and nightly builds
+        | Official    // Official releases
+        | Staging     // Build candidates for official release
+        | Snapshot    // On-demand and nightly builds
 
     type RequestedVersionPart =
         | Number of int
@@ -83,14 +83,14 @@ module Versions =
         member this.BinDir() =
             InDir @@ sprintf "%s-%s/bin/" this.Product.Name this.FullVersion
 
-        member this.OutMsiPath() = 
+        member this.OutMsiPath() =
             OutDir @@ this.Product.Name @@ (sprintf "%s-%s.msi" this.Product.Name this.FullVersion)
 
-        member private this.ZipFile () =
+        member private this.ZipFile() =
             let fullPathInDir = InDir |> Path.GetFullPath
             Path.Combine(fullPathInDir, sprintf "%s-%s.zip" this.Product.Name this.FullVersion)
 
-        member private this.ExtractedDirectory () =
+        member private this.ExtractedDirectory() =
             let fullPathInDir = InDir |> Path.GetFullPath            
             Path.Combine(fullPathInDir, sprintf "%s-%s" this.Product.Name this.FullVersion)
 
@@ -102,7 +102,7 @@ module Versions =
             Requested : RequestedAsset;
             Resolved: Version;
         } with
-        member this.DownloadUrl () =
+        member this.DownloadUrl() =
             let extension = match this.Requested.Distribution with
                             | MSI -> "msi"
                             | Zip -> "zip"
@@ -240,21 +240,23 @@ module Versions =
         match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun case -> case.Name = s) with
         |[|case|] -> Some(FSharpValue.MakeUnion(case,[||]) :?> 'a)
         |_ -> None
-
-    let parseVersion (requested: RequestedAsset, version:string, hash:string) =
+ 
+    let parseVersionString version =
         let matched = VersionRegex().Match version
         if matched.Success |> not then failwithf "Could not parse version from %s" version
+        { FullVersion = matched.Version.Value;
+          Product = (fromString<Products.Product> matched.Product.Value).Value;
+          Major = matched.Major.Value |> int;
+          Minor = matched.Minor.Value |> int;
+          Patch = matched.Patch.Value |> int;
+          Prerelease = matched.Prerelease.Value; 
+          Hash = matched.Source.Value; }
+
+    let parseVersion (requested: RequestedAsset, version:string, hash:string) =
+        let matched = parseVersionString version
         {
             Requested = requested;
-            Resolved = {
-                        FullVersion = matched.Version.Value;
-                        Product = (fromString<Products.Product> matched.Product.Value).Value;
-                        Major = matched.Major.Value |> int;
-                        Minor = matched.Minor.Value |> int;
-                        Patch = matched.Patch.Value |> int;
-                        Prerelease = matched.Prerelease.Value;
-                        Hash = hash
-            }
+            Resolved = matched;
         }
           
     let private findInOfficialFeed (requested : RequestedAsset) =
@@ -348,8 +350,7 @@ module Versions =
         member this.DownloadPath (version:ResolvedAsset) =
             let fullPathInDir = InDir |> Path.GetFullPath 
             let downloadUrl = version.DownloadUrl()
-            let releaseFile dir =
-                Path.Combine(fullPathInDir, dir, Path.GetFileName downloadUrl)
+            let releaseFile dir = Path.Combine(fullPathInDir, dir, Path.GetFileName downloadUrl)
             //match version.Source with
             //| Compile ->  this.ZipFile version
             //| Released -> releaseFile version "releases"
